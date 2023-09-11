@@ -9,3 +9,4 @@ C:\Users\graem\MECH_423\Labs\Lab 1\Lab1\Lab1\obj\Debug\Lab1.csproj.CoreCompileIn
 C:\Users\graem\MECH_423\Labs\Lab 1\Lab1\Lab1\obj\Debug\Lab1.exe
 C:\Users\graem\MECH_423\Labs\Lab 1\Lab1\Lab1\obj\Debug\Lab1.pdb
 C:\Users\graem\MECH_423\Labs\Lab 1\Lab1\Lab1\obj\Debug\Lab1.Form2.resources
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab1\Lab1\obj\Debug\Lab1.Form3.resources
