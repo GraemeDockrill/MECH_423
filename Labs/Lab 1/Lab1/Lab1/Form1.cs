@@ -17,12 +17,14 @@ namespace Lab1
             InitializeComponent();
         }
 
+        // When user mouses over pictureBox1, the X and Y coordinates are displayed in text boxes 1 and 2
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
             textBox1.Text = e.X.ToString();
             textBox2.Text = e.Y.ToString();
         }
 
+        // When user clicks in the picture box, the coordinates of the click are listed in textBox3
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
             string XYstring = "(" + e.X.ToString() + ", " + e.Y.ToString() + ")" + Environment.NewLine;

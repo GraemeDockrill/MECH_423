@@ -17,6 +17,7 @@ namespace Lab1
             InitializeComponent();
         }
 
+        // When the user clicks button1 and theres text in textBox1, the number is added to a queue
         private void button1_Click(object sender, EventArgs e)
         {
             if (textBox1.Text == "")
@@ -29,6 +30,7 @@ namespace Lab1
             }
         }
 
+        // When the user clicks button2 and theres entries in queue, remove them
         private void button2_Click(object sender, EventArgs e)
         {
 
@@ -46,6 +48,7 @@ namespace Lab1
             }
         }
 
+        // Update the queue shown in textBox6 and keep track of the number of queued items in textBox3
         private void UpdateQueue()
         {
             textBox3.Text = dataQueue.Count.ToString();
@@ -57,11 +60,13 @@ namespace Lab1
             }
         }
 
+        // when timer1 ticks every 100ms, UpdateQueue is called
         private void timer1_Tick(object sender, EventArgs e)
         {
             UpdateQueue();
         }
 
+        // When button3 is clicked, average the data in queue, and clear queue
         private void button3_Click(object sender, EventArgs e)
         {
             if (dataQueue.Count == 0)
