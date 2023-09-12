@@ -182,7 +182,6 @@ namespace Lab1_ex4
         private System.Windows.Forms.Timer timer1;
 
         string serialDataString = "";
-        ConcurrentQueue<Int32> dataQueue = new ConcurrentQueue<Int32>();
     }
 }
 

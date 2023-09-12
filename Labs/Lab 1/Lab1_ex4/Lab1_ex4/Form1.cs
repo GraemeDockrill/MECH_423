@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace Lab1_ex4
 {
@@ -71,8 +70,7 @@ namespace Lab1_ex4
             while (bytesToRead != 0)
             {
                 newByte = serialPort1.ReadByte();
-                dataQueue.Enqueue(newByte);
-                //serialDataString = serialDataString + newByte.ToString() + ", ";
+                serialDataString = serialDataString + newByte.ToString() + ", ";
                 bytesToRead = serialPort1.BytesToRead;
             } 
         }
@@ -83,26 +81,7 @@ namespace Lab1_ex4
             if (serialPort1.IsOpen)
             {
                 textBoxBytesToRead.Text = serialPort1.BytesToRead.ToString();
-
-                foreach (var item in dataQueue)
-                {
-                    serialDataString = serialDataString + item.ToString() + ", ";
-                }
             }
-
-
-
-            //for (int i = count; i > 0; i--)
-            //{
-            //    if (dataQueue.TryDequeue(out item) == false)
-            //    {
-            //        MessageBox.Show("Error: data queue was not able to be dequeued!");
-            //        break;
-            //    }
-            //    sum = sum + item;
-            //}
-
-
 
             textBoxTempStringLength.Text = serialDataString.Length.ToString();
             textBoxSerialDataStream.AppendText(serialDataString);
