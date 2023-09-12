@@ -1,4 +1,7 @@
-﻿namespace Lab1_ex4
+﻿using System;
+using System.Collections.Concurrent;
+
+namespace Lab1_ex4
 {
     partial class Form1
     {
@@ -35,12 +38,17 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textBoxBytesToRead = new System.Windows.Forms.TextBox();
+            this.textBoxTempStringLength = new System.Windows.Forms.TextBox();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.textBoxSerialDataStream = new System.Windows.Forms.TextBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
+            // 
+            // serialPort1
+            // 
+            this.serialPort1.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.serialPort1_DataReceived);
             // 
             // comboBox1
             // 
@@ -49,6 +57,7 @@
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(243, 28);
             this.comboBox1.TabIndex = 0;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // button1
             // 
@@ -56,7 +65,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(230, 28);
             this.button1.TabIndex = 1;
-            this.button1.Text = "Disconnect Serial";
+            this.button1.Text = "Connect Serial";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -90,19 +99,19 @@
             this.label3.TabIndex = 4;
             this.label3.Text = "Items in Queue";
             // 
-            // textBox1
+            // textBoxBytesToRead
             // 
-            this.textBox1.Location = new System.Drawing.Point(206, 47);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(287, 26);
-            this.textBox1.TabIndex = 5;
+            this.textBoxBytesToRead.Location = new System.Drawing.Point(206, 47);
+            this.textBoxBytesToRead.Name = "textBoxBytesToRead";
+            this.textBoxBytesToRead.Size = new System.Drawing.Size(287, 26);
+            this.textBoxBytesToRead.TabIndex = 5;
             // 
-            // textBox2
+            // textBoxTempStringLength
             // 
-            this.textBox2.Location = new System.Drawing.Point(206, 81);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(287, 26);
-            this.textBox2.TabIndex = 6;
+            this.textBoxTempStringLength.Location = new System.Drawing.Point(206, 81);
+            this.textBoxTempStringLength.Name = "textBoxTempStringLength";
+            this.textBoxTempStringLength.Size = new System.Drawing.Size(287, 26);
+            this.textBoxTempStringLength.TabIndex = 6;
             // 
             // textBox3
             // 
@@ -121,24 +130,29 @@
             this.label4.TabIndex = 8;
             this.label4.Text = "Serial Data Stream:";
             // 
-            // textBox4
+            // textBoxSerialDataStream
             // 
-            this.textBox4.Location = new System.Drawing.Point(13, 189);
-            this.textBox4.Multiline = true;
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(480, 249);
-            this.textBox4.TabIndex = 9;
+            this.textBoxSerialDataStream.Location = new System.Drawing.Point(13, 189);
+            this.textBoxSerialDataStream.Multiline = true;
+            this.textBoxSerialDataStream.Name = "textBoxSerialDataStream";
+            this.textBoxSerialDataStream.Size = new System.Drawing.Size(480, 249);
+            this.textBoxSerialDataStream.TabIndex = 9;
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 50;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.textBox4);
+            this.Controls.Add(this.textBoxSerialDataStream);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.textBoxTempStringLength);
+            this.Controls.Add(this.textBoxBytesToRead);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -146,6 +160,7 @@
             this.Controls.Add(this.comboBox1);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -159,11 +174,15 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox textBoxBytesToRead;
+        private System.Windows.Forms.TextBox textBoxTempStringLength;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox textBoxSerialDataStream;
+        private System.Windows.Forms.Timer timer1;
+
+        string serialDataString = "";
+        ConcurrentQueue<Int32> dataQueue = new ConcurrentQueue<Int32>();
     }
 }
 
