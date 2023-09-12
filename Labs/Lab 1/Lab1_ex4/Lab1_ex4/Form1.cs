@@ -70,7 +70,8 @@ namespace Lab1_ex4
             while (bytesToRead != 0)
             {
                 newByte = serialPort1.ReadByte();
-                serialDataString = serialDataString + newByte.ToString() + ", ";
+                dataQueue.Enqueue(newByte); // queue the new byte
+                //serialDataString = serialDataString + newByte.ToString() + ", ";
                 bytesToRead = serialPort1.BytesToRead;
             } 
         }
@@ -83,6 +84,28 @@ namespace Lab1_ex4
                 textBoxBytesToRead.Text = serialPort1.BytesToRead.ToString();
             }
 
+            textBoxItemsInQueue.Text = dataQueue.Count.ToString(); // update items in queue text box
+
+            // loop for dequeueing data one byte at a time
+            for (int queueSize = dataQueue.Count; queueSize > 0; queueSize--)
+            {
+                int item;
+
+                if (dataQueue.TryDequeue(out item) == false)
+                {
+                    MessageBox.Show("Error dequeueing serial data!");
+                    break;
+                }
+
+                serialDataString = serialDataString + item.ToString() + ", "; // add dequeued item to serialDataString
+
+                //// if just directly appending to the serialDataStream text box
+                //textBoxSerialDataStream.AppendText(serialDataString);
+                //serialDataString = "";
+
+            }
+
+            // if using temp serialDataString string to temporarily hold data before adding to serialDataStream text box
             textBoxTempStringLength.Text = serialDataString.Length.ToString();
             textBoxSerialDataStream.AppendText(serialDataString);
             serialDataString = "";

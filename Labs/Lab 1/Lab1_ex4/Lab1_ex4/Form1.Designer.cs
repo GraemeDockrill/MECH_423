@@ -40,7 +40,7 @@ namespace Lab1_ex4
             this.label3 = new System.Windows.Forms.Label();
             this.textBoxBytesToRead = new System.Windows.Forms.TextBox();
             this.textBoxTempStringLength = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.textBoxItemsInQueue = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.textBoxSerialDataStream = new System.Windows.Forms.TextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -113,12 +113,12 @@ namespace Lab1_ex4
             this.textBoxTempStringLength.Size = new System.Drawing.Size(287, 26);
             this.textBoxTempStringLength.TabIndex = 6;
             // 
-            // textBox3
+            // textBoxItemsInQueue
             // 
-            this.textBox3.Location = new System.Drawing.Point(206, 114);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(287, 26);
-            this.textBox3.TabIndex = 7;
+            this.textBoxItemsInQueue.Location = new System.Drawing.Point(206, 114);
+            this.textBoxItemsInQueue.Name = "textBoxItemsInQueue";
+            this.textBoxItemsInQueue.Size = new System.Drawing.Size(287, 26);
+            this.textBoxItemsInQueue.TabIndex = 7;
             // 
             // label4
             // 
@@ -150,7 +150,7 @@ namespace Lab1_ex4
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.textBoxSerialDataStream);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.textBox3);
+            this.Controls.Add(this.textBoxItemsInQueue);
             this.Controls.Add(this.textBoxTempStringLength);
             this.Controls.Add(this.textBoxBytesToRead);
             this.Controls.Add(this.label3);
@@ -176,12 +176,13 @@ namespace Lab1_ex4
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textBoxBytesToRead;
         private System.Windows.Forms.TextBox textBoxTempStringLength;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox textBoxItemsInQueue;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox textBoxSerialDataStream;
         private System.Windows.Forms.Timer timer1;
 
         string serialDataString = "";
+        ConcurrentQueue<Int32> dataQueue = new ConcurrentQueue<Int32>();
     }
 }
 
