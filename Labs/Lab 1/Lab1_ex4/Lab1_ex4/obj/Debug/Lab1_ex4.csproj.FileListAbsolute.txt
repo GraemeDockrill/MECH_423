@@ -1,0 +1,10 @@
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab1_ex4\Lab1_ex4\bin\Debug\Lab1_ex4.exe.config
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab1_ex4\Lab1_ex4\bin\Debug\Lab1_ex4.exe
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab1_ex4\Lab1_ex4\bin\Debug\Lab1_ex4.pdb
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab1_ex4\Lab1_ex4\obj\Debug\Lab1_ex4.csproj.AssemblyReference.cache
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab1_ex4\Lab1_ex4\obj\Debug\Lab1_ex4.Form1.resources
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab1_ex4\Lab1_ex4\obj\Debug\Lab1_ex4.Properties.Resources.resources
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab1_ex4\Lab1_ex4\obj\Debug\Lab1_ex4.csproj.GenerateResource.cache
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab1_ex4\Lab1_ex4\obj\Debug\Lab1_ex4.csproj.CoreCompileInputs.cache
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab1_ex4\Lab1_ex4\obj\Debug\Lab1_ex4.exe
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab1_ex4\Lab1_ex4\obj\Debug\Lab1_ex4.pdb
