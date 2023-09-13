@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 
-namespace Lab1_ex4
+namespace Lab1_ex5
 {
     partial class Form1
     {
@@ -45,11 +45,13 @@ namespace Lab1_ex4
             this.textBoxSerialDataStream = new System.Windows.Forms.TextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.label5 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBoxAccelerationX = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textBoxAccelerationY = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.textBoxAccelerationZ = new System.Windows.Forms.TextBox();
+            this.textBoxOrientation = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // serialPort1
@@ -158,12 +160,12 @@ namespace Lab1_ex4
             this.label5.TabIndex = 10;
             this.label5.Text = "Ax:";
             // 
-            // textBox1
+            // textBoxAccelerationX
             // 
-            this.textBox1.Location = new System.Drawing.Point(51, 445);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 26);
-            this.textBox1.TabIndex = 11;
+            this.textBoxAccelerationX.Location = new System.Drawing.Point(51, 445);
+            this.textBoxAccelerationX.Name = "textBoxAccelerationX";
+            this.textBoxAccelerationX.Size = new System.Drawing.Size(100, 26);
+            this.textBoxAccelerationX.TabIndex = 11;
             // 
             // label6
             // 
@@ -174,12 +176,12 @@ namespace Lab1_ex4
             this.label6.TabIndex = 12;
             this.label6.Text = "Ay:";
             // 
-            // textBox2
+            // textBoxAccelerationY
             // 
-            this.textBox2.Location = new System.Drawing.Point(196, 445);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 26);
-            this.textBox2.TabIndex = 13;
+            this.textBoxAccelerationY.Location = new System.Drawing.Point(196, 445);
+            this.textBoxAccelerationY.Name = "textBoxAccelerationY";
+            this.textBoxAccelerationY.Size = new System.Drawing.Size(100, 26);
+            this.textBoxAccelerationY.TabIndex = 13;
             // 
             // label7
             // 
@@ -190,23 +192,41 @@ namespace Lab1_ex4
             this.label7.TabIndex = 14;
             this.label7.Text = "Az:";
             // 
-            // textBox3
+            // textBoxAccelerationZ
             // 
-            this.textBox3.Location = new System.Drawing.Point(342, 445);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(100, 26);
-            this.textBox3.TabIndex = 15;
+            this.textBoxAccelerationZ.Location = new System.Drawing.Point(342, 445);
+            this.textBoxAccelerationZ.Name = "textBoxAccelerationZ";
+            this.textBoxAccelerationZ.Size = new System.Drawing.Size(100, 26);
+            this.textBoxAccelerationZ.TabIndex = 15;
+            // 
+            // textBoxOrientation
+            // 
+            this.textBoxOrientation.Location = new System.Drawing.Point(106, 477);
+            this.textBoxOrientation.Name = "textBoxOrientation";
+            this.textBoxOrientation.Size = new System.Drawing.Size(190, 26);
+            this.textBoxOrientation.TabIndex = 16;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(13, 477);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(87, 20);
+            this.label8.TabIndex = 17;
+            this.label8.Text = "Orientation";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(513, 539);
-            this.Controls.Add(this.textBox3);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.textBoxOrientation);
+            this.Controls.Add(this.textBoxAccelerationZ);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.textBoxAccelerationY);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.textBoxAccelerationX);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.textBoxSerialDataStream);
             this.Controls.Add(this.label4);
@@ -240,15 +260,21 @@ namespace Lab1_ex4
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox textBoxSerialDataStream;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox textBoxAccelerationX;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox textBoxAccelerationY;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox textBoxAccelerationZ;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox textBoxOrientation;
 
         string serialDataString = "";
+        int caseState;
         ConcurrentQueue<Int32> dataQueue = new ConcurrentQueue<Int32>();
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox textBox3;
+        ConcurrentQueue<Int32> dataQueueAx = new ConcurrentQueue<Int32>();
+        ConcurrentQueue<Int32> dataQueueAy = new ConcurrentQueue<Int32>();
+        ConcurrentQueue<Int32> dataQueueAz = new ConcurrentQueue<Int32>();
     }
 }
 

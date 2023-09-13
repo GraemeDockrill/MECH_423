@@ -12,7 +12,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
 using System.IO.Ports;
 
-namespace Lab1_ex4
+namespace Lab1_ex5
 {
     public partial class Form1 : Form
     {
@@ -91,8 +91,9 @@ namespace Lab1_ex4
             // loop for dequeueing data one byte at a time
             for (int queueSize = dataQueue.Count; queueSize > 0; queueSize--)
             {
-                int item;
+                int item; // the dequeued byte
 
+                // try to dequeue data, if fails then break
                 if (dataQueue.TryDequeue(out item) == false)
                 {
                     MessageBox.Show("Error dequeueing serial data!");
@@ -101,11 +102,103 @@ namespace Lab1_ex4
 
                 serialDataString = serialDataString + item.ToString() + ", "; // add dequeued item to serialDataString
 
-                //// if just directly appending to the serialDataStream text box
-                //textBoxSerialDataStream.AppendText(serialDataString);
-                //serialDataString = "";
+
+                // parsing data stream - check for start byte of 254
+                if (item == 255)
+                {
+                    caseState = 0;
+                }
+
+                // based on which byte is received, update the Ax, Ay, Az text boxes
+                switch (caseState)
+                {
+                    case 0: // byte of 255 read
+                        caseState++;
+                        break;
+                    case 1: // parsing Ax byte
+                        textBoxAccelerationX.Text = item.ToString();
+                        dataQueueAx.Enqueue(item);
+                        caseState++;
+                        break;
+                    case 2: // parsing Ay byte
+                        textBoxAccelerationY.Text = item.ToString();
+                        dataQueueAy.Enqueue(item);
+                        caseState++;
+                        break;
+                    case 3: // parsing Az byte
+                        textBoxAccelerationZ.Text = item.ToString();
+                        dataQueueAz.Enqueue(item);
+                        caseState++;
+                        break;
+                    default:
+                        break;
+                }
 
             }
+
+            // loop for dequeueing Ax and updating orientation
+            for (int queueSize = dataQueueAx.Count; queueSize > 0; queueSize--)
+            {
+                int dataAx;
+
+                if (dataQueueAx.TryDequeue(out dataAx) == false)
+                {
+                    MessageBox.Show("Error dequeueing Ax serial data!");
+                    break;
+                }
+
+                if (dataAx >= 150)
+                {
+                    textBoxOrientation.Text = ("+X");
+                }
+                else if (dataAx < 110)
+                {
+                    textBoxOrientation.Text = ("-X");
+                }
+            }
+
+            // loop for dequeueing Ay and updating orientation
+            for (int queueSize = dataQueueAy.Count; queueSize > 0; queueSize--)
+            {
+                int dataAy;
+
+                if (dataQueueAy.TryDequeue(out dataAy) == false)
+                {
+                    MessageBox.Show("Error dequeueing Ax serial data!");
+                    break;
+                }
+
+                if (dataAy >= 150)
+                {
+                    textBoxOrientation.Text = ("+Y");
+                }
+                else if (dataAy < 110)
+                {
+                    textBoxOrientation.Text = ("-Y");
+                }
+            }
+
+            // loop for dequeueing Az and updating orientation
+            for (int queueSize = dataQueueAz.Count; queueSize > 0; queueSize--)
+            {
+                int dataAz;
+
+                if (dataQueueAz.TryDequeue(out dataAz) == false)
+                {
+                    MessageBox.Show("Error dequeueing Ax serial data!");
+                    break;
+                }
+
+                if (dataAz >= 150)
+                {
+                    textBoxOrientation.Text = ("+Z");
+                }
+                else if (dataAz < 110)
+                {
+                    textBoxOrientation.Text = ("-Z");
+                }
+            }
+
 
             // if using temp serialDataString string to temporarily hold data before adding to serialDataStream text box
             textBoxTempStringLength.Text = serialDataString.Length.ToString();
