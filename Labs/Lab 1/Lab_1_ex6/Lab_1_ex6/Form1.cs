@@ -118,16 +118,19 @@ namespace Lab_1_ex6
                     case 1: // parsing Ax byte
                         textBoxAccelerationX.Text = item.ToString();
                         dataQueueAx.Enqueue(item);
+                        if(Checked == 1) outputFile.Write(item.ToString() + ", "); // write Ax to file
                         caseState++;
                         break;
                     case 2: // parsing Ay byte
                         textBoxAccelerationY.Text = item.ToString();
                         dataQueueAy.Enqueue(item);
+                        if (Checked == 1) outputFile.Write(item.ToString() + ", "); // write Ay to file
                         caseState++;
                         break;
                     case 3: // parsing Az byte
                         textBoxAccelerationZ.Text = item.ToString();
                         dataQueueAz.Enqueue(item);
+                        if (Checked == 1) outputFile.Write(item.ToString() + ", " + DateTime.Now + "\n"); // write Az and time to file
                         caseState++;
                         break;
                     default:
@@ -136,7 +139,7 @@ namespace Lab_1_ex6
 
             }
 
-            // loop for dequeueing Ax and updating orientation
+            // loop for dequeueing Ax,Ay,Az and updating orientation
             for (int queueSize = dataQueueAx.Count; queueSize > 0; queueSize--)
             {
                 int dataAx;
@@ -147,6 +150,7 @@ namespace Lab_1_ex6
                     break;
                 }
 
+                // write Ax orientation
                 if (dataAx >= 150)
                 {
                     textBoxOrientation.Text = ("+X");
@@ -157,17 +161,18 @@ namespace Lab_1_ex6
                 }
             }
 
-            // loop for dequeueing Ay and updating orientation
             for (int queueSize = dataQueueAy.Count; queueSize > 0; queueSize--)
             {
+
                 int dataAy;
 
                 if (dataQueueAy.TryDequeue(out dataAy) == false)
                 {
-                    MessageBox.Show("Error dequeueing Ax serial data!");
+                    MessageBox.Show("Error dequeueing Ay serial data!");
                     break;
                 }
 
+                // write Ay orientation
                 if (dataAy >= 150)
                 {
                     textBoxOrientation.Text = ("+Y");
@@ -178,17 +183,18 @@ namespace Lab_1_ex6
                 }
             }
 
-            // loop for dequeueing Az and updating orientation
             for (int queueSize = dataQueueAz.Count; queueSize > 0; queueSize--)
             {
+
                 int dataAz;
 
                 if (dataQueueAz.TryDequeue(out dataAz) == false)
                 {
-                    MessageBox.Show("Error dequeueing Ax serial data!");
+                    MessageBox.Show("Error dequeueing Az serial data!");
                     break;
                 }
 
+                // write Az orientation
                 if (dataAz >= 150)
                 {
                     textBoxOrientation.Text = ("+Z");
@@ -199,11 +205,37 @@ namespace Lab_1_ex6
                 }
             }
 
-
-            // if using temp serialDataString string to temporarily hold data before adding to serialDataStream text box
+            // serialDataString string to temporarily hold data before adding to serialDataStream text box
             textBoxTempStringLength.Text = serialDataString.Length.ToString();
             textBoxSerialDataStream.AppendText(serialDataString);
             serialDataString = "";
+        }
+
+        // Changes the file path name to save data to (checks if valid)
+        private void buttonSelectFilename_Click(object sender, EventArgs e)
+        {
+            // prompt user for a filename and location
+            SaveFileDialog myDialogBox = new SaveFileDialog();
+            myDialogBox.InitialDirectory = @"C:\C# Code";
+            myDialogBox.ShowDialog();
+            textBoxFileName.Text = myDialogBox.FileName.ToString() + ".CSV";
+
+            // create file with a valid file name
+            if (checkBoxSavetoFile.Checked == true)
+            {
+                outputFile = new StreamWriter(textBoxFileName.Text);
+                outputFile.Write("Ax, Ay, Az, Timestamp\n"); // print header in outputFile
+                Checked = 1; // sets checked flag to record data
+            }
+        }
+
+        private void checkBoxSavetoFile_CheckStateChanged(object sender, EventArgs e)
+        {
+            if(checkBoxSavetoFile.Checked == false)
+            {
+                outputFile.Close();
+                Checked = 0;
+            }
         }
     }
 }

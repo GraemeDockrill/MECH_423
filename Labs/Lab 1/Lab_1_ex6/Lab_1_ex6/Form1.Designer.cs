@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.IO;
 
 namespace Lab_1_ex6
 {
@@ -52,6 +53,9 @@ namespace Lab_1_ex6
             this.textBoxAccelerationZ = new System.Windows.Forms.TextBox();
             this.textBoxOrientation = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.checkBoxSavetoFile = new System.Windows.Forms.CheckBox();
+            this.buttonSelectFilename = new System.Windows.Forms.Button();
+            this.textBoxFileName = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // serialPort1
@@ -69,9 +73,9 @@ namespace Lab_1_ex6
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(263, 13);
+            this.button1.Location = new System.Drawing.Point(263, 12);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(230, 28);
+            this.button1.Size = new System.Drawing.Size(230, 29);
             this.button1.TabIndex = 1;
             this.button1.Text = "Connect Serial";
             this.button1.UseVisualStyleBackColor = true;
@@ -215,11 +219,42 @@ namespace Lab_1_ex6
             this.label8.TabIndex = 17;
             this.label8.Text = "Orientation";
             // 
+            // checkBoxSavetoFile
+            // 
+            this.checkBoxSavetoFile.AutoSize = true;
+            this.checkBoxSavetoFile.Location = new System.Drawing.Point(12, 509);
+            this.checkBoxSavetoFile.Name = "checkBoxSavetoFile";
+            this.checkBoxSavetoFile.Size = new System.Drawing.Size(118, 24);
+            this.checkBoxSavetoFile.TabIndex = 18;
+            this.checkBoxSavetoFile.Text = "Save to File";
+            this.checkBoxSavetoFile.UseVisualStyleBackColor = true;
+            this.checkBoxSavetoFile.CheckStateChanged += new System.EventHandler(this.checkBoxSavetoFile_CheckStateChanged);
+            // 
+            // buttonSelectFilename
+            // 
+            this.buttonSelectFilename.Location = new System.Drawing.Point(13, 540);
+            this.buttonSelectFilename.Name = "buttonSelectFilename";
+            this.buttonSelectFilename.Size = new System.Drawing.Size(138, 31);
+            this.buttonSelectFilename.TabIndex = 19;
+            this.buttonSelectFilename.Text = "Select Filename";
+            this.buttonSelectFilename.UseVisualStyleBackColor = true;
+            this.buttonSelectFilename.Click += new System.EventHandler(this.buttonSelectFilename_Click);
+            // 
+            // textBoxFileName
+            // 
+            this.textBoxFileName.Location = new System.Drawing.Point(158, 544);
+            this.textBoxFileName.Name = "textBoxFileName";
+            this.textBoxFileName.Size = new System.Drawing.Size(335, 26);
+            this.textBoxFileName.TabIndex = 20;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(513, 539);
+            this.ClientSize = new System.Drawing.Size(513, 590);
+            this.Controls.Add(this.textBoxFileName);
+            this.Controls.Add(this.buttonSelectFilename);
+            this.Controls.Add(this.checkBoxSavetoFile);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.textBoxOrientation);
             this.Controls.Add(this.textBoxAccelerationZ);
@@ -268,6 +303,9 @@ namespace Lab_1_ex6
         private System.Windows.Forms.TextBox textBoxAccelerationZ;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox textBoxOrientation;
+        private System.Windows.Forms.CheckBox checkBoxSavetoFile;
+        private System.Windows.Forms.Button buttonSelectFilename;
+        private System.Windows.Forms.TextBox textBoxFileName;
 
         string serialDataString = "";
         int caseState;
@@ -275,6 +313,11 @@ namespace Lab_1_ex6
         ConcurrentQueue<Int32> dataQueueAx = new ConcurrentQueue<Int32>();
         ConcurrentQueue<Int32> dataQueueAy = new ConcurrentQueue<Int32>();
         ConcurrentQueue<Int32> dataQueueAz = new ConcurrentQueue<Int32>();
+
+        StreamWriter outputFile;
+
+        int Checked = 0;
+        
     }
 }
 
