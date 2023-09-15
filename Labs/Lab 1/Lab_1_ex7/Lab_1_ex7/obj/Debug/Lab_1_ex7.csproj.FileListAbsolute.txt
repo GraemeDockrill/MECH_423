@@ -1,0 +1,10 @@
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex7\Lab_1_ex7\bin\Debug\Lab_1_ex7.exe.config
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex7\Lab_1_ex7\bin\Debug\Lab_1_ex7.exe
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex7\Lab_1_ex7\bin\Debug\Lab_1_ex7.pdb
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex7\Lab_1_ex7\obj\Debug\Lab_1_ex7.csproj.AssemblyReference.cache
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex7\Lab_1_ex7\obj\Debug\Lab_1_ex7.Form1.resources
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex7\Lab_1_ex7\obj\Debug\Lab_1_ex7.Properties.Resources.resources
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex7\Lab_1_ex7\obj\Debug\Lab_1_ex7.csproj.GenerateResource.cache
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex7\Lab_1_ex7\obj\Debug\Lab_1_ex7.csproj.CoreCompileInputs.cache
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex7\Lab_1_ex7\obj\Debug\Lab_1_ex7.exe
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex7\Lab_1_ex7\obj\Debug\Lab_1_ex7.pdb
