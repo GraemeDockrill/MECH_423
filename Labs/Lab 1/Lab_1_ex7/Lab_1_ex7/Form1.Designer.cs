@@ -181,9 +181,23 @@
         private System.Windows.Forms.Label labelDataHistory;
         private System.Windows.Forms.TextBox textBoxDataHistory;
 
-        int state = 0;
         int wait = 0;
         int waitCycles = 5;
+
+        // enum for states
+        enum states
+        {
+            waitForData,
+            punch,
+            initiateRightHook,
+            RightHook,
+            initiateHighPunch,
+            HighPunch
+            
+        }
+
+        states state = states.waitForData;
+
     }
 }
 

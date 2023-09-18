@@ -23,77 +23,77 @@ namespace Lab_1_ex7
             if(int.TryParse(textBoxDataAx.Text, out int Ax) && int.TryParse(textBoxDataAy.Text, out int Ay) && int.TryParse(textBoxDataAz.Text, out int Az))
             {
 
-                if (state == 0) // wait for new data
+                if (state == states.waitForData) // wait for new data
                 {
                     if (Ax >= 180) // +X
                     {
-                        state = 1;
+                        state = states.punch;
                     }
                     else if (Az >= 180) // +Z
                     {
-                        state = 4;
+                        state = states.initiateHighPunch;
                     }
                 }
-                else if (state == 1) // user punches forward +X
+                else if (state == states.punch) // user punches forward +X
                 {
                     wait++; // wait for 10 data points
 
                     if (Ay >= 180) // +Y
                     {
-                        state = 2;
+                        state = states.initiateRightHook;
                     }
                     else if (wait >= waitCycles) // return to state 0
                     {
                         wait = 0;
-                        state = 0;
+                        state = states.waitForData;
                     }
                 }
-                else if (state == 2) // user punches forward then left
+                else if (state == states.initiateRightHook) // user punches forward then left
                 {
                     wait++;
 
                     if (Az >= 180) // +Z
                     {
-                        state = 3;
+                        state = states.RightHook;
                     }
                     else if (wait >= waitCycles) // return to state 0
                     {
                         wait = 0;
-                        state = 0;
+                        state = states.waitForData;
                     }
                 }
-                else if (state == 3) // user completes right hook
+                else if (state == states.RightHook) // user completes right hook
                 {
                     wait++;
 
                     if (wait >= waitCycles) // return to state 0
                     {
                         wait = 0;
-                        state = 0;
+                        state = states.waitForData;
                     }
                 }
-                else if (state == 4) // user initiates high punch
+                else if (state == states.initiateHighPunch) // user initiates high punch
                 {
                     wait++;
 
                     if(Ax >= 180) // +X
                     {
-                        state = 5;
+                        state = states.HighPunch;
                     }
                     else if (wait >= waitCycles) // return to state 0
                     {
                         wait = 0;
-                        state = 0;
+                        state = states.waitForData;
                     }
                 }
-                else if (state == 5) // user completes high punch
+                else if (state == states.HighPunch) // user completes high punch
                 {
                     wait++;
 
                     if(wait >= waitCycles) // return to state 0
                     {
                         wait = 0;
-                        state = 0;
+                        state = states.waitForData;
                     }
                 }
 
