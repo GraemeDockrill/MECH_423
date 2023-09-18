@@ -233,7 +233,11 @@ namespace Lab_1_ex6
         {
             if(checkBoxSavetoFile.Checked == false)
             {
-                outputFile.Close();
+                if(outputFile != null)
+                {
+                    outputFile.Close();
+                    outputFile = null;
+                }
                 Checked = 0;
             }
         }
