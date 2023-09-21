@@ -107,102 +107,96 @@ namespace Lab_1_ex8
                 // parsing data stream - check for start byte of 254
                 if (item == 255)
                 {
-                    caseState = 0;
+                    state = parsingStates.startByte;
                 }
 
                 // based on which byte is received, update the Ax, Ay, Az text boxes
-                switch (caseState)
+                if (state == parsingStates.startByte)
                 {
-                    case 0: // byte of 255 read
-                        caseState++;
-                        break;
-                    case 1: // parsing Ax byte
-                        textBoxAccelerationX.Text = item.ToString();
-                        dataQueueAx.Enqueue(item);
-                        if (Checked == 1) outputFile.Write(item.ToString() + ", "); // write Ax to file
-                        caseState++;
-                        break;
-                    case 2: // parsing Ay byte
-                        textBoxAccelerationY.Text = item.ToString();
-                        dataQueueAy.Enqueue(item);
-                        if (Checked == 1) outputFile.Write(item.ToString() + ", "); // write Ay to file
-                        caseState++;
-                        break;
-                    case 3: // parsing Az byte
-                        textBoxAccelerationZ.Text = item.ToString();
-                        dataQueueAz.Enqueue(item);
-                        if (Checked == 1) outputFile.Write(item.ToString() + ", " + DateTime.Now + "\n"); // write Az and time to file
-                        caseState++;
-                        break;
-                    default:
-                        break;
+                    state = parsingStates.AxByte;
                 }
-
-            }
-
-            // loop for dequeueing Ax,Ay,Az and updating orientation
-            for (int queueSize = dataQueueAx.Count; queueSize > 0; queueSize--)
-            {
-                int dataAx;
-
-                if (dataQueueAx.TryDequeue(out dataAx) == false)
+                else if (state == parsingStates.AxByte) // parsing Ax byte
                 {
-                    MessageBox.Show("Error dequeueing Ax serial data!");
-                    break;
+                    textBoxAccelerationX.Text = item.ToString();
+                    dataQueueAx.Enqueue(item);
+
+                    // updating Ax average
+                    AxSum += item;
+                    if(dataQueueAx.Count > 100)
+                    {
+                        int dequeuedAx;
+
+                        if (dataQueueAx.TryDequeue(out dequeuedAx) == false)
+                            MessageBox.Show("Error Dequeuing Ax serial data!");
+                        AxSum -= dequeuedAx;
+                        textBoxAverageAx.Text = (AxSum / 100).ToString();
+                    }
+
+                    // updating Ax orientation
+                    if (item >= 150)
+                        textBoxOrientation.Text = ("+X");
+                    else if (item <= 110)
+                        textBoxOrientation.Text = ("-X");
+
+                    // write Ax to file
+                    if (Checked == 1) outputFile.Write(item.ToString() + ", ");
+
+                    state = parsingStates.AyByte;
                 }
-
-                // write Ax orientation
-                if (dataAx >= 150)
+                else if (state == parsingStates.AyByte) // parsing Ay byte
                 {
-                    textBoxOrientation.Text = ("+X");
+                    textBoxAccelerationY.Text = item.ToString();
+                    dataQueueAy.Enqueue(item);
+
+                    // updating Ay average
+                    AySum += item;
+                    if (dataQueueAy.Count > 100)
+                    {
+                        int dequeuedAy;
+
+                        if (dataQueueAy.TryDequeue(out dequeuedAy) == false)
+                            MessageBox.Show("Error Dequeuing Ax serial data!");
+                        AySum -= dequeuedAy;
+                        textBoxAverageAy.Text = (AySum / 100).ToString();
+                    }
+
+                    // updating Ay orientation
+                    if (item >= 150)
+                        textBoxOrientation.Text = ("+Y");
+                    else if (item <= 110)
+                        textBoxOrientation.Text = ("-Y");
+
+                    // write Ay to file
+                    if (Checked == 1) outputFile.Write(item.ToString() + ", ");
+
+                    state = parsingStates.AzByte;
                 }
-                else if (dataAx < 110)
+                else if (state == parsingStates.AzByte) // parsing Az byte
                 {
-                    textBoxOrientation.Text = ("-X");
-                }
-            }
+                    textBoxAccelerationZ.Text = item.ToString();
+                    dataQueueAz.Enqueue(item);
 
-            for (int queueSize = dataQueueAy.Count; queueSize > 0; queueSize--)
-            {
+                    // updating Ax average
+                    AzSum += item;
+                    if (dataQueueAz.Count > 100)
+                    {
+                        int dequeuedAz;
+                        if (dataQueueAz.TryDequeue(out dequeuedAz) == false)
+                            MessageBox.Show("Error Dequeuing Ax serial data!");
+                        AzSum -= dequeuedAz;
+                        textBoxAverageAz.Text = (AzSum / 100).ToString();
+                    }
 
-                int dataAy;
+                    // updating Az orientation
+                    if (item >= 150)
+                        textBoxOrientation.Text = ("+Z");
+                    else if (item <= 110)
+                        textBoxOrientation.Text = ("-Z");
 
-                if (dataQueueAy.TryDequeue(out dataAy) == false)
-                {
-                    MessageBox.Show("Error dequeueing Ay serial data!");
-                    break;
-                }
+                    // write Az and time to file
+                    if (Checked == 1) outputFile.Write(item.ToString() + ", " + DateTime.Now + "\n");
 
-                // write Ay orientation
-                if (dataAy >= 150)
-                {
-                    textBoxOrientation.Text = ("+Y");
-                }
-                else if (dataAy < 110)
-                {
-                    textBoxOrientation.Text = ("-Y");
-                }
-            }
-
-            for (int queueSize = dataQueueAz.Count; queueSize > 0; queueSize--)
-            {
-
-                int dataAz;
-
-                if (dataQueueAz.TryDequeue(out dataAz) == false)
-                {
-                    MessageBox.Show("Error dequeueing Az serial data!");
-                    break;
-                }
-
-                // write Az orientation
-                if (dataAz >= 150)
-                {
-                    textBoxOrientation.Text = ("+Z");
-                }
-                else if (dataAz < 110)
-                {
-                    textBoxOrientation.Text = ("-Z");
+                    state = parsingStates.startByte;
                 }
             }
 

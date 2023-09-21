@@ -7,3 +7,4 @@ C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex8\Lab_1_ex8\obj\Debug\Lab_1_ex8.cspro
 C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex8\Lab_1_ex8\obj\Debug\Lab_1_ex8.csproj.CoreCompileInputs.cache
 C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex8\Lab_1_ex8\obj\Debug\Lab_1_ex8.exe
 C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex8\Lab_1_ex8\obj\Debug\Lab_1_ex8.pdb
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex8\Lab_1_ex8\obj\Debug\Lab_1_ex8.Form1.resources
