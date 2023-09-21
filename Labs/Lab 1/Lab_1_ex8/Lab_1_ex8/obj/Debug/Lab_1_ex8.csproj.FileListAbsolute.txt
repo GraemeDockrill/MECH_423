@@ -1,0 +1,9 @@
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex8\Lab_1_ex8\bin\Debug\Lab_1_ex8.exe.config
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex8\Lab_1_ex8\bin\Debug\Lab_1_ex8.exe
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex8\Lab_1_ex8\bin\Debug\Lab_1_ex8.pdb
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex8\Lab_1_ex8\obj\Debug\Lab_1_ex8.csproj.AssemblyReference.cache
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex8\Lab_1_ex8\obj\Debug\Lab_1_ex8.Properties.Resources.resources
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex8\Lab_1_ex8\obj\Debug\Lab_1_ex8.csproj.GenerateResource.cache
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex8\Lab_1_ex8\obj\Debug\Lab_1_ex8.csproj.CoreCompileInputs.cache
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex8\Lab_1_ex8\obj\Debug\Lab_1_ex8.exe
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex8\Lab_1_ex8\obj\Debug\Lab_1_ex8.pdb
