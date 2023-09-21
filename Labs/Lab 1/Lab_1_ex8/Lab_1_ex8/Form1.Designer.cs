@@ -63,6 +63,8 @@ namespace Lab_1_ex8
             this.label11 = new System.Windows.Forms.Label();
             this.textBoxAverageAx = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.textBoxGesture = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // serialPort1
@@ -73,7 +75,7 @@ namespace Lab_1_ex8
             // 
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(9, 8);
-            this.comboBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.comboBox1.Margin = new System.Windows.Forms.Padding(2);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(163, 21);
             this.comboBox1.TabIndex = 0;
@@ -82,7 +84,7 @@ namespace Lab_1_ex8
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(175, 8);
-            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(153, 19);
             this.button1.TabIndex = 1;
@@ -126,7 +128,7 @@ namespace Lab_1_ex8
             // textBoxBytesToRead
             // 
             this.textBoxBytesToRead.Location = new System.Drawing.Point(137, 31);
-            this.textBoxBytesToRead.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxBytesToRead.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxBytesToRead.Name = "textBoxBytesToRead";
             this.textBoxBytesToRead.Size = new System.Drawing.Size(193, 20);
             this.textBoxBytesToRead.TabIndex = 5;
@@ -134,7 +136,7 @@ namespace Lab_1_ex8
             // textBoxTempStringLength
             // 
             this.textBoxTempStringLength.Location = new System.Drawing.Point(137, 53);
-            this.textBoxTempStringLength.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxTempStringLength.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxTempStringLength.Name = "textBoxTempStringLength";
             this.textBoxTempStringLength.Size = new System.Drawing.Size(193, 20);
             this.textBoxTempStringLength.TabIndex = 6;
@@ -142,7 +144,7 @@ namespace Lab_1_ex8
             // textBoxItemsInQueue
             // 
             this.textBoxItemsInQueue.Location = new System.Drawing.Point(137, 74);
-            this.textBoxItemsInQueue.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxItemsInQueue.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxItemsInQueue.Name = "textBoxItemsInQueue";
             this.textBoxItemsInQueue.Size = new System.Drawing.Size(193, 20);
             this.textBoxItemsInQueue.TabIndex = 7;
@@ -161,7 +163,7 @@ namespace Lab_1_ex8
             // textBoxSerialDataStream
             // 
             this.textBoxSerialDataStream.Location = new System.Drawing.Point(9, 123);
-            this.textBoxSerialDataStream.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxSerialDataStream.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxSerialDataStream.Multiline = true;
             this.textBoxSerialDataStream.Name = "textBoxSerialDataStream";
             this.textBoxSerialDataStream.Size = new System.Drawing.Size(321, 163);
@@ -185,7 +187,7 @@ namespace Lab_1_ex8
             // textBoxAccelerationX
             // 
             this.textBoxAccelerationX.Location = new System.Drawing.Point(34, 289);
-            this.textBoxAccelerationX.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxAccelerationX.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxAccelerationX.Name = "textBoxAccelerationX";
             this.textBoxAccelerationX.Size = new System.Drawing.Size(68, 20);
             this.textBoxAccelerationX.TabIndex = 11;
@@ -203,7 +205,7 @@ namespace Lab_1_ex8
             // textBoxAccelerationY
             // 
             this.textBoxAccelerationY.Location = new System.Drawing.Point(131, 289);
-            this.textBoxAccelerationY.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxAccelerationY.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxAccelerationY.Name = "textBoxAccelerationY";
             this.textBoxAccelerationY.Size = new System.Drawing.Size(68, 20);
             this.textBoxAccelerationY.TabIndex = 13;
@@ -221,7 +223,7 @@ namespace Lab_1_ex8
             // textBoxAccelerationZ
             // 
             this.textBoxAccelerationZ.Location = new System.Drawing.Point(228, 289);
-            this.textBoxAccelerationZ.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxAccelerationZ.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxAccelerationZ.Name = "textBoxAccelerationZ";
             this.textBoxAccelerationZ.Size = new System.Drawing.Size(68, 20);
             this.textBoxAccelerationZ.TabIndex = 15;
@@ -229,7 +231,7 @@ namespace Lab_1_ex8
             // textBoxOrientation
             // 
             this.textBoxOrientation.Location = new System.Drawing.Point(71, 310);
-            this.textBoxOrientation.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxOrientation.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxOrientation.Name = "textBoxOrientation";
             this.textBoxOrientation.Size = new System.Drawing.Size(128, 20);
             this.textBoxOrientation.TabIndex = 16;
@@ -248,7 +250,7 @@ namespace Lab_1_ex8
             // 
             this.checkBoxSavetoFile.AutoSize = true;
             this.checkBoxSavetoFile.Location = new System.Drawing.Point(6, 409);
-            this.checkBoxSavetoFile.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.checkBoxSavetoFile.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxSavetoFile.Name = "checkBoxSavetoFile";
             this.checkBoxSavetoFile.Size = new System.Drawing.Size(82, 17);
             this.checkBoxSavetoFile.TabIndex = 18;
@@ -259,7 +261,7 @@ namespace Lab_1_ex8
             // buttonSelectFilename
             // 
             this.buttonSelectFilename.Location = new System.Drawing.Point(7, 429);
-            this.buttonSelectFilename.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonSelectFilename.Margin = new System.Windows.Forms.Padding(2);
             this.buttonSelectFilename.Name = "buttonSelectFilename";
             this.buttonSelectFilename.Size = new System.Drawing.Size(92, 20);
             this.buttonSelectFilename.TabIndex = 19;
@@ -270,7 +272,7 @@ namespace Lab_1_ex8
             // textBoxFileName
             // 
             this.textBoxFileName.Location = new System.Drawing.Point(103, 432);
-            this.textBoxFileName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxFileName.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxFileName.Name = "textBoxFileName";
             this.textBoxFileName.Size = new System.Drawing.Size(225, 20);
             this.textBoxFileName.TabIndex = 20;
@@ -338,11 +340,29 @@ namespace Lab_1_ex8
             this.label12.TabIndex = 22;
             this.label12.Text = "Ax:";
             // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(26, 376);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(47, 13);
+            this.label13.TabIndex = 28;
+            this.label13.Text = "Gesture:";
+            // 
+            // textBoxGesture
+            // 
+            this.textBoxGesture.Location = new System.Drawing.Point(79, 373);
+            this.textBoxGesture.Name = "textBoxGesture";
+            this.textBoxGesture.Size = new System.Drawing.Size(249, 20);
+            this.textBoxGesture.TabIndex = 29;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(342, 463);
+            this.Controls.Add(this.textBoxGesture);
+            this.Controls.Add(this.label13);
             this.Controls.Add(this.textBoxAverageAz);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.textBoxAverageAy);
@@ -371,7 +391,7 @@ namespace Lab_1_ex8
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.comboBox1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -405,28 +425,6 @@ namespace Lab_1_ex8
         private System.Windows.Forms.CheckBox checkBoxSavetoFile;
         private System.Windows.Forms.Button buttonSelectFilename;
         private System.Windows.Forms.TextBox textBoxFileName;
-
-        string serialDataString = "";
-        int caseState;
-        int Checked = 0;
-        int AxSum = 0;
-        int AySum = 0;
-        int AzSum = 0;
-        ConcurrentQueue<Int32> dataQueue = new ConcurrentQueue<Int32>();
-        ConcurrentQueue<Int32> dataQueueAx = new ConcurrentQueue<Int32>();
-        ConcurrentQueue<Int32> dataQueueAy = new ConcurrentQueue<Int32>();
-        ConcurrentQueue<Int32> dataQueueAz = new ConcurrentQueue<Int32>();
-        StreamWriter outputFile;
-
-        enum parsingStates
-        {
-            startByte,
-            AxByte,
-            AyByte,
-            AzByte
-        }
-
-        parsingStates state = parsingStates.startByte;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox textBoxAverageAz;
         private System.Windows.Forms.Label label10;
@@ -434,6 +432,51 @@ namespace Lab_1_ex8
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.TextBox textBoxAverageAx;
         private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox textBoxGesture;
+
+        string serialDataString = "";
+        int caseState;
+        int Checked = 0;
+        int AxSum = 0;
+        int AySum = 0;
+        int AzSum = 0;
+        int averagePeriod = 100;
+        int wait = 0;
+        int waitCycles = 20;
+        int gestureAcceleration = 180;
+
+        int dequeuedAx;
+        int dequeuedAy;
+        int dequeuedAz;
+
+        ConcurrentQueue<Int32> dataQueue = new ConcurrentQueue<Int32>();
+        ConcurrentQueue<Int32> dataQueueAx = new ConcurrentQueue<Int32>();
+        ConcurrentQueue<Int32> dataQueueAy = new ConcurrentQueue<Int32>();
+        ConcurrentQueue<Int32> dataQueueAz = new ConcurrentQueue<Int32>();
+        StreamWriter outputFile;
+
+        enum parsingByte
+        {
+            start,
+            Ax,
+            Ay,
+            Az
+        }
+
+        parsingByte parsingState = parsingByte.start;
+
+        enum gestureState
+        {
+            waitForData,
+            punch,
+            initiateRightHook,
+            rightHook,
+            initiateHighPunch,
+            highPunch
+        }
+
+        gestureState state = gestureState.waitForData;
     }
 }
 

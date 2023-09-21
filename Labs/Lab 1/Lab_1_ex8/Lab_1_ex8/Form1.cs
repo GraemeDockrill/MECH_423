@@ -82,14 +82,14 @@ namespace Lab_1_ex8
         // On tick of timer, update text boxes, and loop through concurrent queue and add to serialDataString
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (serialPort1.IsOpen)
+            if (serialPort1.IsOpen) // read bytes if port open
             {
                 textBoxBytesToRead.Text = serialPort1.BytesToRead.ToString();
             }
 
             textBoxItemsInQueue.Text = dataQueue.Count.ToString(); // update items in queue text box
 
-            // loop for dequeueing data one byte at a time
+            // loop for dequeueing data one byte at a time and processing
             for (int queueSize = dataQueue.Count; queueSize > 0; queueSize--)
             {
                 int item; // the dequeued byte
@@ -104,32 +104,32 @@ namespace Lab_1_ex8
                 serialDataString = serialDataString + item.ToString() + ", "; // add dequeued item to serialDataString
 
 
-                // parsing data stream - check for start byte of 254
+                // parsing data stream - look for start byte of 255
                 if (item == 255)
                 {
-                    state = parsingStates.startByte;
+                    parsingState = parsingByte.start;
                 }
 
+
                 // based on which byte is received, update the Ax, Ay, Az text boxes
-                if (state == parsingStates.startByte)
+                if (parsingState == parsingByte.start) // byte of 255 read
                 {
-                    state = parsingStates.AxByte;
+                    parsingState = parsingByte.Ax;
                 }
-                else if (state == parsingStates.AxByte) // parsing Ax byte
+                else if (parsingState == parsingByte.Ax) // parsing Ax byte
                 {
                     textBoxAccelerationX.Text = item.ToString();
                     dataQueueAx.Enqueue(item);
 
                     // updating Ax average
                     AxSum += item;
-                    if(dataQueueAx.Count > 100)
+                    if (dataQueueAx.Count > averagePeriod)
                     {
-                        int dequeuedAx;
-
+                        //int dequeuedAx;
                         if (dataQueueAx.TryDequeue(out dequeuedAx) == false)
                             MessageBox.Show("Error Dequeuing Ax serial data!");
                         AxSum -= dequeuedAx;
-                        textBoxAverageAx.Text = (AxSum / 100).ToString();
+                        textBoxAverageAx.Text = (AxSum / averagePeriod).ToString();
                     }
 
                     // updating Ax orientation
@@ -141,23 +141,22 @@ namespace Lab_1_ex8
                     // write Ax to file
                     if (Checked == 1) outputFile.Write(item.ToString() + ", ");
 
-                    state = parsingStates.AyByte;
+                    parsingState = parsingByte.Ay;
                 }
-                else if (state == parsingStates.AyByte) // parsing Ay byte
+                else if (parsingState == parsingByte.Ay) // parsing Ay byte
                 {
                     textBoxAccelerationY.Text = item.ToString();
                     dataQueueAy.Enqueue(item);
 
                     // updating Ay average
                     AySum += item;
-                    if (dataQueueAy.Count > 100)
+                    if (dataQueueAy.Count > averagePeriod)
                     {
-                        int dequeuedAy;
-
+                        //int dequeuedAy;
                         if (dataQueueAy.TryDequeue(out dequeuedAy) == false)
                             MessageBox.Show("Error Dequeuing Ax serial data!");
                         AySum -= dequeuedAy;
-                        textBoxAverageAy.Text = (AySum / 100).ToString();
+                        textBoxAverageAy.Text = (AySum / averagePeriod).ToString();
                     }
 
                     // updating Ay orientation
@@ -169,22 +168,22 @@ namespace Lab_1_ex8
                     // write Ay to file
                     if (Checked == 1) outputFile.Write(item.ToString() + ", ");
 
-                    state = parsingStates.AzByte;
+                    parsingState = parsingByte.Az;
                 }
-                else if (state == parsingStates.AzByte) // parsing Az byte
+                else if (parsingState == parsingByte.Az) // parsing Az byte
                 {
                     textBoxAccelerationZ.Text = item.ToString();
                     dataQueueAz.Enqueue(item);
 
-                    // updating Ax average
+                    // updating Az average
                     AzSum += item;
-                    if (dataQueueAz.Count > 100)
+                    if (dataQueueAz.Count > averagePeriod)
                     {
-                        int dequeuedAz;
+                        //int dequeuedAz;
                         if (dataQueueAz.TryDequeue(out dequeuedAz) == false)
                             MessageBox.Show("Error Dequeuing Ax serial data!");
                         AzSum -= dequeuedAz;
-                        textBoxAverageAz.Text = (AzSum / 100).ToString();
+                        textBoxAverageAz.Text = (AzSum / averagePeriod).ToString();
                     }
 
                     // updating Az orientation
@@ -196,7 +195,101 @@ namespace Lab_1_ex8
                     // write Az and time to file
                     if (Checked == 1) outputFile.Write(item.ToString() + ", " + DateTime.Now + "\n");
 
-                    state = parsingStates.startByte;
+                    parsingState = parsingByte.start;
+                }
+            }
+
+
+            // state machine for gestures
+            if (state == gestureState.waitForData) // wait for new data
+            {
+                textBoxGesture.Text = ("");
+
+                if (dequeuedAx > gestureAcceleration) // +X
+                {
+                    state = gestureState.punch;
+                }
+                else if (dequeuedAz > gestureAcceleration) // +Z
+                {
+                    state = gestureState.initiateHighPunch;
+                }
+            }
+            else if(state == gestureState.punch) // user punches forward +X
+            {
+                wait++; // wait for 10 data points
+
+                if(wait >= waitCycles)
+                {
+                    if (dequeuedAy > gestureAcceleration) // +Y
+                    {
+                        state = gestureState.initiateRightHook;
+                    }
+                    else // user only did a simple punch
+                    {
+                        textBoxGesture.Text = ("Simple Punch");
+
+                        if (wait >= waitCycles * 2) // return to state 0
+                        {
+                            wait = 0;
+                            state = gestureState.waitForData;
+                        }
+                    }
+                }
+            }
+            else if(state == gestureState.initiateRightHook) // user punches forward then left
+            {
+                wait++;
+
+                if(wait >= waitCycles)
+                {
+                    if (dequeuedAz > gestureAcceleration) // +Z
+                    {
+                        state = gestureState.rightHook;
+                    }
+                    else // return to state 0
+                    {
+                        wait = 0;
+                        state = gestureState.waitForData;
+                    }
+                }
+            }
+            else if(state == gestureState.rightHook) // user completes right hook
+            {
+                wait++;
+                textBoxGesture.Text = ("Right Hook");
+
+                if(wait >= waitCycles) // return to state 0
+                {
+                    wait = 0;
+                    state = gestureState.waitForData;
+                }
+            }
+            else if(state == gestureState.initiateHighPunch) // user initiates high punch
+            {
+                wait++;
+
+                if (wait >= waitCycles)
+                {
+                    if (dequeuedAx > gestureAcceleration) // +X
+                    {
+                        state = gestureState.highPunch;
+                    }
+                    else // return to state 0
+                    {
+                        wait = 0;
+                        state = gestureState.waitForData;
+                    }
+                }                
+            }
+            else if(state == gestureState.highPunch) // user completes high punch
+            {
+                wait++;
+                textBoxGesture.Text = ("High Punch");
+
+                if (wait >= waitCycles) // return to state 0
+                {
+                    wait = 0;
+                    state = gestureState.waitForData;
                 }
             }
 
