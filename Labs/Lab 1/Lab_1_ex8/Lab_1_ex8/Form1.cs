@@ -123,6 +123,7 @@ namespace Lab_1_ex8
 
                     // updating Ax average
                     AxSum += item;
+                    Ax = item;
                     if (dataQueueAx.Count > averagePeriod)
                     {
                         //int dequeuedAx;
@@ -150,6 +151,7 @@ namespace Lab_1_ex8
 
                     // updating Ay average
                     AySum += item;
+                    Ay = item;
                     if (dataQueueAy.Count > averagePeriod)
                     {
                         //int dequeuedAy;
@@ -177,6 +179,7 @@ namespace Lab_1_ex8
 
                     // updating Az average
                     AzSum += item;
+                    Az = item;
                     if (dataQueueAz.Count > averagePeriod)
                     {
                         //int dequeuedAz;
@@ -200,65 +203,67 @@ namespace Lab_1_ex8
             }
 
 
-            // state machine for gestures
+            // state machine for gestures - sensing the negative acceleration
             if (state == gestureState.waitForData) // wait for new data
             {
                 textBoxGesture.Text = ("");
+                textBoxGestureState.Text = ("wait for data");
 
-                if (dequeuedAx > gestureAcceleration) // +X
+                if (Ax < gestureAcceleration) // +X
                 {
+                    wait = 0;
                     state = gestureState.punch;
                 }
-                else if (dequeuedAz > gestureAcceleration) // +Z
+                else if (Az < gestureAcceleration) // +Z
                 {
+                    wait = 0;
                     state = gestureState.initiateHighPunch;
                 }
             }
             else if(state == gestureState.punch) // user punches forward +X
             {
                 wait++; // wait for 10 data points
+                textBoxGestureState.Text = ("punch");
 
-                if(wait >= waitCycles)
+                if (Ay < gestureAcceleration) // +Y
                 {
-                    if (dequeuedAy > gestureAcceleration) // +Y
-                    {
-                        state = gestureState.initiateRightHook;
-                    }
-                    else // user only did a simple punch
-                    {
-                        textBoxGesture.Text = ("Simple Punch");
-
-                        if (wait >= waitCycles * 2) // return to state 0
-                        {
-                            wait = 0;
-                            state = gestureState.waitForData;
-                        }
-                    }
+                    wait = 0;
+                    state = gestureState.initiateRightHook;
                 }
-            }
-            else if(state == gestureState.initiateRightHook) // user punches forward then left
-            {
-                wait++;
-
-                if(wait >= waitCycles)
+                else if (wait >= waitCycles) // user only did a simple punch
                 {
-                    if (dequeuedAz > gestureAcceleration) // +Z
-                    {
-                        state = gestureState.rightHook;
-                    }
-                    else // return to state 0
+                    textBoxGesture.Text = ("Simple Punch");
+
+                    if (wait >= waitCycles * 2) // return to state 0
                     {
                         wait = 0;
                         state = gestureState.waitForData;
                     }
                 }
             }
+            else if(state == gestureState.initiateRightHook) // user punches forward then left
+            {
+                wait++;
+                textBoxGestureState.Text = ("initiate Right Hook");
+
+                if (Az < gestureAcceleration) // +Z
+                {
+                    wait = 0;
+                    state = gestureState.rightHook;
+                }
+                else if (wait >= waitCycles) // return to state 0
+                {
+                    wait = 0;
+                    state = gestureState.waitForData;
+                }
+            }
             else if(state == gestureState.rightHook) // user completes right hook
             {
                 wait++;
                 textBoxGesture.Text = ("Right Hook");
+                textBoxGestureState.Text = ("Right Hook");
 
-                if(wait >= waitCycles) // return to state 0
+                if (wait >= waitCycles) // return to state 0
                 {
                     wait = 0;
                     state = gestureState.waitForData;
@@ -267,24 +272,24 @@ namespace Lab_1_ex8
             else if(state == gestureState.initiateHighPunch) // user initiates high punch
             {
                 wait++;
+                textBoxGestureState.Text = ("Initiate High Punch");
 
-                if (wait >= waitCycles)
+                if (Ax < gestureAcceleration) // +X
                 {
-                    if (dequeuedAx > gestureAcceleration) // +X
-                    {
-                        state = gestureState.highPunch;
-                    }
-                    else // return to state 0
-                    {
-                        wait = 0;
-                        state = gestureState.waitForData;
-                    }
-                }                
+                    wait = 0;
+                    state = gestureState.highPunch;
+                }
+                else if (wait >= waitCycles) // return to state 0
+                {
+                    wait = 0;
+                    state = gestureState.waitForData;
+                }              
             }
             else if(state == gestureState.highPunch) // user completes high punch
             {
                 wait++;
                 textBoxGesture.Text = ("High Punch");
+                textBoxGestureState.Text = ("High Punch");
 
                 if (wait >= waitCycles) // return to state 0
                 {
