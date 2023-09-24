@@ -354,6 +354,7 @@ namespace Lab_1_ex9
             timer1.Start();
 
             titleScreenShow();
+            pictureBoxGameBorder.Height = gameBorderHeight;
 
             comboBoxCOMPorts.Items.Clear();
             comboBoxCOMPorts.Items.AddRange(System.IO.Ports.SerialPort.GetPortNames());

@@ -568,6 +568,7 @@ namespace Lab_1_ex9
 
         Random rnd = new Random();
 
+        int gameBorderHeight = 1000; // 1200 for 4k monitor, 1000 for laptop
         double AxScaled;
         double AyScaled;
         double Az;
