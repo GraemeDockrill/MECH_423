@@ -44,9 +44,9 @@ namespace Lab_1_ex9
             this.label3 = new System.Windows.Forms.Label();
             this.textBoxAz = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBoxInputX = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textBoxInputY = new System.Windows.Forms.TextBox();
             this.pictureBoxPlayerCar = new System.Windows.Forms.PictureBox();
             this.pictureBoxBlueCar = new System.Windows.Forms.PictureBox();
             this.pictureBoxGreenCar = new System.Windows.Forms.PictureBox();
@@ -56,6 +56,14 @@ namespace Lab_1_ex9
             this.pictureBoxGameBorder = new System.Windows.Forms.PictureBox();
             this.pictureBoxRoad3 = new System.Windows.Forms.PictureBox();
             this.pictureBoxPurpleCar = new System.Windows.Forms.PictureBox();
+            this.pictureBoxBomb = new System.Windows.Forms.PictureBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.textBoxScore = new System.Windows.Forms.TextBox();
+            this.pictureBoxTitleScreen = new System.Windows.Forms.PictureBox();
+            this.labelTitle = new System.Windows.Forms.Label();
+            this.labelFinalScore = new System.Windows.Forms.Label();
+            this.textBoxFinalScore = new System.Windows.Forms.TextBox();
+            this.buttonStartGame = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPlayerCar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBlueCar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxGreenCar)).BeginInit();
@@ -65,6 +73,8 @@ namespace Lab_1_ex9
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxGameBorder)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRoad3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPurpleCar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBomb)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTitleScreen)).BeginInit();
             this.SuspendLayout();
             // 
             // serialPort1
@@ -79,7 +89,7 @@ namespace Lab_1_ex9
             // comboBoxCOMPorts
             // 
             this.comboBoxCOMPorts.FormattingEnabled = true;
-            this.comboBoxCOMPorts.Location = new System.Drawing.Point(13, 13);
+            this.comboBoxCOMPorts.Location = new System.Drawing.Point(159, 685);
             this.comboBoxCOMPorts.Name = "comboBoxCOMPorts";
             this.comboBoxCOMPorts.Size = new System.Drawing.Size(121, 21);
             this.comboBoxCOMPorts.TabIndex = 0;
@@ -87,7 +97,7 @@ namespace Lab_1_ex9
             // 
             // buttonSerialConnection
             // 
-            this.buttonSerialConnection.Location = new System.Drawing.Point(141, 13);
+            this.buttonSerialConnection.Location = new System.Drawing.Point(294, 683);
             this.buttonSerialConnection.Name = "buttonSerialConnection";
             this.buttonSerialConnection.Size = new System.Drawing.Size(150, 23);
             this.buttonSerialConnection.TabIndex = 1;
@@ -98,7 +108,7 @@ namespace Lab_1_ex9
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(298, 20);
+            this.label1.Location = new System.Drawing.Point(157, 721);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(22, 13);
             this.label1.TabIndex = 3;
@@ -106,7 +116,7 @@ namespace Lab_1_ex9
             // 
             // textBoxAx
             // 
-            this.textBoxAx.Location = new System.Drawing.Point(327, 12);
+            this.textBoxAx.Location = new System.Drawing.Point(185, 718);
             this.textBoxAx.Name = "textBoxAx";
             this.textBoxAx.Size = new System.Drawing.Size(100, 20);
             this.textBoxAx.TabIndex = 4;
@@ -114,7 +124,7 @@ namespace Lab_1_ex9
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(433, 18);
+            this.label2.Location = new System.Drawing.Point(291, 721);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(22, 13);
             this.label2.TabIndex = 5;
@@ -122,7 +132,7 @@ namespace Lab_1_ex9
             // 
             // textBoxAy
             // 
-            this.textBoxAy.Location = new System.Drawing.Point(461, 12);
+            this.textBoxAy.Location = new System.Drawing.Point(319, 718);
             this.textBoxAy.Name = "textBoxAy";
             this.textBoxAy.Size = new System.Drawing.Size(100, 20);
             this.textBoxAy.TabIndex = 6;
@@ -130,7 +140,7 @@ namespace Lab_1_ex9
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(568, 18);
+            this.label3.Location = new System.Drawing.Point(425, 721);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(22, 13);
             this.label3.TabIndex = 7;
@@ -138,7 +148,7 @@ namespace Lab_1_ex9
             // 
             // textBoxAz
             // 
-            this.textBoxAz.Location = new System.Drawing.Point(596, 13);
+            this.textBoxAz.Location = new System.Drawing.Point(453, 718);
             this.textBoxAz.Name = "textBoxAz";
             this.textBoxAz.Size = new System.Drawing.Size(100, 20);
             this.textBoxAz.TabIndex = 8;
@@ -146,34 +156,38 @@ namespace Lab_1_ex9
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(13, 59);
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(12, 9);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(41, 13);
+            this.label4.Size = new System.Drawing.Size(86, 25);
             this.label4.TabIndex = 9;
             this.label4.Text = "Input X";
             // 
-            // textBox1
+            // textBoxInputX
             // 
-            this.textBox1.Location = new System.Drawing.Point(69, 59);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 20);
-            this.textBox1.TabIndex = 10;
+            this.textBoxInputX.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxInputX.Location = new System.Drawing.Point(104, 6);
+            this.textBoxInputX.Name = "textBoxInputX";
+            this.textBoxInputX.Size = new System.Drawing.Size(100, 31);
+            this.textBoxInputX.TabIndex = 10;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(13, 99);
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(11, 50);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(41, 13);
+            this.label5.Size = new System.Drawing.Size(87, 25);
             this.label5.TabIndex = 11;
             this.label5.Text = "Input Y";
             // 
-            // textBox2
+            // textBoxInputY
             // 
-            this.textBox2.Location = new System.Drawing.Point(69, 96);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 20);
-            this.textBox2.TabIndex = 12;
+            this.textBoxInputY.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxInputY.Location = new System.Drawing.Point(104, 47);
+            this.textBoxInputY.Name = "textBoxInputY";
+            this.textBoxInputY.Size = new System.Drawing.Size(100, 31);
+            this.textBoxInputY.TabIndex = 12;
             // 
             // pictureBoxPlayerCar
             // 
@@ -275,15 +289,86 @@ namespace Lab_1_ex9
             this.pictureBoxPurpleCar.TabIndex = 22;
             this.pictureBoxPurpleCar.TabStop = false;
             // 
+            // pictureBoxBomb
+            // 
+            this.pictureBoxBomb.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.pictureBoxBomb.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxBomb.Image")));
+            this.pictureBoxBomb.Location = new System.Drawing.Point(583, 335);
+            this.pictureBoxBomb.Name = "pictureBoxBomb";
+            this.pictureBoxBomb.Size = new System.Drawing.Size(50, 65);
+            this.pictureBoxBomb.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBoxBomb.TabIndex = 23;
+            this.pictureBoxBomb.TabStop = false;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(556, 12);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(73, 25);
+            this.label6.TabIndex = 24;
+            this.label6.Text = "Score";
+            // 
+            // textBoxScore
+            // 
+            this.textBoxScore.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxScore.Location = new System.Drawing.Point(635, 9);
+            this.textBoxScore.Name = "textBoxScore";
+            this.textBoxScore.Size = new System.Drawing.Size(177, 31);
+            this.textBoxScore.TabIndex = 25;
+            // 
+            // pictureBoxTitleScreen
+            // 
+            this.pictureBoxTitleScreen.Location = new System.Drawing.Point(140, 155);
+            this.pictureBoxTitleScreen.Name = "pictureBoxTitleScreen";
+            this.pictureBoxTitleScreen.Size = new System.Drawing.Size(573, 617);
+            this.pictureBoxTitleScreen.TabIndex = 26;
+            this.pictureBoxTitleScreen.TabStop = false;
+            // 
+            // labelTitle
+            // 
+            this.labelTitle.AutoSize = true;
+            this.labelTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelTitle.Location = new System.Drawing.Point(276, 266);
+            this.labelTitle.Name = "labelTitle";
+            this.labelTitle.Size = new System.Drawing.Size(285, 42);
+            this.labelTitle.TabIndex = 27;
+            this.labelTitle.Text = "Highway Racer";
+            // 
+            // labelFinalScore
+            // 
+            this.labelFinalScore.AutoSize = true;
+            this.labelFinalScore.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelFinalScore.Location = new System.Drawing.Point(204, 450);
+            this.labelFinalScore.Name = "labelFinalScore";
+            this.labelFinalScore.Size = new System.Drawing.Size(168, 31);
+            this.labelFinalScore.TabIndex = 28;
+            this.labelFinalScore.Text = "Your Score:";
+            // 
+            // textBoxFinalScore
+            // 
+            this.textBoxFinalScore.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxFinalScore.Location = new System.Drawing.Point(378, 447);
+            this.textBoxFinalScore.Name = "textBoxFinalScore";
+            this.textBoxFinalScore.Size = new System.Drawing.Size(255, 38);
+            this.textBoxFinalScore.TabIndex = 29;
+            // 
+            // buttonStartGame
+            // 
+            this.buttonStartGame.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonStartGame.Location = new System.Drawing.Point(327, 567);
+            this.buttonStartGame.Name = "buttonStartGame";
+            this.buttonStartGame.Size = new System.Drawing.Size(204, 58);
+            this.buttonStartGame.TabIndex = 30;
+            this.buttonStartGame.Text = "Start";
+            this.buttonStartGame.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(824, 1161);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.label4);
             this.Controls.Add(this.textBoxAz);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.textBoxAy);
@@ -292,6 +377,18 @@ namespace Lab_1_ex9
             this.Controls.Add(this.label1);
             this.Controls.Add(this.buttonSerialConnection);
             this.Controls.Add(this.comboBoxCOMPorts);
+            this.Controls.Add(this.buttonStartGame);
+            this.Controls.Add(this.textBoxFinalScore);
+            this.Controls.Add(this.labelFinalScore);
+            this.Controls.Add(this.labelTitle);
+            this.Controls.Add(this.pictureBoxTitleScreen);
+            this.Controls.Add(this.textBoxScore);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.pictureBoxBomb);
+            this.Controls.Add(this.textBoxInputY);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.textBoxInputX);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.pictureBoxPlayerCar);
             this.Controls.Add(this.pictureBoxPurpleCar);
             this.Controls.Add(this.pictureBoxGreenCar);
@@ -313,6 +410,8 @@ namespace Lab_1_ex9
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxGameBorder)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRoad3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPurpleCar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBomb)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTitleScreen)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -331,9 +430,9 @@ namespace Lab_1_ex9
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textBoxAz;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBoxInputX;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox textBoxInputY;
         private System.Windows.Forms.PictureBox pictureBoxPlayerCar;
         private System.Windows.Forms.PictureBox pictureBoxBlueCar;
         private System.Windows.Forms.PictureBox pictureBoxGreenCar;
@@ -343,6 +442,14 @@ namespace Lab_1_ex9
         private System.Windows.Forms.PictureBox pictureBoxGameBorder;
         private System.Windows.Forms.PictureBox pictureBoxRoad3;
         private System.Windows.Forms.PictureBox pictureBoxPurpleCar;
+        private System.Windows.Forms.PictureBox pictureBoxBomb;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox textBoxScore;
+        private System.Windows.Forms.PictureBox pictureBoxTitleScreen;
+        private System.Windows.Forms.Label labelTitle;
+        private System.Windows.Forms.Label labelFinalScore;
+        private System.Windows.Forms.TextBox textBoxFinalScore;
+        private System.Windows.Forms.Button buttonStartGame;
 
         ConcurrentQueue<Int32> dataQueue = new ConcurrentQueue<Int32>();
 
@@ -350,8 +457,8 @@ namespace Lab_1_ex9
 
         double AxScaled;
         double AyScaled;
-        int redCarX = 0;
-        int redCarY = 0;
+        int playerCarX = 0;
+        int playerCarY = 0;
         int blueCarX = 0;
         int blueCarY = 0;
         int greenCarX = 0;
@@ -373,7 +480,10 @@ namespace Lab_1_ex9
         int yellowCarSpeed;
         int purpleCarSpeed;
 
+        int collisionTolerance = 5;
+        int score;
 
+        bool play = false;
         bool collision = false;
 
         int step = 5;
