@@ -65,6 +65,14 @@ namespace Lab_1_ex9
             this.labelFinalScore = new System.Windows.Forms.Label();
             this.textBoxFinalScore = new System.Windows.Forms.TextBox();
             this.buttonStartGame = new System.Windows.Forms.Button();
+            this.pictureBoxBlueCarExplosion = new System.Windows.Forms.PictureBox();
+            this.pictureBoxGreenCarExplosion = new System.Windows.Forms.PictureBox();
+            this.pictureBoxYellowCarExplosion = new System.Windows.Forms.PictureBox();
+            this.pictureBoxPurpleCarExplosion = new System.Windows.Forms.PictureBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBoxBombProgress = new System.Windows.Forms.TextBox();
+            this.labelBombsUsed = new System.Windows.Forms.Label();
+            this.textBoxBombsUsed = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPlayerCar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBlueCar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxGreenCar)).BeginInit();
@@ -76,6 +84,10 @@ namespace Lab_1_ex9
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPurpleCar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBomb)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTitleScreen)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBlueCarExplosion)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxGreenCarExplosion)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxYellowCarExplosion)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPurpleCarExplosion)).BeginInit();
             this.SuspendLayout();
             // 
             // serialPort1
@@ -158,7 +170,7 @@ namespace Lab_1_ex9
             // 
             this.labelInputX.AutoSize = true;
             this.labelInputX.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelInputX.Location = new System.Drawing.Point(12, 9);
+            this.labelInputX.Location = new System.Drawing.Point(7, 6);
             this.labelInputX.Name = "labelInputX";
             this.labelInputX.Size = new System.Drawing.Size(86, 25);
             this.labelInputX.TabIndex = 9;
@@ -167,7 +179,7 @@ namespace Lab_1_ex9
             // textBoxInputX
             // 
             this.textBoxInputX.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxInputX.Location = new System.Drawing.Point(104, 6);
+            this.textBoxInputX.Location = new System.Drawing.Point(99, 3);
             this.textBoxInputX.Name = "textBoxInputX";
             this.textBoxInputX.Size = new System.Drawing.Size(100, 31);
             this.textBoxInputX.TabIndex = 10;
@@ -176,7 +188,7 @@ namespace Lab_1_ex9
             // 
             this.labelInputY.AutoSize = true;
             this.labelInputY.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelInputY.Location = new System.Drawing.Point(11, 50);
+            this.labelInputY.Location = new System.Drawing.Point(7, 41);
             this.labelInputY.Name = "labelInputY";
             this.labelInputY.Size = new System.Drawing.Size(87, 25);
             this.labelInputY.TabIndex = 11;
@@ -185,7 +197,7 @@ namespace Lab_1_ex9
             // textBoxInputY
             // 
             this.textBoxInputY.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxInputY.Location = new System.Drawing.Point(104, 47);
+            this.textBoxInputY.Location = new System.Drawing.Point(99, 38);
             this.textBoxInputY.Name = "textBoxInputY";
             this.textBoxInputY.Size = new System.Drawing.Size(100, 31);
             this.textBoxInputY.TabIndex = 12;
@@ -292,9 +304,9 @@ namespace Lab_1_ex9
             // 
             // pictureBoxBomb
             // 
-            this.pictureBoxBomb.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.pictureBoxBomb.BackColor = System.Drawing.Color.Red;
             this.pictureBoxBomb.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxBomb.Image")));
-            this.pictureBoxBomb.Location = new System.Drawing.Point(583, 335);
+            this.pictureBoxBomb.Location = new System.Drawing.Point(12, 103);
             this.pictureBoxBomb.Name = "pictureBoxBomb";
             this.pictureBoxBomb.Size = new System.Drawing.Size(50, 65);
             this.pictureBoxBomb.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -367,11 +379,103 @@ namespace Lab_1_ex9
             this.buttonStartGame.UseVisualStyleBackColor = true;
             this.buttonStartGame.Click += new System.EventHandler(this.buttonStartGame_Click);
             // 
+            // pictureBoxBlueCarExplosion
+            // 
+            this.pictureBoxBlueCarExplosion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.pictureBoxBlueCarExplosion.Enabled = false;
+            this.pictureBoxBlueCarExplosion.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxBlueCarExplosion.Image")));
+            this.pictureBoxBlueCarExplosion.Location = new System.Drawing.Point(511, 50);
+            this.pictureBoxBlueCarExplosion.Name = "pictureBoxBlueCarExplosion";
+            this.pictureBoxBlueCarExplosion.Size = new System.Drawing.Size(100, 100);
+            this.pictureBoxBlueCarExplosion.TabIndex = 31;
+            this.pictureBoxBlueCarExplosion.TabStop = false;
+            this.pictureBoxBlueCarExplosion.Visible = false;
+            // 
+            // pictureBoxGreenCarExplosion
+            // 
+            this.pictureBoxGreenCarExplosion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.pictureBoxGreenCarExplosion.Enabled = false;
+            this.pictureBoxGreenCarExplosion.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxGreenCarExplosion.Image")));
+            this.pictureBoxGreenCarExplosion.Location = new System.Drawing.Point(676, 50);
+            this.pictureBoxGreenCarExplosion.Name = "pictureBoxGreenCarExplosion";
+            this.pictureBoxGreenCarExplosion.Size = new System.Drawing.Size(100, 100);
+            this.pictureBoxGreenCarExplosion.TabIndex = 32;
+            this.pictureBoxGreenCarExplosion.TabStop = false;
+            this.pictureBoxGreenCarExplosion.Visible = false;
+            // 
+            // pictureBoxYellowCarExplosion
+            // 
+            this.pictureBoxYellowCarExplosion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.pictureBoxYellowCarExplosion.Enabled = false;
+            this.pictureBoxYellowCarExplosion.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxYellowCarExplosion.Image")));
+            this.pictureBoxYellowCarExplosion.Location = new System.Drawing.Point(511, 195);
+            this.pictureBoxYellowCarExplosion.Name = "pictureBoxYellowCarExplosion";
+            this.pictureBoxYellowCarExplosion.Size = new System.Drawing.Size(100, 100);
+            this.pictureBoxYellowCarExplosion.TabIndex = 33;
+            this.pictureBoxYellowCarExplosion.TabStop = false;
+            this.pictureBoxYellowCarExplosion.Visible = false;
+            // 
+            // pictureBoxPurpleCarExplosion
+            // 
+            this.pictureBoxPurpleCarExplosion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.pictureBoxPurpleCarExplosion.Enabled = false;
+            this.pictureBoxPurpleCarExplosion.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxPurpleCarExplosion.Image")));
+            this.pictureBoxPurpleCarExplosion.Location = new System.Drawing.Point(676, 208);
+            this.pictureBoxPurpleCarExplosion.Name = "pictureBoxPurpleCarExplosion";
+            this.pictureBoxPurpleCarExplosion.Size = new System.Drawing.Size(100, 100);
+            this.pictureBoxPurpleCarExplosion.TabIndex = 34;
+            this.pictureBoxPurpleCarExplosion.TabStop = false;
+            this.pictureBoxPurpleCarExplosion.Visible = false;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(7, 75);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(127, 25);
+            this.label1.TabIndex = 35;
+            this.label1.Text = "Bomb Prog";
+            // 
+            // textBoxBombProgress
+            // 
+            this.textBoxBombProgress.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxBombProgress.Location = new System.Drawing.Point(132, 72);
+            this.textBoxBombProgress.Name = "textBoxBombProgress";
+            this.textBoxBombProgress.Size = new System.Drawing.Size(67, 31);
+            this.textBoxBombProgress.TabIndex = 36;
+            // 
+            // labelBombsUsed
+            // 
+            this.labelBombsUsed.AutoSize = true;
+            this.labelBombsUsed.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelBombsUsed.Location = new System.Drawing.Point(184, 493);
+            this.labelBombsUsed.Name = "labelBombsUsed";
+            this.labelBombsUsed.Size = new System.Drawing.Size(188, 31);
+            this.labelBombsUsed.TabIndex = 37;
+            this.labelBombsUsed.Text = "Bombs Used:";
+            // 
+            // textBoxBombsUsed
+            // 
+            this.textBoxBombsUsed.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxBombsUsed.Location = new System.Drawing.Point(378, 491);
+            this.textBoxBombsUsed.Name = "textBoxBombsUsed";
+            this.textBoxBombsUsed.Size = new System.Drawing.Size(92, 38);
+            this.textBoxBombsUsed.TabIndex = 38;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(824, 1161);
+            this.ClientSize = new System.Drawing.Size(824, 1048);
+            this.Controls.Add(this.textBoxBombsUsed);
+            this.Controls.Add(this.labelBombsUsed);
+            this.Controls.Add(this.textBoxBombProgress);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.pictureBoxPurpleCarExplosion);
+            this.Controls.Add(this.pictureBoxYellowCarExplosion);
+            this.Controls.Add(this.pictureBoxGreenCarExplosion);
+            this.Controls.Add(this.pictureBoxBlueCarExplosion);
             this.Controls.Add(this.textBoxAz);
             this.Controls.Add(this.labelAz);
             this.Controls.Add(this.textBoxAy);
@@ -415,6 +519,10 @@ namespace Lab_1_ex9
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPurpleCar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBomb)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTitleScreen)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBlueCarExplosion)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxGreenCarExplosion)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxYellowCarExplosion)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPurpleCarExplosion)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -456,14 +564,13 @@ namespace Lab_1_ex9
 
         ISoundEngine engine = new ISoundEngine();
 
-        
-
         ConcurrentQueue<Int32> dataQueue = new ConcurrentQueue<Int32>();
 
         Random rnd = new Random();
 
         double AxScaled;
         double AyScaled;
+        double Az;
         int playerCarX = 0;
         int playerCarY = 0;
         int blueCarX = 0;
@@ -489,9 +596,14 @@ namespace Lab_1_ex9
 
         int collisionTolerance = 5;
         int score;
+        int bombProgress;
+        int bombShowTimer;
+        int bombsUsed;
+        int AzBombAcceleration = 100;
 
         bool play = false;
         bool collision = false;
+        bool hasBomb = false;
 
         int step = 5;
 
@@ -504,7 +616,14 @@ namespace Lab_1_ex9
         }
 
         parsingByte parsingState = parsingByte.start;
-        
+        private System.Windows.Forms.PictureBox pictureBoxBlueCarExplosion;
+        private System.Windows.Forms.PictureBox pictureBoxGreenCarExplosion;
+        private System.Windows.Forms.PictureBox pictureBoxYellowCarExplosion;
+        private System.Windows.Forms.PictureBox pictureBoxPurpleCarExplosion;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox textBoxBombProgress;
+        private System.Windows.Forms.Label labelBombsUsed;
+        private System.Windows.Forms.TextBox textBoxBombsUsed;
     }
 }
 

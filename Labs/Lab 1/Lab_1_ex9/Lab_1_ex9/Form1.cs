@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 using IrrKlang;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Lab_1_ex9
 {
@@ -28,6 +29,10 @@ namespace Lab_1_ex9
             textBoxFinalScore.Visible = true;
             labelFinalScore.Enabled = true;
             labelFinalScore.Visible = true;
+            textBoxBombsUsed.Enabled = true;
+            textBoxBombsUsed.Visible = true;
+            labelBombsUsed.Enabled = true;
+            labelBombsUsed.Visible = true;
             labelTitle.Enabled = true;
             labelTitle.Visible = true;
             buttonStartGame.Enabled = true;
@@ -50,6 +55,7 @@ namespace Lab_1_ex9
             textBoxAz.Visible = true;
 
             textBoxFinalScore.Text = score.ToString();
+            textBoxBombsUsed.Text = bombsUsed.ToString();
         }
 
         public void titleScreenHide() 
@@ -60,6 +66,10 @@ namespace Lab_1_ex9
             textBoxFinalScore.Visible = false;
             labelFinalScore.Enabled = false;
             labelFinalScore.Visible = false;
+            textBoxBombsUsed.Enabled = false;
+            textBoxBombsUsed.Visible = false;
+            labelBombsUsed.Enabled = false;
+            labelBombsUsed.Visible = false;
             labelTitle.Enabled = false;
             labelTitle.Visible = false;
             buttonStartGame.Enabled = false;
@@ -147,6 +157,9 @@ namespace Lab_1_ex9
 
         public void NPCCarMovement()
         {
+            
+
+            // get car positions
             blueCarX = pictureBoxBlueCar.Location.X;
             blueCarY = pictureBoxBlueCar.Location.Y;
             greenCarX = pictureBoxGreenCar.Location.X;
@@ -156,6 +169,7 @@ namespace Lab_1_ex9
             purpleCarX = pictureBoxPurpleCar.Location.X;
             purpleCarY = pictureBoxPurpleCar.Location.Y;
 
+            // move cars by speed step
             blueCarY += blueCarSpeed;
             greenCarY += greenCarSpeed;
             yellowCarY += yellowCarSpeed;
@@ -167,21 +181,29 @@ namespace Lab_1_ex9
             {
                 blueCarY = pictureBoxGameBorder.Location.Y - pictureBoxBlueCar.Height;
                 blueCarSpeed = carBaseSpeed * rnd.Next(2, 5);
+                pictureBoxBlueCar.Enabled = true;
+                pictureBoxBlueCar.Visible = true;
             }
             if (greenCarY > pictureBoxGameBorder.Location.Y + pictureBoxGameBorder.Height)
             {
                 greenCarY = pictureBoxGameBorder.Location.Y - pictureBoxGreenCar.Height;
                 greenCarSpeed = carBaseSpeed * rnd.Next(2, 5);
+                pictureBoxGreenCar.Enabled = true;
+                pictureBoxGreenCar.Visible = true;
             }
             if (yellowCarY > pictureBoxGameBorder.Location.Y + pictureBoxGameBorder.Height)
             {
                 yellowCarY = pictureBoxGameBorder.Location.Y - pictureBoxYellowCar.Height;
                 yellowCarSpeed = carBaseSpeed * rnd.Next(2, 5);
+                pictureBoxYellowCar.Enabled = true;
+                pictureBoxYellowCar.Visible = true;
             }
             if (purpleCarY > pictureBoxGameBorder.Location.Y + pictureBoxGameBorder.Height)
             {
                 purpleCarY = pictureBoxGameBorder.Location.Y - pictureBoxPurpleCar.Height;
                 purpleCarSpeed = carBaseSpeed * rnd.Next(2, 5);
+                pictureBoxPurpleCar.Enabled = true;
+                pictureBoxPurpleCar.Visible = true;
             }
 
             pictureBoxBlueCar.Location = new Point(blueCarX, blueCarY);
@@ -192,21 +214,25 @@ namespace Lab_1_ex9
 
         public bool checkPlayerCarCollision()
         {
-            if (playerCarX + pictureBoxPlayerCar.Width - collisionTolerance >= blueCarX + collisionTolerance && playerCarX + collisionTolerance <= blueCarX + pictureBoxBlueCar.Width - collisionTolerance && playerCarY + pictureBoxPlayerCar.Height - collisionTolerance >= blueCarY + collisionTolerance && playerCarY + collisionTolerance <= blueCarY + pictureBoxBlueCar.Height - collisionTolerance) // blue car collision
+            // first check if cars are exploded
+            if (pictureBoxBlueCar.Enabled && pictureBoxGreenCar.Enabled && pictureBoxYellowCar.Enabled && pictureBoxPurpleCar.Enabled)
             {
-                return true;
-            }
-            if (playerCarX + pictureBoxPlayerCar.Width - collisionTolerance >= greenCarX + collisionTolerance && playerCarX + collisionTolerance <= greenCarX + pictureBoxGreenCar.Width - collisionTolerance && playerCarY + pictureBoxPlayerCar.Height - collisionTolerance >= greenCarY + collisionTolerance && playerCarY + collisionTolerance <= greenCarY + pictureBoxGreenCar.Height - collisionTolerance) // green car collision
-            {
-                return true;
-            }
-            if (playerCarX + pictureBoxPlayerCar.Width - collisionTolerance >= yellowCarX + collisionTolerance && playerCarX + collisionTolerance <= yellowCarX + pictureBoxYellowCar.Width - collisionTolerance && playerCarY + pictureBoxPlayerCar.Height - collisionTolerance >= yellowCarY + collisionTolerance && playerCarY + collisionTolerance <= yellowCarY + pictureBoxYellowCar.Height - collisionTolerance) // yellow car collision
-            {
-                return true;
-            }
-            if (playerCarX + pictureBoxPlayerCar.Width - collisionTolerance >= purpleCarX + collisionTolerance && playerCarX + collisionTolerance <= purpleCarX + pictureBoxPurpleCar.Width - collisionTolerance && playerCarY + pictureBoxPlayerCar.Height - collisionTolerance >= purpleCarY + collisionTolerance && playerCarY + collisionTolerance <= purpleCarY + pictureBoxPurpleCar.Height - collisionTolerance) // purple car collision
-            {
-                return true;
+                if (playerCarX + pictureBoxPlayerCar.Width - collisionTolerance >= blueCarX + collisionTolerance && playerCarX + collisionTolerance <= blueCarX + pictureBoxBlueCar.Width - collisionTolerance && playerCarY + pictureBoxPlayerCar.Height - collisionTolerance >= blueCarY + collisionTolerance && playerCarY + collisionTolerance <= blueCarY + pictureBoxBlueCar.Height - collisionTolerance) // blue car collision
+                {
+                    return true;
+                }
+                if (playerCarX + pictureBoxPlayerCar.Width - collisionTolerance >= greenCarX + collisionTolerance && playerCarX + collisionTolerance <= greenCarX + pictureBoxGreenCar.Width - collisionTolerance && playerCarY + pictureBoxPlayerCar.Height - collisionTolerance >= greenCarY + collisionTolerance && playerCarY + collisionTolerance <= greenCarY + pictureBoxGreenCar.Height - collisionTolerance) // green car collision
+                {
+                    return true;
+                }
+                if (playerCarX + pictureBoxPlayerCar.Width - collisionTolerance >= yellowCarX + collisionTolerance && playerCarX + collisionTolerance <= yellowCarX + pictureBoxYellowCar.Width - collisionTolerance && playerCarY + pictureBoxPlayerCar.Height - collisionTolerance >= yellowCarY + collisionTolerance && playerCarY + collisionTolerance <= yellowCarY + pictureBoxYellowCar.Height - collisionTolerance) // yellow car collision
+                {
+                    return true;
+                }
+                if (playerCarX + pictureBoxPlayerCar.Width - collisionTolerance >= purpleCarX + collisionTolerance && playerCarX + collisionTolerance <= purpleCarX + pictureBoxPurpleCar.Width - collisionTolerance && playerCarY + pictureBoxPlayerCar.Height - collisionTolerance >= purpleCarY + collisionTolerance && playerCarY + collisionTolerance <= purpleCarY + pictureBoxPurpleCar.Height - collisionTolerance) // purple car collision
+                {
+                    return true;
+                }
             }
             return false; // if player hasn't collided
         }
@@ -218,6 +244,93 @@ namespace Lab_1_ex9
             pictureBoxGreenCar.Location = new Point(436, 526);
             pictureBoxYellowCar.Location = new Point(301, 526);
             pictureBoxPurpleCar.Location = new Point(561, 526);
+        }
+
+        public void checkBombCars()
+        {
+            // if player uses bomb, clear screen
+            if (Az < AzBombAcceleration && hasBomb)
+            {
+                // player used bomb
+                hasBomb = false;
+                bombsUsed++;
+                pictureBoxBomb.BackColor = Color.Red;
+                bombProgress = 0;
+
+                // draw bomb to cars
+                pictureBoxBlueCarExplosion.Location = new Point(blueCarX, blueCarY);
+                pictureBoxGreenCarExplosion.Location = new Point(greenCarX, greenCarY);
+                pictureBoxYellowCarExplosion.Location = new Point(yellowCarX, yellowCarY);
+                pictureBoxPurpleCarExplosion.Location = new Point(purpleCarX, purpleCarY);
+
+                // enable explosion image
+                pictureBoxBlueCarExplosion.Enabled = true;
+                pictureBoxBlueCarExplosion.Visible = true;
+                pictureBoxGreenCarExplosion.Enabled = true;
+                pictureBoxGreenCarExplosion.Visible = true;
+                pictureBoxYellowCarExplosion.Enabled = true;
+                pictureBoxYellowCarExplosion.Visible = true;
+                pictureBoxPurpleCarExplosion.Enabled = true;
+                pictureBoxPurpleCarExplosion.Visible = true;
+
+                // disable cars
+                carsHide();
+            }
+
+            if (bombShowTimer >= 20)
+            {
+                // disable explosion image
+                pictureBoxBlueCarExplosion.Enabled = false;
+                pictureBoxBlueCarExplosion.Visible = false;
+                pictureBoxGreenCarExplosion.Enabled = false;
+                pictureBoxGreenCarExplosion.Visible = false;
+                pictureBoxYellowCarExplosion.Enabled = false;
+                pictureBoxYellowCarExplosion.Visible = false;
+                pictureBoxPurpleCarExplosion.Enabled = false;
+                pictureBoxPurpleCarExplosion.Visible = false;
+
+                bombShowTimer = 0;
+            }
+
+            bombShowTimer++;
+        }
+
+        public void carsShow()
+        {
+            pictureBoxBlueCar.Enabled = true;
+            pictureBoxBlueCar.Visible = true;
+            pictureBoxGreenCar.Enabled = true;
+            pictureBoxGreenCar.Visible = true;
+            pictureBoxYellowCar.Enabled = true;
+            pictureBoxYellowCar.Visible = true;
+            pictureBoxPurpleCar.Enabled = true;
+            pictureBoxPurpleCar.Visible = true;
+        }
+
+        public void carsHide()
+        {
+            pictureBoxBlueCar.Enabled = false;
+            pictureBoxBlueCar.Visible = false;
+            pictureBoxGreenCar.Enabled = false;
+            pictureBoxGreenCar.Visible = false;
+            pictureBoxYellowCar.Enabled = false;
+            pictureBoxYellowCar.Visible = false;
+            pictureBoxPurpleCar.Enabled = false;
+            pictureBoxPurpleCar.Visible = false;
+        }
+
+        public void checkBombProgress()
+        {
+            if (bombProgress / 10 >= 100)
+            {
+                hasBomb = true;
+                pictureBoxBomb.BackColor = Color.LightGreen;
+            }
+            else
+            {
+                bombProgress++;
+                textBoxBombProgress.Text = (bombProgress / 10).ToString();
+            }
         }
 
         // when button clicked, either connect or disconnect serial
@@ -296,6 +409,11 @@ namespace Lab_1_ex9
                 resetGame();
                 play = true;
                 score = 0;
+                bombsUsed = 0;
+                bombProgress = 0;
+                bombShowTimer = 0;
+                hasBomb = false;
+                pictureBoxBomb.BackColor = Color.Red;
                 engine.Play2D("../../../media/mariojump.wav", true);
 
                 // randomize car speeds
@@ -349,6 +467,7 @@ namespace Lab_1_ex9
                 {
                     textBoxAz.Text = item.ToString();
                     parsingState = parsingByte.start;
+                    Az = item;
                 }
 
                 // if game enabled
@@ -372,6 +491,12 @@ namespace Lab_1_ex9
 
                     // scrolling car movement------------------------------------------
                     NPCCarMovement();
+
+                    // bomb progress----------------------------------------------
+                    checkBombProgress();
+
+                    // check if player bombed cars--------------------------------
+                    checkBombCars();
 
                     // collision with cars----------------------------------------
                     if (checkPlayerCarCollision())
