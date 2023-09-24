@@ -8,3 +8,5 @@ C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex9\Lab_1_ex9\obj\Debug\Lab_1_ex9.cspro
 C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex9\Lab_1_ex9\obj\Debug\Lab_1_ex9.csproj.CoreCompileInputs.cache
 C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex9\Lab_1_ex9\obj\Debug\Lab_1_ex9.exe
 C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex9\Lab_1_ex9\obj\Debug\Lab_1_ex9.pdb
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex9\Lab_1_ex9\bin\Debug\irrKlang.NET4.dll
+C:\Users\graem\MECH_423\Labs\Lab 1\Lab_1_ex9\Lab_1_ex9\obj\Debug\Lab_1_ex9.csproj.CopyComplete
