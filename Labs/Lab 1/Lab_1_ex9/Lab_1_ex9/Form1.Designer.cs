@@ -102,17 +102,19 @@ namespace Lab_1_ex9
             // comboBoxCOMPorts
             // 
             this.comboBoxCOMPorts.FormattingEnabled = true;
-            this.comboBoxCOMPorts.Location = new System.Drawing.Point(159, 685);
+            this.comboBoxCOMPorts.Location = new System.Drawing.Point(238, 1054);
+            this.comboBoxCOMPorts.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.comboBoxCOMPorts.Name = "comboBoxCOMPorts";
-            this.comboBoxCOMPorts.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxCOMPorts.Size = new System.Drawing.Size(180, 28);
             this.comboBoxCOMPorts.TabIndex = 0;
             this.comboBoxCOMPorts.SelectedIndexChanged += new System.EventHandler(this.comboBoxCOMPorts_SelectedIndexChanged);
             // 
             // buttonSerialConnection
             // 
-            this.buttonSerialConnection.Location = new System.Drawing.Point(294, 683);
+            this.buttonSerialConnection.Location = new System.Drawing.Point(441, 1051);
+            this.buttonSerialConnection.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.buttonSerialConnection.Name = "buttonSerialConnection";
-            this.buttonSerialConnection.Size = new System.Drawing.Size(150, 23);
+            this.buttonSerialConnection.Size = new System.Drawing.Size(225, 35);
             this.buttonSerialConnection.TabIndex = 1;
             this.buttonSerialConnection.Text = "Connect Serial";
             this.buttonSerialConnection.UseVisualStyleBackColor = true;
@@ -121,92 +123,103 @@ namespace Lab_1_ex9
             // labelAx
             // 
             this.labelAx.AutoSize = true;
-            this.labelAx.Location = new System.Drawing.Point(157, 721);
+            this.labelAx.Location = new System.Drawing.Point(236, 1109);
+            this.labelAx.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelAx.Name = "labelAx";
-            this.labelAx.Size = new System.Drawing.Size(22, 13);
+            this.labelAx.Size = new System.Drawing.Size(31, 20);
             this.labelAx.TabIndex = 3;
             this.labelAx.Text = "Ax:";
             // 
             // textBoxAx
             // 
-            this.textBoxAx.Location = new System.Drawing.Point(185, 718);
+            this.textBoxAx.Location = new System.Drawing.Point(278, 1105);
+            this.textBoxAx.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBoxAx.Name = "textBoxAx";
-            this.textBoxAx.Size = new System.Drawing.Size(100, 20);
+            this.textBoxAx.Size = new System.Drawing.Size(148, 26);
             this.textBoxAx.TabIndex = 4;
             // 
             // labelAy
             // 
             this.labelAy.AutoSize = true;
-            this.labelAy.Location = new System.Drawing.Point(291, 721);
+            this.labelAy.Location = new System.Drawing.Point(436, 1109);
+            this.labelAy.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelAy.Name = "labelAy";
-            this.labelAy.Size = new System.Drawing.Size(22, 13);
+            this.labelAy.Size = new System.Drawing.Size(31, 20);
             this.labelAy.TabIndex = 5;
             this.labelAy.Text = "Ay:";
             // 
             // textBoxAy
             // 
-            this.textBoxAy.Location = new System.Drawing.Point(319, 718);
+            this.textBoxAy.Location = new System.Drawing.Point(478, 1105);
+            this.textBoxAy.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBoxAy.Name = "textBoxAy";
-            this.textBoxAy.Size = new System.Drawing.Size(100, 20);
+            this.textBoxAy.Size = new System.Drawing.Size(148, 26);
             this.textBoxAy.TabIndex = 6;
             // 
             // labelAz
             // 
             this.labelAz.AutoSize = true;
-            this.labelAz.Location = new System.Drawing.Point(425, 721);
+            this.labelAz.Location = new System.Drawing.Point(638, 1109);
+            this.labelAz.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelAz.Name = "labelAz";
-            this.labelAz.Size = new System.Drawing.Size(22, 13);
+            this.labelAz.Size = new System.Drawing.Size(32, 20);
             this.labelAz.TabIndex = 7;
             this.labelAz.Text = "Az:";
             // 
             // textBoxAz
             // 
-            this.textBoxAz.Location = new System.Drawing.Point(453, 718);
+            this.textBoxAz.Location = new System.Drawing.Point(680, 1105);
+            this.textBoxAz.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBoxAz.Name = "textBoxAz";
-            this.textBoxAz.Size = new System.Drawing.Size(100, 20);
+            this.textBoxAz.Size = new System.Drawing.Size(148, 26);
             this.textBoxAz.TabIndex = 8;
             // 
             // labelInputX
             // 
             this.labelInputX.AutoSize = true;
             this.labelInputX.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelInputX.Location = new System.Drawing.Point(7, 6);
+            this.labelInputX.Location = new System.Drawing.Point(10, 9);
+            this.labelInputX.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelInputX.Name = "labelInputX";
-            this.labelInputX.Size = new System.Drawing.Size(86, 25);
+            this.labelInputX.Size = new System.Drawing.Size(125, 37);
             this.labelInputX.TabIndex = 9;
             this.labelInputX.Text = "Input X";
             // 
             // textBoxInputX
             // 
             this.textBoxInputX.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxInputX.Location = new System.Drawing.Point(99, 3);
+            this.textBoxInputX.Location = new System.Drawing.Point(148, 5);
+            this.textBoxInputX.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBoxInputX.Name = "textBoxInputX";
-            this.textBoxInputX.Size = new System.Drawing.Size(100, 31);
+            this.textBoxInputX.Size = new System.Drawing.Size(148, 43);
             this.textBoxInputX.TabIndex = 10;
             // 
             // labelInputY
             // 
             this.labelInputY.AutoSize = true;
             this.labelInputY.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelInputY.Location = new System.Drawing.Point(7, 41);
+            this.labelInputY.Location = new System.Drawing.Point(10, 63);
+            this.labelInputY.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelInputY.Name = "labelInputY";
-            this.labelInputY.Size = new System.Drawing.Size(87, 25);
+            this.labelInputY.Size = new System.Drawing.Size(126, 37);
             this.labelInputY.TabIndex = 11;
             this.labelInputY.Text = "Input Y";
             // 
             // textBoxInputY
             // 
             this.textBoxInputY.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxInputY.Location = new System.Drawing.Point(99, 38);
+            this.textBoxInputY.Location = new System.Drawing.Point(148, 58);
+            this.textBoxInputY.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBoxInputY.Name = "textBoxInputY";
-            this.textBoxInputY.Size = new System.Drawing.Size(100, 31);
+            this.textBoxInputY.Size = new System.Drawing.Size(148, 43);
             this.textBoxInputY.TabIndex = 12;
             // 
             // pictureBoxPlayerCar
             // 
             this.pictureBoxPlayerCar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.pictureBoxPlayerCar.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxPlayerCar.Image")));
-            this.pictureBoxPlayerCar.Location = new System.Drawing.Point(370, 128);
+            this.pictureBoxPlayerCar.Location = new System.Drawing.Point(555, 197);
+            this.pictureBoxPlayerCar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pictureBoxPlayerCar.MaximumSize = new System.Drawing.Size(100, 180);
             this.pictureBoxPlayerCar.MinimumSize = new System.Drawing.Size(100, 180);
             this.pictureBoxPlayerCar.Name = "pictureBoxPlayerCar";
@@ -219,8 +232,7 @@ namespace Lab_1_ex9
             // 
             this.pictureBoxBlueCar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.pictureBoxBlueCar.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxBlueCar.Image")));
-            this.pictureBoxBlueCar.Location = new System.Drawing.Point(179, 526);
-            this.pictureBoxBlueCar.Margin = new System.Windows.Forms.Padding(2);
+            this.pictureBoxBlueCar.Location = new System.Drawing.Point(268, 809);
             this.pictureBoxBlueCar.Name = "pictureBoxBlueCar";
             this.pictureBoxBlueCar.Size = new System.Drawing.Size(101, 182);
             this.pictureBoxBlueCar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -231,8 +243,7 @@ namespace Lab_1_ex9
             // 
             this.pictureBoxGreenCar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.pictureBoxGreenCar.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxGreenCar.Image")));
-            this.pictureBoxGreenCar.Location = new System.Drawing.Point(436, 526);
-            this.pictureBoxGreenCar.Margin = new System.Windows.Forms.Padding(2);
+            this.pictureBoxGreenCar.Location = new System.Drawing.Point(654, 809);
             this.pictureBoxGreenCar.Name = "pictureBoxGreenCar";
             this.pictureBoxGreenCar.Size = new System.Drawing.Size(100, 180);
             this.pictureBoxGreenCar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -243,8 +254,7 @@ namespace Lab_1_ex9
             // 
             this.pictureBoxYellowCar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.pictureBoxYellowCar.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxYellowCar.Image")));
-            this.pictureBoxYellowCar.Location = new System.Drawing.Point(301, 526);
-            this.pictureBoxYellowCar.Margin = new System.Windows.Forms.Padding(2);
+            this.pictureBoxYellowCar.Location = new System.Drawing.Point(452, 809);
             this.pictureBoxYellowCar.Name = "pictureBoxYellowCar";
             this.pictureBoxYellowCar.Size = new System.Drawing.Size(101, 182);
             this.pictureBoxYellowCar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -254,8 +264,7 @@ namespace Lab_1_ex9
             // pictureBoxRoad1
             // 
             this.pictureBoxRoad1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxRoad1.Image")));
-            this.pictureBoxRoad1.Location = new System.Drawing.Point(0, 630);
-            this.pictureBoxRoad1.Margin = new System.Windows.Forms.Padding(2);
+            this.pictureBoxRoad1.Location = new System.Drawing.Point(0, 969);
             this.pictureBoxRoad1.Name = "pictureBoxRoad1";
             this.pictureBoxRoad1.Size = new System.Drawing.Size(840, 650);
             this.pictureBoxRoad1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -266,6 +275,7 @@ namespace Lab_1_ex9
             // 
             this.pictureBoxRoad2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxRoad2.Image")));
             this.pictureBoxRoad2.Location = new System.Drawing.Point(0, 0);
+            this.pictureBoxRoad2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pictureBoxRoad2.Name = "pictureBoxRoad2";
             this.pictureBoxRoad2.Size = new System.Drawing.Size(840, 650);
             this.pictureBoxRoad2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -275,7 +285,8 @@ namespace Lab_1_ex9
             // pictureBoxGameBorder
             // 
             this.pictureBoxGameBorder.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBoxGameBorder.Location = new System.Drawing.Point(140, 0);
+            this.pictureBoxGameBorder.Location = new System.Drawing.Point(210, 0);
+            this.pictureBoxGameBorder.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pictureBoxGameBorder.Name = "pictureBoxGameBorder";
             this.pictureBoxGameBorder.Size = new System.Drawing.Size(700, 1200);
             this.pictureBoxGameBorder.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -285,7 +296,8 @@ namespace Lab_1_ex9
             // pictureBoxRoad3
             // 
             this.pictureBoxRoad3.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxRoad3.Image")));
-            this.pictureBoxRoad3.Location = new System.Drawing.Point(0, -630);
+            this.pictureBoxRoad3.Location = new System.Drawing.Point(0, -969);
+            this.pictureBoxRoad3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pictureBoxRoad3.Name = "pictureBoxRoad3";
             this.pictureBoxRoad3.Size = new System.Drawing.Size(840, 650);
             this.pictureBoxRoad3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -296,9 +308,10 @@ namespace Lab_1_ex9
             // 
             this.pictureBoxPurpleCar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.pictureBoxPurpleCar.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxPurpleCar.Image")));
-            this.pictureBoxPurpleCar.Location = new System.Drawing.Point(561, 526);
+            this.pictureBoxPurpleCar.Location = new System.Drawing.Point(842, 809);
+            this.pictureBoxPurpleCar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pictureBoxPurpleCar.Name = "pictureBoxPurpleCar";
-            this.pictureBoxPurpleCar.Size = new System.Drawing.Size(100, 180);
+            this.pictureBoxPurpleCar.Size = new System.Drawing.Size(150, 277);
             this.pictureBoxPurpleCar.TabIndex = 22;
             this.pictureBoxPurpleCar.TabStop = false;
             // 
@@ -306,7 +319,8 @@ namespace Lab_1_ex9
             // 
             this.pictureBoxBomb.BackColor = System.Drawing.Color.Red;
             this.pictureBoxBomb.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxBomb.Image")));
-            this.pictureBoxBomb.Location = new System.Drawing.Point(12, 103);
+            this.pictureBoxBomb.Location = new System.Drawing.Point(18, 158);
+            this.pictureBoxBomb.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pictureBoxBomb.Name = "pictureBoxBomb";
             this.pictureBoxBomb.Size = new System.Drawing.Size(50, 65);
             this.pictureBoxBomb.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -317,26 +331,29 @@ namespace Lab_1_ex9
             // 
             this.labelScore.AutoSize = true;
             this.labelScore.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelScore.Location = new System.Drawing.Point(556, 12);
+            this.labelScore.Location = new System.Drawing.Point(834, 18);
+            this.labelScore.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelScore.Name = "labelScore";
-            this.labelScore.Size = new System.Drawing.Size(73, 25);
+            this.labelScore.Size = new System.Drawing.Size(105, 37);
             this.labelScore.TabIndex = 24;
             this.labelScore.Text = "Score";
             // 
             // textBoxScore
             // 
             this.textBoxScore.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxScore.Location = new System.Drawing.Point(635, 9);
+            this.textBoxScore.Location = new System.Drawing.Point(952, 14);
+            this.textBoxScore.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBoxScore.Name = "textBoxScore";
-            this.textBoxScore.Size = new System.Drawing.Size(177, 31);
+            this.textBoxScore.Size = new System.Drawing.Size(264, 43);
             this.textBoxScore.TabIndex = 25;
             // 
             // pictureBoxTitleScreen
             // 
             this.pictureBoxTitleScreen.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxTitleScreen.Image")));
-            this.pictureBoxTitleScreen.Location = new System.Drawing.Point(140, 155);
+            this.pictureBoxTitleScreen.Location = new System.Drawing.Point(210, 238);
+            this.pictureBoxTitleScreen.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pictureBoxTitleScreen.Name = "pictureBoxTitleScreen";
-            this.pictureBoxTitleScreen.Size = new System.Drawing.Size(573, 617);
+            this.pictureBoxTitleScreen.Size = new System.Drawing.Size(860, 949);
             this.pictureBoxTitleScreen.TabIndex = 26;
             this.pictureBoxTitleScreen.TabStop = false;
             // 
@@ -344,9 +361,10 @@ namespace Lab_1_ex9
             // 
             this.labelTitle.AutoSize = true;
             this.labelTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTitle.Location = new System.Drawing.Point(276, 266);
+            this.labelTitle.Location = new System.Drawing.Point(414, 409);
+            this.labelTitle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelTitle.Name = "labelTitle";
-            this.labelTitle.Size = new System.Drawing.Size(285, 42);
+            this.labelTitle.Size = new System.Drawing.Size(418, 64);
             this.labelTitle.TabIndex = 27;
             this.labelTitle.Text = "Highway Racer";
             // 
@@ -354,26 +372,29 @@ namespace Lab_1_ex9
             // 
             this.labelFinalScore.AutoSize = true;
             this.labelFinalScore.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelFinalScore.Location = new System.Drawing.Point(204, 450);
+            this.labelFinalScore.Location = new System.Drawing.Point(306, 692);
+            this.labelFinalScore.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelFinalScore.Name = "labelFinalScore";
-            this.labelFinalScore.Size = new System.Drawing.Size(168, 31);
+            this.labelFinalScore.Size = new System.Drawing.Size(248, 47);
             this.labelFinalScore.TabIndex = 28;
             this.labelFinalScore.Text = "Your Score:";
             // 
             // textBoxFinalScore
             // 
             this.textBoxFinalScore.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxFinalScore.Location = new System.Drawing.Point(378, 447);
+            this.textBoxFinalScore.Location = new System.Drawing.Point(567, 688);
+            this.textBoxFinalScore.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBoxFinalScore.Name = "textBoxFinalScore";
-            this.textBoxFinalScore.Size = new System.Drawing.Size(255, 38);
+            this.textBoxFinalScore.Size = new System.Drawing.Size(380, 53);
             this.textBoxFinalScore.TabIndex = 29;
             // 
             // buttonStartGame
             // 
             this.buttonStartGame.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonStartGame.Location = new System.Drawing.Point(327, 567);
+            this.buttonStartGame.Location = new System.Drawing.Point(490, 872);
+            this.buttonStartGame.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.buttonStartGame.Name = "buttonStartGame";
-            this.buttonStartGame.Size = new System.Drawing.Size(204, 58);
+            this.buttonStartGame.Size = new System.Drawing.Size(306, 89);
             this.buttonStartGame.TabIndex = 30;
             this.buttonStartGame.Text = "Start";
             this.buttonStartGame.UseVisualStyleBackColor = true;
@@ -384,9 +405,10 @@ namespace Lab_1_ex9
             this.pictureBoxBlueCarExplosion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.pictureBoxBlueCarExplosion.Enabled = false;
             this.pictureBoxBlueCarExplosion.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxBlueCarExplosion.Image")));
-            this.pictureBoxBlueCarExplosion.Location = new System.Drawing.Point(511, 50);
+            this.pictureBoxBlueCarExplosion.Location = new System.Drawing.Point(766, 77);
+            this.pictureBoxBlueCarExplosion.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pictureBoxBlueCarExplosion.Name = "pictureBoxBlueCarExplosion";
-            this.pictureBoxBlueCarExplosion.Size = new System.Drawing.Size(100, 100);
+            this.pictureBoxBlueCarExplosion.Size = new System.Drawing.Size(150, 154);
             this.pictureBoxBlueCarExplosion.TabIndex = 31;
             this.pictureBoxBlueCarExplosion.TabStop = false;
             this.pictureBoxBlueCarExplosion.Visible = false;
@@ -396,9 +418,10 @@ namespace Lab_1_ex9
             this.pictureBoxGreenCarExplosion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.pictureBoxGreenCarExplosion.Enabled = false;
             this.pictureBoxGreenCarExplosion.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxGreenCarExplosion.Image")));
-            this.pictureBoxGreenCarExplosion.Location = new System.Drawing.Point(676, 50);
+            this.pictureBoxGreenCarExplosion.Location = new System.Drawing.Point(1014, 77);
+            this.pictureBoxGreenCarExplosion.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pictureBoxGreenCarExplosion.Name = "pictureBoxGreenCarExplosion";
-            this.pictureBoxGreenCarExplosion.Size = new System.Drawing.Size(100, 100);
+            this.pictureBoxGreenCarExplosion.Size = new System.Drawing.Size(150, 154);
             this.pictureBoxGreenCarExplosion.TabIndex = 32;
             this.pictureBoxGreenCarExplosion.TabStop = false;
             this.pictureBoxGreenCarExplosion.Visible = false;
@@ -408,9 +431,10 @@ namespace Lab_1_ex9
             this.pictureBoxYellowCarExplosion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.pictureBoxYellowCarExplosion.Enabled = false;
             this.pictureBoxYellowCarExplosion.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxYellowCarExplosion.Image")));
-            this.pictureBoxYellowCarExplosion.Location = new System.Drawing.Point(511, 195);
+            this.pictureBoxYellowCarExplosion.Location = new System.Drawing.Point(766, 300);
+            this.pictureBoxYellowCarExplosion.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pictureBoxYellowCarExplosion.Name = "pictureBoxYellowCarExplosion";
-            this.pictureBoxYellowCarExplosion.Size = new System.Drawing.Size(100, 100);
+            this.pictureBoxYellowCarExplosion.Size = new System.Drawing.Size(150, 154);
             this.pictureBoxYellowCarExplosion.TabIndex = 33;
             this.pictureBoxYellowCarExplosion.TabStop = false;
             this.pictureBoxYellowCarExplosion.Visible = false;
@@ -420,9 +444,10 @@ namespace Lab_1_ex9
             this.pictureBoxPurpleCarExplosion.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.pictureBoxPurpleCarExplosion.Enabled = false;
             this.pictureBoxPurpleCarExplosion.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxPurpleCarExplosion.Image")));
-            this.pictureBoxPurpleCarExplosion.Location = new System.Drawing.Point(676, 208);
+            this.pictureBoxPurpleCarExplosion.Location = new System.Drawing.Point(1014, 320);
+            this.pictureBoxPurpleCarExplosion.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pictureBoxPurpleCarExplosion.Name = "pictureBoxPurpleCarExplosion";
-            this.pictureBoxPurpleCarExplosion.Size = new System.Drawing.Size(100, 100);
+            this.pictureBoxPurpleCarExplosion.Size = new System.Drawing.Size(150, 154);
             this.pictureBoxPurpleCarExplosion.TabIndex = 34;
             this.pictureBoxPurpleCarExplosion.TabStop = false;
             this.pictureBoxPurpleCarExplosion.Visible = false;
@@ -431,43 +456,47 @@ namespace Lab_1_ex9
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(7, 75);
+            this.label1.Location = new System.Drawing.Point(10, 115);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(127, 25);
+            this.label1.Size = new System.Drawing.Size(187, 37);
             this.label1.TabIndex = 35;
             this.label1.Text = "Bomb Prog";
             // 
             // textBoxBombProgress
             // 
             this.textBoxBombProgress.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxBombProgress.Location = new System.Drawing.Point(132, 72);
+            this.textBoxBombProgress.Location = new System.Drawing.Point(198, 111);
+            this.textBoxBombProgress.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBoxBombProgress.Name = "textBoxBombProgress";
-            this.textBoxBombProgress.Size = new System.Drawing.Size(67, 31);
+            this.textBoxBombProgress.Size = new System.Drawing.Size(98, 43);
             this.textBoxBombProgress.TabIndex = 36;
             // 
             // labelBombsUsed
             // 
             this.labelBombsUsed.AutoSize = true;
             this.labelBombsUsed.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelBombsUsed.Location = new System.Drawing.Point(184, 493);
+            this.labelBombsUsed.Location = new System.Drawing.Point(276, 758);
+            this.labelBombsUsed.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelBombsUsed.Name = "labelBombsUsed";
-            this.labelBombsUsed.Size = new System.Drawing.Size(188, 31);
+            this.labelBombsUsed.Size = new System.Drawing.Size(278, 47);
             this.labelBombsUsed.TabIndex = 37;
             this.labelBombsUsed.Text = "Bombs Used:";
             // 
             // textBoxBombsUsed
             // 
             this.textBoxBombsUsed.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxBombsUsed.Location = new System.Drawing.Point(378, 491);
+            this.textBoxBombsUsed.Location = new System.Drawing.Point(567, 755);
+            this.textBoxBombsUsed.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBoxBombsUsed.Name = "textBoxBombsUsed";
-            this.textBoxBombsUsed.Size = new System.Drawing.Size(92, 38);
+            this.textBoxBombsUsed.Size = new System.Drawing.Size(136, 53);
             this.textBoxBombsUsed.TabIndex = 38;
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(824, 1048);
+            this.ClientSize = new System.Drawing.Size(1236, 1570);
             this.Controls.Add(this.textBoxBombsUsed);
             this.Controls.Add(this.labelBombsUsed);
             this.Controls.Add(this.textBoxBombProgress);
@@ -505,6 +534,7 @@ namespace Lab_1_ex9
             this.Controls.Add(this.pictureBoxRoad2);
             this.Controls.Add(this.pictureBoxRoad3);
             this.Controls.Add(this.pictureBoxGameBorder);
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -595,7 +625,7 @@ namespace Lab_1_ex9
         int yellowCarSpeed;
         int purpleCarSpeed;
 
-        int collisionTolerance = 5;
+        int collisionTolerance = 7;
         int score;
         int bombProgress;
         int bombShowTimer;

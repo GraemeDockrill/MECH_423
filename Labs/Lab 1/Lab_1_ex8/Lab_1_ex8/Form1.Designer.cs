@@ -67,6 +67,20 @@ namespace Lab_1_ex8
             this.textBoxGesture = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
             this.textBoxGestureState = new System.Windows.Forms.TextBox();
+            this.textBoxAzMax = new System.Windows.Forms.TextBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.textBoxAyMax = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.textBoxAxMax = new System.Windows.Forms.TextBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.textBoxStdAz = new System.Windows.Forms.TextBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.textBoxStdAy = new System.Windows.Forms.TextBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.textBoxStdAx = new System.Windows.Forms.TextBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // serialPort1
@@ -98,7 +112,7 @@ namespace Lab_1_ex8
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(12, 49);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(103, 13);
+            this.label1.Size = new System.Drawing.Size(154, 20);
             this.label1.TabIndex = 2;
             this.label1.Text = "Serial Bytes to Read";
             // 
@@ -108,7 +122,7 @@ namespace Lab_1_ex8
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(12, 82);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(100, 13);
+            this.label2.Size = new System.Drawing.Size(149, 20);
             this.label2.TabIndex = 3;
             this.label2.Text = "Temp String Length";
             // 
@@ -118,7 +132,7 @@ namespace Lab_1_ex8
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.Location = new System.Drawing.Point(12, 115);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(78, 13);
+            this.label3.Size = new System.Drawing.Size(117, 20);
             this.label3.TabIndex = 4;
             this.label3.Text = "Items in Queue";
             // 
@@ -149,7 +163,7 @@ namespace Lab_1_ex8
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.Location = new System.Drawing.Point(12, 162);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(98, 13);
+            this.label4.Size = new System.Drawing.Size(148, 20);
             this.label4.TabIndex = 8;
             this.label4.Text = "Serial Data Stream:";
             // 
@@ -233,9 +247,9 @@ namespace Lab_1_ex8
             // checkBoxSavetoFile
             // 
             this.checkBoxSavetoFile.AutoSize = true;
-            this.checkBoxSavetoFile.Location = new System.Drawing.Point(9, 629);
+            this.checkBoxSavetoFile.Location = new System.Drawing.Point(13, 760);
             this.checkBoxSavetoFile.Name = "checkBoxSavetoFile";
-            this.checkBoxSavetoFile.Size = new System.Drawing.Size(111, 24);
+            this.checkBoxSavetoFile.Size = new System.Drawing.Size(118, 24);
             this.checkBoxSavetoFile.TabIndex = 18;
             this.checkBoxSavetoFile.Text = "Save to File";
             this.checkBoxSavetoFile.UseVisualStyleBackColor = true;
@@ -243,7 +257,7 @@ namespace Lab_1_ex8
             // 
             // buttonSelectFilename
             // 
-            this.buttonSelectFilename.Location = new System.Drawing.Point(10, 660);
+            this.buttonSelectFilename.Location = new System.Drawing.Point(14, 791);
             this.buttonSelectFilename.Name = "buttonSelectFilename";
             this.buttonSelectFilename.Size = new System.Drawing.Size(138, 31);
             this.buttonSelectFilename.TabIndex = 19;
@@ -253,7 +267,7 @@ namespace Lab_1_ex8
             // 
             // textBoxFileName
             // 
-            this.textBoxFileName.Location = new System.Drawing.Point(154, 665);
+            this.textBoxFileName.Location = new System.Drawing.Point(158, 796);
             this.textBoxFileName.Name = "textBoxFileName";
             this.textBoxFileName.Size = new System.Drawing.Size(336, 26);
             this.textBoxFileName.TabIndex = 20;
@@ -319,7 +333,7 @@ namespace Lab_1_ex8
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(39, 578);
+            this.label13.Location = new System.Drawing.Point(43, 709);
             this.label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(71, 20);
@@ -328,7 +342,7 @@ namespace Lab_1_ex8
             // 
             // textBoxGesture
             // 
-            this.textBoxGesture.Location = new System.Drawing.Point(118, 574);
+            this.textBoxGesture.Location = new System.Drawing.Point(122, 705);
             this.textBoxGesture.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBoxGesture.Name = "textBoxGesture";
             this.textBoxGesture.Size = new System.Drawing.Size(372, 26);
@@ -337,7 +351,7 @@ namespace Lab_1_ex8
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(6, 606);
+            this.label14.Location = new System.Drawing.Point(10, 737);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(110, 20);
             this.label14.TabIndex = 30;
@@ -345,16 +359,146 @@ namespace Lab_1_ex8
             // 
             // textBoxGestureState
             // 
-            this.textBoxGestureState.Location = new System.Drawing.Point(122, 603);
+            this.textBoxGestureState.Location = new System.Drawing.Point(126, 734);
             this.textBoxGestureState.Name = "textBoxGestureState";
             this.textBoxGestureState.Size = new System.Drawing.Size(100, 26);
             this.textBoxGestureState.TabIndex = 31;
+            // 
+            // textBoxAzMax
+            // 
+            this.textBoxAzMax.Location = new System.Drawing.Point(342, 605);
+            this.textBoxAzMax.Name = "textBoxAzMax";
+            this.textBoxAzMax.Size = new System.Drawing.Size(100, 26);
+            this.textBoxAzMax.TabIndex = 38;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(303, 605);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(32, 20);
+            this.label15.TabIndex = 37;
+            this.label15.Text = "Az:";
+            // 
+            // textBoxAyMax
+            // 
+            this.textBoxAyMax.Location = new System.Drawing.Point(196, 605);
+            this.textBoxAyMax.Name = "textBoxAyMax";
+            this.textBoxAyMax.Size = new System.Drawing.Size(100, 26);
+            this.textBoxAyMax.TabIndex = 36;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(158, 605);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(31, 20);
+            this.label16.TabIndex = 35;
+            this.label16.Text = "Ay:";
+            // 
+            // textBoxAxMax
+            // 
+            this.textBoxAxMax.Location = new System.Drawing.Point(51, 605);
+            this.textBoxAxMax.Name = "textBoxAxMax";
+            this.textBoxAxMax.Size = new System.Drawing.Size(100, 26);
+            this.textBoxAxMax.TabIndex = 34;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(14, 605);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(31, 20);
+            this.label17.TabIndex = 33;
+            this.label17.Text = "Ax:";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(81, 582);
+            this.label18.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(274, 20);
+            this.label18.TabIndex = 32;
+            this.label18.Text = "Running Max of Past 500 Data Points";
+            // 
+            // textBoxStdAz
+            // 
+            this.textBoxStdAz.Location = new System.Drawing.Point(342, 666);
+            this.textBoxStdAz.Name = "textBoxStdAz";
+            this.textBoxStdAz.Size = new System.Drawing.Size(100, 26);
+            this.textBoxStdAz.TabIndex = 45;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(303, 666);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(32, 20);
+            this.label19.TabIndex = 44;
+            this.label19.Text = "Az:";
+            // 
+            // textBoxStdAy
+            // 
+            this.textBoxStdAy.Location = new System.Drawing.Point(196, 666);
+            this.textBoxStdAy.Name = "textBoxStdAy";
+            this.textBoxStdAy.Size = new System.Drawing.Size(100, 26);
+            this.textBoxStdAy.TabIndex = 43;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(158, 666);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(31, 20);
+            this.label20.TabIndex = 42;
+            this.label20.Text = "Ay:";
+            // 
+            // textBoxStdAx
+            // 
+            this.textBoxStdAx.Location = new System.Drawing.Point(51, 666);
+            this.textBoxStdAx.Name = "textBoxStdAx";
+            this.textBoxStdAx.Size = new System.Drawing.Size(100, 26);
+            this.textBoxStdAx.TabIndex = 41;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(14, 666);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(31, 20);
+            this.label21.TabIndex = 40;
+            this.label21.Text = "Ax:";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(81, 643);
+            this.label22.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(277, 20);
+            this.label22.TabIndex = 39;
+            this.label22.Text = "Running STD of Past 100 Data Points";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(513, 712);
+            this.ClientSize = new System.Drawing.Size(513, 834);
+            this.Controls.Add(this.textBoxStdAz);
+            this.Controls.Add(this.label19);
+            this.Controls.Add(this.textBoxStdAy);
+            this.Controls.Add(this.label20);
+            this.Controls.Add(this.textBoxStdAx);
+            this.Controls.Add(this.label21);
+            this.Controls.Add(this.label22);
+            this.Controls.Add(this.textBoxAzMax);
+            this.Controls.Add(this.label15);
+            this.Controls.Add(this.textBoxAyMax);
+            this.Controls.Add(this.label16);
+            this.Controls.Add(this.textBoxAxMax);
+            this.Controls.Add(this.label17);
+            this.Controls.Add(this.label18);
             this.Controls.Add(this.textBoxGestureState);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.textBoxGesture);
@@ -442,18 +586,44 @@ namespace Lab_1_ex8
         int Ay = 120;
         int Az = 120;
         int averagePeriod = 100;
+        int maxPeriod = 500;
         int wait = 0;
         int waitCycles = 25;
-        int gestureAcceleration = 50;
+        int positiveGestureAcceleration = 50;
+        int negativeGestureAcceleration = 200;
+
+        double gravity = 150.0;
 
         int dequeuedAx;
         int dequeuedAy;
         int dequeuedAz;
 
+        int dequeuedMaxAx;
+        int dequeuedMaxAy;
+        int dequeuedMaxAz;
+
+        int maxAx = 0;
+        int maxAy = 0;
+        int maxAz = 0;
+
+        double stdSumAx = 0;
+        double stdSumAy = 0;
+        double stdSumAz = 0;
+
         ConcurrentQueue<Int32> dataQueue = new ConcurrentQueue<Int32>();
         ConcurrentQueue<Int32> dataQueueAx = new ConcurrentQueue<Int32>();
         ConcurrentQueue<Int32> dataQueueAy = new ConcurrentQueue<Int32>();
         ConcurrentQueue<Int32> dataQueueAz = new ConcurrentQueue<Int32>();
+
+
+        ConcurrentQueue<Int32> maxdataQueueAx = new ConcurrentQueue<Int32>();
+        ConcurrentQueue<Int32> maxdataQueueAy = new ConcurrentQueue<Int32>();
+        ConcurrentQueue<Int32> maxdataQueueAz = new ConcurrentQueue<Int32>();
+
+        ConcurrentQueue<Int32> stddataQueueAx = new ConcurrentQueue<Int32>();
+        ConcurrentQueue<Int32> stddataQueueAy = new ConcurrentQueue<Int32>();
+        ConcurrentQueue<Int32> stddataQueueAz = new ConcurrentQueue<Int32>();
+
         StreamWriter outputFile;
 
         enum parsingByte
@@ -466,18 +636,44 @@ namespace Lab_1_ex8
 
         parsingByte parsingState = parsingByte.start;
 
+        //enum gestureState
+        //{
+        //    waitForData,
+        //    punch,
+        //    initiateRightHook,
+        //    rightHook,
+        //    initiateHighPunch,
+        //    highPunch,
+        //    backpunch
+
+        //}
+
         enum gestureState
         {
             waitForData,
-            punch,
-            initiateRightHook,
-            rightHook,
-            initiateHighPunch,
-            highPunch
+            freeFall,
+            graveDigger,
+            initiateWave,
+            midWave,
+            wave
+
         }
 
         gestureState state = gestureState.waitForData;
-        
+        private System.Windows.Forms.TextBox textBoxAzMax;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.TextBox textBoxAyMax;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.TextBox textBoxAxMax;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.TextBox textBoxStdAz;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.TextBox textBoxStdAy;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.TextBox textBoxStdAx;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.Label label22;
     }
 }
 
