@@ -17,7 +17,8 @@ int main(void)
 	P4SEL1 &= ~BIT0;
 
 	// enable internal pull-up resistors for switch S1 (attached to pin P4.0)
-	P4REN |= BIT0; // enable for low-high transition
+	P4REN |= BIT0;
+	P4OUT |= BIT0; // set P4.0 to use pull-up resistor page 293
 
 	// set P4.0 to get interrupted from rising edge & enable the interrupt
 	P4IES &= ~BIT0; // interrupt edge select
@@ -29,6 +30,8 @@ int main(void)
 	// set up P3.7 as a digital output
 	P3DIR |= BIT7;
 
+	P3OUT |= BIT7;
+
 	// set pin P3.7 to digital I/O
 	//P3SEL0 &= ~BIT7;
 	//P3SEL1 &= ~BIT7;
@@ -37,7 +40,9 @@ int main(void)
 	_EINT();
 
 	// infinite loop
-	while(1);
+	while(1){
+	    _NOP();
+	}
 
 	return 0;
 }
