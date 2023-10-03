@@ -38,7 +38,7 @@ int main(void)
         int i;
         // delay loop - do nothing
         for(i = 0; i < 30000; i++){
-            _NOP();
+            _NOP();__delay_cycles(10);
         }
 
         // toggle LEDS 2,3,5,6
