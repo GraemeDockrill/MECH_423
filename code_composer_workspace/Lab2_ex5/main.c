@@ -27,20 +27,16 @@ int main(void)
 	TB1CTL |= TBIE;                     // enable TB1CTL interrupt
 
 	// setting TB1.1 cycle to 500Hz
-	TB1CCTL1 |= OUTMOD2;                // set mode to Toggle
-	TB1CCTL1 &= ~(OUTMOD0 + OUTMOD1);   // set mode to Toggle
-	TB1CCR0 = 499;                      // setting compare latch TB1CL0 - CAN'T WRITE DIRECTLY TO TB1CL0
-	TB1CCR1 = 249;                      // setting compare latch TB1CL1 - CAN'T WRITE DIRECTLY TO TB1CL0
+	TB1CCTL1 |= OUTMOD2;                // set mode to OUTMODE 4 Toggle
+	TB1CCTL1 &= ~(OUTMOD0 + OUTMOD1);   // set mode to OUTMODE 4 Toggle
 
-//	TB1CL0 = 0x01F3;                   // 499 in hex CAN'T WRITE DIRECTLY TO TBxCLn
-//	TB1CL1 = 0x00F9;                   // 249 in hex
+	// setting TB1.2 cycle to 500Hz, 25% duty cycle
+	TB1CCTL2 |= OUTMOD0 + OUTMOD1;      // set mode to Set/Reset
+    TB1CCTL2 &= ~(OUTMOD2);             // set mode to Set/Reset
 
-//	// setting TB1.1 cycle to 500Hz
-//    TB1CCTL2 |= OUTMOD2;                // set mode to Toggle
-//    TB1CCTL2 &= ~(OUTMOD0 + OUTMOD1);   // set mode to Toggle
-
-
-	//TB1CL0 = 499;
+    // setting up square wave
+	TB1CCR0 = 999;                      // setting compare latch TB1CL0 - CAN'T WRITE DIRECTLY TO TB1CL0
+	TB1CCR1 = 499;                      // setting compare latch TB1CL1 - CAN'T WRITE DIRECTLY TO TB1CL0
 
 	// setting up P3.4 as TB1.1 output
 	P3DIR |= BIT4;                      // setting P3.4 as output
@@ -52,10 +48,8 @@ int main(void)
 	P3SEL0 |= BIT5;                     // setting P3.5 as TB1.2
 	P3SEL1 &= ~BIT5;                    // setting P3.4 as TB1.2
 
-
-
-
-	// setting up square wave
+	// Global interrupt enable
+    _EINT();
 
 	
 	while(1);
