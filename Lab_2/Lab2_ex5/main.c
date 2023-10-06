@@ -13,13 +13,12 @@ int main(void)
 	CSCTL0 = CSKEY;                     // unlocking clock
 	CSCTL1 |= DCOFSEL1 + DCOFSEL0;      // set DCO to 8MHz
 	CSCTL2 = SELA_3 + SELS_3 + SELM_3;  // ACLK = DCO, SMCLK = DCO, MCLK = DCO
-	CSCTL3 = DIVA_4 + DIVS_4 + DIVM_4;  // ACLK/16, SMCLK/16, MCLK/16
+	CSCTL3 = DIVA__16 + DIVS__16 + DIVM__16;  // ACLK/16, SMCLK/16, MCLK/16
 
 	// setting up Timer B
-	TB1CTL |= TBSSEL1;                  // TB1 using SMCLK
-	TB1CTL &= ~TBSSEL0;                 // TB1 using SMCLK
-	TB1CTL &= ~(ID0 + ID1);             // TB1 with a CLK divider of 1
-	TB1CTL |= MC0;                      // setting TB to up mode
+	TB1CTL |= TBSSEL__SMCLK;            // TB1 using SMCLK
+	TB1CTL |= ID__1;                    // TB1 with a CLK divider of 1
+	TB1CTL |= MC__UP;                      // setting TB to up mode
 	TB1CTL |= TBIE;                     // enable TB1CTL interrupt
 
 	// setting TB1.1 cycle to 500Hz
