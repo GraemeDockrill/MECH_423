@@ -13,7 +13,7 @@ void clockSetup (void){
     CSCTL0 = CSKEY;                             // unlocking clock
     CSCTL1 |= DCOFSEL1 + DCOFSEL0;              // set DCO to 8MHz
     CSCTL2 = SELA_3 + SELS_3 + SELM_3;          // ACLK = DCO, SMCLK = DCO, MCLK = DCO
-    CSCTL3 = DIVA__16 + DIVS__16 + DIVM__16;    // ACLK/16, SMCLK/16, MCLK/16
+    CSCTL3 = DIVS__16 + DIVM__16;               // SMCLK/16, MCLK/16
 }
 
 void timerBSetup (void){
@@ -21,12 +21,27 @@ void timerBSetup (void){
     TB1CTL |= TBSSEL__SMCLK;            // TB1 using SMCLK
     TB1CTL |= ID__1;                    // TB1 with a CLK divider of 1
     TB1CTL |= MC__UP;                   // setting TB to up mode
-    TB1CTL |= TBIE;                     // enable TB1CTL interrupt
+    TB1CCTL0 |= CCIE;                   // enable timer B overflow flag
 
     // setting TB1.1 cycle to 25Hz
     // TB1CCTL1 = OUTMOD_7;
 
-    TB1CCR0 = 49;                      // setting compare latch TB1CL0 - CAN'T WRITE DIRECTLY TO TB1CL0
+
+    TB1CCR0 = 999;
+    //TB1CCR0 = 49;                      // setting compare latch TB1CL0 - CAN'T WRITE DIRECTLY TO TB1CL0
+}
+
+
+void UART_Setup (void){
+    // Configure P2.0 and P2.1 ports for UART
+    P2SEL0 &= ~(BIT0 + BIT1);               // secondary module function UCA0RXD
+    P2SEL1 |= BIT0 + BIT1;                  // secondary module function UCA0TXD
+    UCA0CTLW0 |= UCSWRST;                   // Put the UART in software reset so can be modified
+    UCA0CTLW0 |= UCSSEL0;                   // Run the UART using ACLK
+    UCA0MCTLW = UCOS16 + UCBRF0 + 0x4900;   // Enable oversampling, Baud rate = 9600 from an 8 MHz clock (BRCLK) and from column UCBRSx
+    UCA0BRW = 52;                           // Clock prescaler from Table 18-5 column UCBRx
+    UCA0CTLW0 &= ~UCSWRST;                  // release UART for operation
+    UCA0IE |= UCRXIE;                       // Enable UART Rx interrupt
 }
 
 
@@ -78,34 +93,7 @@ int main(void)
 	// Global interrupt enable
 	_EINT();
 
-	while(1){
-	    // switch case for reading data from accelerometer
-//        switch(state){
-//            case 0:
-//                // set up ADC to read port A12
-//                // enable conversion
-//                // convert
-//                // disable  conversion
-//                // store ADC10MEM0->Ax
-//                break;
-//            case 1:
-//                // set up ADC to read port A13
-//                // enable conversion
-//                // convert
-//                // disable  conversion
-//                // store ADC10MEM0->Ay
-//                break;
-//            case 2:
-//                // set up ADC to read port A14
-//                // enable conversion
-//                // convert
-//                // disable  conversion
-//                // store ADC10MEM0->Az
-//                break;
-//            default:
-//                break;
-//        }
-	}
+	while(1);
 
 	return 0;
 }
@@ -172,19 +160,13 @@ __interrupt void ADC10_Conversion_ISR(void)
 
 
 
-#pragma vector = TIMER0_B1_VECTOR       // interrupt vector for TB1 interrupt
+#pragma vector = TIMER1_B0_VECTOR       // interrupt vector for TB1 interrupt
 __interrupt void TB1_ISR(void)
 {
-    switch(TB1IV){
-        case TBIFG:
             UART_Tx(255);
             UART_Tx(Ax);
             UART_Tx(Ay);
             UART_Tx(Az);
 
-            TB1CTL &= ~TBIFG;
-            break;
-        default:
-            break;
-    }
+            TB1CCTL0 &= ~CCIFG;
 }
