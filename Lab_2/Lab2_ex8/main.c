@@ -1,27 +1,24 @@
 #include <msp430.h> 
 
-// global variables for acceleration
-unsigned volatile char Ax = 0;
-unsigned volatile char Ay = 0;
-unsigned volatile char Az = 0;
-
+// global variable for temperature
+unsigned volatile temperature = 0;
 
 void clockSetup (void){
     // configuring clocks
     CSCTL0 = CSKEY;                             // unlocking clock
     CSCTL1 |= DCOFSEL1 + DCOFSEL0;              // set DCO to 8MHz
     CSCTL2 = SELA_3 + SELS_3 + SELM_3;          // ACLK = DCO, SMCLK = DCO, MCLK = DCO
-    CSCTL3 = DIVS__16 + DIVM__16;               // SMCLK/16, MCLK/16
+    CSCTL3 = DIVS__8 + DIVM__8;                // SMCLK/8, MCLK/8
 }
 
 void timerBSetup (void){
     // setting up Timer B
     TB1CTL |= TBSSEL__SMCLK;            // TB1 using SMCLK
-    TB1CTL |= ID__1;                    // TB1 with a CLK divider of 1
+    TB1CTL |= ID__2;                    // TB1 with a CLK divider of 2
     TB1CTL |= MC__UP;                   // setting TB to up mode
     TB1CCTL0 |= CCIE;                   // enable timer B overflow flag
 
-    TB1CCR0 = 19999;                    // set compare latch. period of timer B: SMCLK = 500kHz; 500kHz/1; 500kHz/25Hz = 20 cycles
+    TB1CCR0 = 19999;                    // set compare latch. period of timer B: SMCLK = 1MHz; 1MHz/2; 500kHz/25Hz = 20 cycles
 }
 
 
@@ -41,10 +38,12 @@ void UART_Setup (void){
 void ADCSetup (void){
     // initial ADC configuration
     ADC10CTL0 &= ~ADC10ENC;                                 // disable ADC10
-    ADC10CTL1 |= ADC10SSEL_1 + ADC10SHP + ADC10CONSEQ_0;    // select ACLK for ADC10_B, SAMPCON from sampling timer, single-channel single-conversion
-    ADC10CTL0 |= ADC10ON;                                   // turn on the ADC
+    ADC10CTL0 |= ADC10ON + ADC10SHT_8;                      // turn on the ADC, sample and hold of 256 clock cycles
+    ADC10CTL1 |= ADC10SSEL_3 + ADC10SHP + ADC10CONSEQ_0;    // select SMCLK for ADC10_B, SAMPCON from sampling timer, single-channel single-conversion
+    ADC10MCTL0 = ADC10INCH_4;                               // set up ADC to read A4 (NTC temperature sensor)
     ADC10CTL2 |= ADC10RES;                                  // set resolution to 10 bit
     ADC10CTL0 |= ADC10ENC;                                  // enable ADC10
+    ADC10IE |= ADC10IE0;
 }
 
 
@@ -66,7 +65,6 @@ char ADC_Read (void){
     return result;                      // return result
 }
 
-
 /**
  * main.c
  */
@@ -74,62 +72,78 @@ int main(void)
 {
 	WDTCTL = WDTPW | WDTHOLD;	// stop watchdog timer
 	
-	// set P3.0, P3.1, P3.2 as A12-A14
-	P3SEL0 |= BIT0 + BIT1 + BIT2;
-	P3SEL1 |= BIT0 + BIT1 + BIT2;
-
 	// configuring P2.7 as output
-	P2DIR |= BIT7;
-	P2SEL1 &= ~BIT7;
-	P2SEL0 &= ~BIT7;
+    P2DIR |= BIT7;
+    P2OUT |= BIT7;              // set high to power NTC
 
-	// set to output high to power accelerometer
-	P2OUT |= BIT7;
+	// set P1.4 as A4 to ADC
+	P1SEL0 |= BIT4;
+	P1SEL1 |= BIT4;
 
-	clockSetup();
-	timerBSetup();
-	ADCSetup();
-	UART_Setup();
+	// set up reference voltage
+	REFCTL0 |= REFVSEL1 + REFON;
 
-	// Global interrupt enable
-	_EINT();
+    clockSetup();
+    timerBSetup();
+    ADCSetup();
+    UART_Setup();
 
-	while(1);
+    // set up LEDs
+    PJDIR |= BIT0 + BIT1 + BIT2 + BIT3;
+    P3DIR |= BIT4 + BIT5 + BIT6 + BIT7;
+    PJOUT |= BIT0;
+
+    // Global interrupt enable
+    _EINT();
+
+    while(1);
 
 	return 0;
 }
 
-
-// ISRs------------------------------------------------------------------------------
-
 #pragma vector = TIMER1_B0_VECTOR       // interrupt vector for TB1 interrupt
 __interrupt void TB1_ISR(void)
 {
-    UART_Tx(255);                       // transmit start bit
+    UART_Tx(255);                       // start byte
 
     // set up ADC for Ax input
-    ADC10CTL0 &= ~ADC10ENC;             // disable conversion
-    ADC10MCTL0 = ADC10INCH_12;          // set up ADC to read A12 (Ax)
     ADC10CTL0 |= ADC10ENC + ADC10SC;    // enable/start conversion
 
-    Ax = ADC_Read();                    // read ADC to Ax
-    UART_Tx(Ax);                        // transmit Ax
+    temperature = ADC_Read();           // read ADC to Ax
+    UART_Tx(temperature);               // transmit Ax
 
-    // set up ADC for Ay input
-    ADC10CTL0 &= ~ADC10ENC;             // disable conversion
-    ADC10MCTL0 = ADC10INCH_13;          // set up ADC to read A13 (Ay)
-    ADC10CTL0 |= ADC10ENC + ADC10SC;    // enable/start conversion
+    ADC10CTL0 &= ~(ADC10ENC + ADC10SC); // disable conversion
 
-    Ay = ADC_Read();                    // read ADC to Ay
-    UART_Tx(Ay);                        // transmit Ay
-
-    // set up ADC for Az input
-    ADC10CTL0 &= ~ADC10ENC;             // disable conversion
-    ADC10MCTL0 = ADC10INCH_14;          // set up ADC to read A14 (Az)
-    ADC10CTL0 |= ADC10ENC + ADC10SC;    // enable/start conversion
-
-    Az = ADC_Read();                    // read ADC to Az
-    UART_Tx(Az);                        // transmit Az
+    // LEDs on
+    if(temperature < 42)
+        PJOUT |= BIT1;
+    if(temperature < 41)
+            PJOUT |= BIT2;
+    if(temperature < 40)
+            PJOUT |= BIT3;
+    if(temperature < 39)
+            P3OUT |= BIT4;
+    if(temperature < 38)
+            P3OUT |= BIT5;
+    if(temperature < 37)
+            P3OUT |= BIT6;
+    if(temperature < 36)
+            P3OUT |= BIT7;
+    // LEDs off
+    if(temperature > 42)
+            PJOUT &= ~BIT1;
+    if(temperature > 41)
+            PJOUT &= ~BIT2;
+    if(temperature > 40)
+            PJOUT &= ~BIT3;
+    if(temperature > 39)
+            P3OUT &= ~BIT4;
+    if(temperature > 38)
+            P3OUT &= ~BIT5;
+    if(temperature > 37)
+            P3OUT &= ~BIT6;
+    if(temperature > 36)
+            P3OUT &= ~BIT7;
 
     TB1CCTL0 &= ~CCIFG;                 // reset timer flag
 }
