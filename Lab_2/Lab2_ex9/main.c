@@ -3,7 +3,8 @@
 // defines and global variables
 #define BUFFER_SIZE 50
 
-unsigned volatile char data = 0;
+unsigned char Rx = 0;
+unsigned char sendData = 0;
 
 // Setup Functions--------------------------------
 void clockSetup (void){
@@ -11,7 +12,7 @@ void clockSetup (void){
     CSCTL0 = CSKEY;                             // unlocking clock
     CSCTL1 |= DCOFSEL1 + DCOFSEL0;              // set DCO to 8MHz
     CSCTL2 = SELA_3 + SELS_3 + SELM_3;          // ACLK = DCO, SMCLK = DCO, MCLK = DCO
-    CSCTL3 = DIVS__8 + DIVM__8;                // SMCLK/8, MCLK/8
+    CSCTL3 = DIVS__8 + DIVM__8;                 // SMCLK/8, MCLK/8
 }
 
 void UART_Setup (void){
@@ -27,8 +28,8 @@ void UART_Setup (void){
 }
 
 void UART_Tx (unsigned char TxByte){
-    while (!(UCA0IFG & UCTXIFG));       // wait until the previous Tx is finished
-    UCA0TXBUF = TxByte;                 // send TxByte
+    while (!(UCA0IFG & UCTXIFG));           // wait until the previous Tx is finished
+    UCA0TXBUF = TxByte;                     // send TxByte
 }
 
 char UART_Rx (void){
@@ -37,7 +38,7 @@ char UART_Rx (void){
     return RxByte;                          // return RxByte
 }
 
-void UART_string (char string[]){
+void UART_string (unsigned char string[]){
     // loop through string character by character and send over serial
     int i;
     for(i = 0; string[i] != '\0'; i++)
@@ -46,57 +47,65 @@ void UART_string (char string[]){
 
 typedef struct{
 
-    char buffer[BUFFER_SIZE];
-    int head;
-    int tail;
-    int full;
+    unsigned char* buffer;
+    int size;
+    int front;
+    int rear;
 
 } CircularBuffer;
 
 // sets up buffer
-void initializeBuffer(CircularBuffer* cb){
-    cb->head = 0;
-    cb->tail = 0;
-    cb->full = 0; // 1 = full
+CircularBuffer* createCircularBuffer(int size){
+    CircularBuffer* cb = (CircularBuffer*)malloc(sizeof(CircularBuffer));
+    cb->buffer = (unsigned char*)malloc(size * sizeof(unsigned char));
+    cb->size = size;
+    cb->front = -1;
+    cb->rear = -1;
+    return cb;
 }
 
-// checks if buffer is empty. returns cb->full
-int isEmpty(const CircularBuffer *cb){
-//    if(!cb->full && (cb->head == cb->tail))
-//        return 1;
-//    else
-//        return 0;
-
-    return cb->full;
+// checks if buffer is full. returns 1 if full
+int isFull(CircularBuffer* cb){
+    return ((cb->rear + 1) % cb->size) == cb->front;
 }
 
-// enqueues a char given and returns 1 if successful
-int enqueue(CircularBuffer* cb, char data){
-    if(!cb->full){
-        cb->buffer[cb->head] = data;
-        cb->head = (cb->head + 1) % BUFFER_SIZE;    // warp around to beginning if overflows
-        if(cb->head == cb->tail)
-            cb->full = 1;                           // if buffer full, set full to 1
-        return 1;                                   // return 1 since successful
+// checks if buffer is empty. returns 1 is empty
+int isEmpty(CircularBuffer* cb){
+    return cb->front == -1;
+}
+
+// enqueues a given char given. UARTs an error if queue full
+void enqueue(CircularBuffer* cb, char data){
+    if(isFull(cb)){
+        UART_string("Buffer is full, cannot enqueue!");
+        return;
     }
-    return 0;                                       // return 0 if queue full
-}
-
-// dequeues a char from the buffer. returns 1 if works, 0 otherwise
-int dequeue(CircularBuffer* cb, char* data){
-    // if buffer is not empty
-    if(!isEmpty(cb)){
-        *data = cb->buffer[cb->tail];               // stores tail in data
-        cb->tail = (cb->tail + 1) % BUFFER_SIZE;     // advance tail and wrap around if overflow
-        cb->full = 0;                               // buffer no longer full
-        return 1;                                   // return 1 for success
+    if(isEmpty(cb))
+        cb->front = cb->rear = 0;
+    else{
+        cb->rear = (cb->rear + 1) % cb->size;
     }
-    return 0;                                       // return 0 for empty queue
+    cb->buffer[cb->rear] = data;
+    return;
+}
+
+// dequeues a char from the buffer. returns data if works, -1 otherwise
+char dequeue(CircularBuffer* cb){
+    if(isEmpty(cb)){
+        UART_string("Queue is empty, cannot dequeue!");
+        return -1;
+    }
+    char data = cb->buffer[cb->front];
+    if(cb->front == cb->rear)
+        cb->front = cb->rear = -1;
+    else
+        cb->front = (cb->front + 1) % cb->size;
+
+    return data;
 }
 
 
-volatile CircularBuffer cb;      // create buffer struct
-
+volatile CircularBuffer* cb;
 
 
 /**
@@ -106,7 +115,7 @@ int main(void)
 {
 	WDTCTL = WDTPW | WDTHOLD;	// stop watchdog timer
 	
-	initializeBuffer(&cb);  // initialize buffer at its memory location
+	cb = createCircularBuffer(BUFFER_SIZE);
 
 	// set up clock and UART
 	clockSetup();
@@ -124,20 +133,15 @@ int main(void)
 #pragma vector = USCI_A0_VECTOR             // interrupt vector for Rx interrupt
 __interrupt void USCI_A0_ISR(void)
 {
-    char Rx = UART_Rx();
+    Rx = UART_Rx();                         // get char from UART
 
-    // if carriage return received over UART, dequeue and send dequeued
-    if(Rx == 13){
-        if(dequeue(&cb, &data))
-            UART_Tx(data);                  // transmit dequeued byte
-        else
-            UART_string("Queue full!");     // error for empty queue
-    }
-    else
-        // enqueue data from UART
-        if(enqueue(&cb, data))
+    if(Rx == 13){                           // if
+        sendData = dequeue(cb);
+        if(sendData == -1)                  // if dequeue failed do nothing
             _NOP();
         else
-            UART_string("Queue full!");     // error for enqueuing full queue
-
+            UART_Tx(sendData);              // if dequeue successful, send dequeued char to UART
+    }
+    else
+        enqueue(cb, Rx);                    // enqueue received data from UART
 }
