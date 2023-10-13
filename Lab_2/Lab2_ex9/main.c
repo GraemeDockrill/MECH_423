@@ -3,6 +3,8 @@
 // defines and global variables
 #define BUFFER_SIZE 50
 
+unsigned volatile char data = 0;
+
 // Setup Functions--------------------------------
 void clockSetup (void){
     // configuring clocks
@@ -35,6 +37,13 @@ char UART_Rx (void){
     return RxByte;                          // return RxByte
 }
 
+void UART_string (char string[]){
+    // loop through string character by character and send over serial
+    int i;
+    for(i = 0; string[i] != '\0'; i++)
+        UART_Tx(string[i]);
+}
+
 typedef struct{
 
     char buffer[BUFFER_SIZE];
@@ -45,7 +54,7 @@ typedef struct{
 } CircularBuffer;
 
 // sets up buffer
-void initializeBuffer(CircularBuffer *cb){
+void initializeBuffer(CircularBuffer* cb){
     cb->head = 0;
     cb->tail = 0;
     cb->full = 0; // 1 = full
@@ -62,7 +71,7 @@ int isEmpty(const CircularBuffer *cb){
 }
 
 // enqueues a char given and returns 1 if successful
-int enqueue(CircularBuffer *cb, char *data){
+int enqueue(CircularBuffer* cb, char data){
     if(!cb->full){
         cb->buffer[cb->head] = data;
         cb->head = (cb->head + 1) % BUFFER_SIZE;    // warp around to beginning if overflows
@@ -70,11 +79,11 @@ int enqueue(CircularBuffer *cb, char *data){
             cb->full = 1;                           // if buffer full, set full to 1
         return 1;                                   // return 1 since successful
     }
-    return 0;                                       // return 0 if unsuccessful
+    return 0;                                       // return 0 if queue full
 }
 
 // dequeues a char from the buffer. returns 1 if works, 0 otherwise
-int dequeue(CircularBuffer *cb, char *data){
+int dequeue(CircularBuffer* cb, char* data){
     // if buffer is not empty
     if(!isEmpty(cb)){
         *data = cb->buffer[cb->tail];               // stores tail in data
@@ -82,8 +91,11 @@ int dequeue(CircularBuffer *cb, char *data){
         cb->full = 0;                               // buffer no longer full
         return 1;                                   // return 1 for success
     }
-    return 0;                                       // return 0 for fail
+    return 0;                                       // return 0 for empty queue
 }
+
+
+volatile CircularBuffer cb;      // create buffer struct
 
 
 
@@ -94,7 +106,6 @@ int main(void)
 {
 	WDTCTL = WDTPW | WDTHOLD;	// stop watchdog timer
 	
-	CircularBuffer cb;      // create buffer struct
 	initializeBuffer(&cb);  // initialize buffer at its memory location
 
 	// set up clock and UART
@@ -113,19 +124,20 @@ int main(void)
 #pragma vector = USCI_A0_VECTOR             // interrupt vector for Rx interrupt
 __interrupt void USCI_A0_ISR(void)
 {
+    char Rx = UART_Rx();
+
     // if carriage return received over UART, dequeue and send dequeued
-    if(UART_Rx() == 13){
-        dequeue
+    if(Rx == 13){
+        if(dequeue(&cb, &data))
+            UART_Tx(data);                  // transmit dequeued byte
+        else
+            UART_string("Queue full!");     // error for empty queue
     }
+    else
+        // enqueue data from UART
+        if(enqueue(&cb, data))
+            _NOP();
+        else
+            UART_string("Queue full!");     // error for enqueuing full queue
 
-    while (!(UCA0IFG & UCTXIFG));           // Wait until the previous Tx is finished
-    UCA0TXBUF = RxByte;                     // Echo back the received byte
-
-    while (!(UCA0IFG & UCTXIFG));           // Wait until the previous Tx is finished
-    UCA0TXBUF = RxByte + 1;                 // Echo back the received byte + 1
-
-    if(RxByte == 'j')                       // if received char is j, turn on LED
-        PJOUT |= BIT0;
-    if(RxByte == 'k')
-        PJOUT &= ~BIT0;                     // if received char is k, turn off LED
 }
