@@ -1,8 +1,7 @@
 #include <msp430.h> 
+#include <msp_setup_functions.h>
 
 // defines and global variables
-#define BUFFER_SIZE 50
-
 unsigned volatile char Rx = 0;
 unsigned volatile char sendData = 0;
 unsigned volatile char startByte;
@@ -12,123 +11,6 @@ unsigned volatile char dataByte2;
 unsigned volatile char escByte;
 unsigned volatile int dataWord;
 unsigned volatile int parsingMessage = 0;
-
-// Setup Functions--------------------------------
-void clockSetup (void){
-    // configuring clocks
-    CSCTL0 = CSKEY;                             // unlocking clock
-    CSCTL1 |= DCOFSEL1 + DCOFSEL0;              // set DCO to 8MHz
-    CSCTL2 = SELA_3 + SELS_3 + SELM_3;          // ACLK = DCO, SMCLK = DCO, MCLK = DCO
-    CSCTL3 = DIVS__8 + DIVM__8;                 // SMCLK/8, MCLK/8
-}
-
-void timerBSetup (void){
-    // setting up Timer B
-    TB1CTL |= TBSSEL__SMCLK;            // TB1 using SMCLK
-    TB1CTL |= ID__8;                   // TB1 with a CLK divider of 16
-    TB1CTL |= MC__UP;                   // setting TB to up mode
-
-    // setting TB1.1 cycle to 500Hz
-    TB1CCTL1 = OUTMOD_7;                // set mode to Reset/Set
-
-    // setting up square wave
-    TB1CCR0 = 999;                      // setting compare latch TB1CL0 - CAN'T WRITE DIRECTLY TO TB1CL0
-    TB1CCR1 = 499;                      // setting compare latch TB1CL1 - CAN'T WRITE DIRECTLY TO TB1CL0
-}
-
-void UART_Setup (void){
-    // Configure P2.0 and P2.1 ports for UART
-    P2SEL0 &= ~(BIT0 + BIT1);               // secondary module function UCA0RXD
-    P2SEL1 |= BIT0 + BIT1;                  // secondary module function UCA0TXD
-    UCA0CTLW0 |= UCSWRST;                   // Put the UART in software reset so can be modified
-    UCA0CTLW0 |= UCSSEL0;                   // Run the UART using ACLK
-    UCA0MCTLW = UCOS16 + UCBRF0 + 0x4900;   // Enable oversampling, Baud rate = 9600 from an 8 MHz clock (BRCLK) and from column UCBRSx
-    UCA0BRW = 52;                           // Clock prescaler from Table 18-5 column UCBRx
-    UCA0CTLW0 &= ~UCSWRST;                  // release UART for operation
-    UCA0IE |= UCRXIE;                       // Enable UART Rx interrupt
-}
-
-void UART_Tx (unsigned char TxByte){
-    while (!(UCA0IFG & UCTXIFG));           // wait until the previous Tx is finished
-    UCA0TXBUF = TxByte;                     // send TxByte
-}
-
-char UART_Rx (void){
-    unsigned char RxByte = 0;               // Create an unsigned character variable (8 bits)
-    RxByte = UCA0RXBUF;                     // Get the new byte from the Rx buffer
-    return RxByte;                          // return RxByte
-}
-
-void UART_string (unsigned char string[]){
-    // loop through string character by character and send over serial
-    int i;
-    for(i = 0; string[i] != '\0'; i++)
-        UART_Tx(string[i]);
-}
-
-typedef struct{
-
-    unsigned char* buffer;
-    int size;
-    int front;
-    int rear;
-    int count;
-
-} CircularBuffer;
-
-// sets up buffer
-CircularBuffer* createCircularBuffer(int size){
-    CircularBuffer* cb = (CircularBuffer*)malloc(sizeof(CircularBuffer));
-    cb->buffer = (unsigned char*)malloc(size * sizeof(unsigned char));
-    cb->size = size;
-    cb->front = -1;
-    cb->rear = -1;
-    cb->count = 0;
-    return cb;
-}
-
-// checks if buffer is full. returns 1 if full
-int isFull(CircularBuffer* cb){
-    return ((cb->rear + 1) % cb->size) == cb->front;
-}
-
-// checks if buffer is empty. returns 1 is empty
-int isEmpty(CircularBuffer* cb){
-    return cb->front == -1;
-}
-
-// enqueues a given char given. UARTs an error if queue full
-void enqueue(CircularBuffer* cb, char data){
-    if(isFull(cb)){
-        UART_string("Buffer is full, cannot enqueue!");
-        return;
-    }
-    if(isEmpty(cb))
-        cb->front = cb->rear = 0;
-    else{
-        cb->rear = (cb->rear + 1) % cb->size;
-    }
-    cb->buffer[cb->rear] = data;
-    cb->count = cb->count + 1;
-    return;
-}
-
-// dequeues a char from the buffer. returns data if works, -1 otherwise
-char dequeue(CircularBuffer* cb){
-    if(isEmpty(cb)){
-        UART_string("Queue is empty, cannot dequeue!");
-        return -1;
-    }
-    char data = cb->buffer[cb->front];
-    if(cb->front == cb->rear)
-        cb->front = cb->rear = -1;
-    else
-        cb->front = (cb->front + 1) % cb->size;
-
-    cb->count = cb->count - 1;
-    return data;
-}
-
 
 volatile CircularBuffer* cb;
 

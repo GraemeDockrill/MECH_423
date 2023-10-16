@@ -1,4 +1,5 @@
 #include <msp430.h> 
+#include <../includes/msp_setup_functions.h>
 
 // MECH 423 Lab 2 Exercise 5
 
@@ -10,27 +11,10 @@ int main(void)
 	WDTCTL = WDTPW | WDTHOLD;	// stop watchdog timer
 
 	// configuring clocks
-	CSCTL0 = CSKEY;                     // unlocking clock
-	CSCTL1 |= DCOFSEL1 + DCOFSEL0;      // set DCO to 8MHz
-	CSCTL2 = SELA_3 + SELS_3 + SELM_3;  // ACLK = DCO, SMCLK = DCO, MCLK = DCO
-	CSCTL3 = DIVA__16 + DIVS__16 + DIVM__16;  // ACLK/16, SMCLK/16, MCLK/16
-
-	// setting up Timer B
-	TB1CTL |= TBSSEL__SMCLK;            // TB1 using SMCLK
-	TB1CTL |= ID__1;                    // TB1 with a CLK divider of 1
-	TB1CTL |= MC__UP;                      // setting TB to up mode
-	TB1CTL |= TBIE;                     // enable TB1CTL interrupt
-
-	// setting TB1.1 cycle to 500Hz
-	TB1CCTL1 = OUTMOD_7;                // set mode to Reset/Set
-
-	// setting TB1.2 cycle to 500Hz, 25% duty cycle
-	TB1CCTL2 = OUTMOD_7;                // set mode to Reset/Set
-
-    // setting up square wave
-	TB1CCR0 = 999;                      // setting compare latch TB1CL0 - CAN'T WRITE DIRECTLY TO TB1CL0
-	TB1CCR1 = 499;                      // setting compare latch TB1CL1 - CAN'T WRITE DIRECTLY TO TB1CL0
-	TB1CCR2 = 249;                      // setting compare latch TB1CL2 - CAN'T WRITE DIRECTLY TO TB1CL0
+	clockSetup();
+	timerBSetup(1999);
+	timerB_CCR1_Setup(999);             // setting up TB1.1 cycle to 500 Hz, 50% duty
+	timerB_CCR2_Setup(499);             // setting up TB1.2 cycle to 500 Hz, 25% duty
 
 	// setting up P3.4 as TB1.1 output
 	P3DIR |= BIT4;                      // setting P3.4 as output
@@ -42,7 +26,6 @@ int main(void)
 
 	// Global interrupt enable
     _EINT();
-
 	
 	while(1);
 

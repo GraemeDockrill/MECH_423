@@ -6,9 +6,8 @@
  */
 int main(void)
 {
-	WDTCTL = WDTPW | WDTHOLD;	// stop watchdog timer
+	WDTCTL = WDTPW | WDTHOLD;   // stop watchdog timer
 
-	// initial setup
 	// set P4.0 as a digital input
 	P4DIR &= ~BIT0;
 
@@ -18,23 +17,18 @@ int main(void)
 
 	// enable internal pull-up resistors for switch S1 (attached to pin P4.0)
 	P4REN |= BIT0;
-	P4OUT |= BIT0; // set P4.0 to use pull-up resistor page 293
+	P4OUT |= BIT0;              // set P4.0 to use pull-up resistor page 293
 
 	// set P4.0 to get interrupted from rising edge & enable the interrupt
-	P4IES &= ~BIT0; // interrupt edge select
-	P4IE |= BIT0; // interrupt enable
+	P4IES &= ~BIT0;             // interrupt edge select
+	P4IE |= BIT0;               // interrupt enable
 
 	// disable interrupt flag of P4.0
 	P4IFG &= ~BIT0;
 
 	// set up P3.7 as a digital output
 	P3DIR |= BIT7;
-
 	P3OUT |= BIT7;
-
-	// set pin P3.7 to digital I/O
-	//P3SEL0 &= ~BIT7;
-	//P3SEL1 &= ~BIT7;
 
 	// global interrupt enable
 	_EINT();
@@ -50,6 +44,12 @@ int main(void)
 // ISR
 #pragma vector = PORT4_VECTOR;
 __interrupt void buttonInterrupt(void){
-    P3OUT ^= BIT7; // toggle LED
-    P4IFG &= ~BIT0; // reset interrupt flag
+
+    switch(P4IV){
+    case P4IV_P4IFG0:
+        P3OUT ^= BIT7;          // toggle LED
+        P4IFG &= ~BIT0;         // reset interrupt flag
+        break;
+    }
+
 }
