@@ -1,69 +1,9 @@
 #include <msp430.h> 
+#include <../includes/msp_setup_functions.h>
 
 // global variable for temperature
 unsigned volatile temperature = 0;
 
-void clockSetup (void){
-    // configuring clocks
-    CSCTL0 = CSKEY;                             // unlocking clock
-    CSCTL1 |= DCOFSEL1 + DCOFSEL0;              // set DCO to 8MHz
-    CSCTL2 = SELA_3 + SELS_3 + SELM_3;          // ACLK = DCO, SMCLK = DCO, MCLK = DCO
-    CSCTL3 = DIVS__8 + DIVM__8;                // SMCLK/8, MCLK/8
-}
-
-void timerBSetup (void){
-    // setting up Timer B
-    TB1CTL |= TBSSEL__SMCLK;            // TB1 using SMCLK
-    TB1CTL |= ID__2;                    // TB1 with a CLK divider of 2
-    TB1CTL |= MC__UP;                   // setting TB to up mode
-    TB1CCTL0 |= CCIE;                   // enable timer B overflow flag
-
-    TB1CCR0 = 19999;                    // set compare latch. period of timer B: SMCLK = 1MHz; 1MHz/2; 500kHz/25Hz = 20 cycles
-}
-
-
-void UART_Setup (void){
-    // Configure P2.0 and P2.1 ports for UART
-    P2SEL0 &= ~(BIT0 + BIT1);               // secondary module function UCA0RXD
-    P2SEL1 |= BIT0 + BIT1;                  // secondary module function UCA0TXD
-    UCA0CTLW0 |= UCSWRST;                   // Put the UART in software reset so can be modified
-    UCA0CTLW0 |= UCSSEL0;                   // Run the UART using ACLK
-    UCA0MCTLW = UCOS16 + UCBRF0 + 0x4900;   // Enable oversampling, Baud rate = 9600 from an 8 MHz clock (BRCLK) and from column UCBRSx
-    UCA0BRW = 52;                           // Clock prescaler from Table 18-5 column UCBRx
-    UCA0CTLW0 &= ~UCSWRST;                  // release UART for operation
-    UCA0IE |= UCRXIE;                       // Enable UART Rx interrupt
-}
-
-
-void ADCSetup (void){
-    // initial ADC configuration
-    ADC10CTL0 &= ~ADC10ENC;                                 // disable ADC10
-    ADC10CTL0 |= ADC10ON + ADC10SHT_8;                      // turn on the ADC, sample and hold of 256 clock cycles
-    ADC10CTL1 |= ADC10SSEL_3 + ADC10SHP + ADC10CONSEQ_0;    // select SMCLK for ADC10_B, SAMPCON from sampling timer, single-channel single-conversion
-    ADC10MCTL0 = ADC10INCH_4;                               // set up ADC to read A4 (NTC temperature sensor)
-    ADC10CTL2 |= ADC10RES;                                  // set resolution to 10 bit
-    ADC10CTL0 |= ADC10ENC;                                  // enable ADC10
-    ADC10IE |= ADC10IE0;
-}
-
-
-void UART_Tx (unsigned char TxByte){
-    while (!(UCA0IFG & UCTXIFG));       // wait until the previous Tx is finished
-    UCA0TXBUF = TxByte;                 // send TxByte
-}
-
-
-char ADC_Read (void){
-    unsigned char result;
-
-    while(ADC10CTL1 & ADC10BUSY);       // wait for ADC to complete
-    result = ADC10MEM0 >> 2;            // read converted memory and bit shift
-
-    if (result >= 255)                  // if accelerometer data is 255, set to 254
-        result = 254;
-
-    return result;                      // return result
-}
 
 /**
  * main.c
@@ -84,9 +24,17 @@ int main(void)
 	REFCTL0 |= REFVSEL1 + REFON;
 
     clockSetup();
-    timerBSetup();
+    timerBSetup(39999);
+    timerB_Overflow_Flag();
     ADCSetup();
     UART_Setup();
+
+    // additional ADC settings
+    ADC10CTL0 &= ~ADC10ENC;                                 // disable ADC10
+    ADC10MCTL0 = ADC10INCH_4;                               // set up ADC to read A4 (NTC temperature sensor)
+    ADC10CTL0 |= ADC10SHT_8;                                // sample and hold of 256 clock cycles
+    ADC10IE |= ADC10IE0;                                    // enable interrupt for successful conversion
+    ADC10CTL0 |= ADC10ENC;                                  // enable ADC10
 
     // set up LEDs
     PJDIR |= BIT0 + BIT1 + BIT2 + BIT3;

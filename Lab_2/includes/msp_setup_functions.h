@@ -9,19 +9,23 @@
 #define MSP_SETUP_FUNCTIONS_H_
 
 // functions
-    // clockSetup
-    // timerBSetup
-    // timerB_CCR1_Setup
-    // timerB_CCR2_Setup
-    // timerAInputSetup
-    // UART_Setup
-    // UART_Tx
-    // UART_Rx
-    // UART_string
-    // isFull
-    // isEmpty
-    // enqueue
-    // dequeue
+    // clockSetup();
+    // timerBSetup(unsigned int CCR0_val);
+    // timerB_Overflow_Flag();
+    // timerB_CCR1_Setup(unsigned int CCR1_val);
+    // timerB_CCR2_Setup(unsigned int CCR2_val);
+    // timerAInputSetup();
+    // ADCSetup();
+    // ADC_Read();
+    // UART_Setup();
+    // UART_Tx(unsigned char TxByte);
+    // UART_Rx();
+    // UART_string(unsigned char string[]);
+    // createCircularBuffer(int size);
+    // isFull(CircularBuffer* cb);
+    // isEmpty(CircularBuffer* cb);
+    // enqueue(CircularBuffer* cb, char data);
+    // dequeue(CircularBuffer* cb);
 
 // buffer size of circular buffer
 //#define BUFFER_SIZE 50
@@ -48,7 +52,7 @@ void clockSetup (void){
 
 
 // sets up Timer B to run at 1 MHz and produce a 500 Hz 50% duty square wave
-void timerBSetup (int CCR0_val){
+void timerBSetup (unsigned int CCR0_val){
     // setting up Timer B
     TB1CTL |= TBSSEL__SMCLK;            // TB1 using SMCLK
     TB1CTL |= ID__1;                    // TB1 with a CLK divider of 1
@@ -58,8 +62,13 @@ void timerBSetup (int CCR0_val){
     TB1CCR0 = CCR0_val;                 // setting compare latch TB1CL0 - CAN'T WRITE DIRECTLY TO TB1CL0
 }
 
+// enable timer B overflow flag
+void timerB_Overflow_Flag (void){
+    TB1CCTL0 |= CCIE;                   // enable timer B overflow flag
+}
+
 // sets up CCR1 to create a 500 Hz 50% duty square wave
-void timerB_CCR1_Setup (int CCR1_val){
+void timerB_CCR1_Setup (unsigned int CCR1_val){
     // setting TB1.1 cycle to 500Hz, 50% duty cycle
     TB1CCTL1 = OUTMOD_7;                // set mode to Reset/Set
 
@@ -68,7 +77,7 @@ void timerB_CCR1_Setup (int CCR1_val){
 }
 
 // sets up CCR2 to create a 500 Hz 25% duty square wave
-void timerB_CCR2_Setup (int CCR2_val){
+void timerB_CCR2_Setup (unsigned int CCR2_val){
     // setting TB1.2 cycle to 500Hz, 25% duty cycle
     TB1CCTL2 = OUTMOD_7;                // set mode to Reset/Set
 
@@ -83,6 +92,32 @@ void timerB_CCR2_Setup (int CCR2_val){
 void timerAInputSetup(){
     TA1CTL = TASSEL__SMCLK + MC__CONTINUOUS + TACLR + TAIE;  // setup Timer A1 to use SMCLK, in CONTINUOUS UP mode, clear timer A, enable timer A interrupt
     TA1CCTL1 = CM_1 + CCIS_0 + CAP + SCS + CCIE;    // setup Timer A1.1 to capture on rising edge, input from CCIxA, in capture mode, synchronous capture, enable capture/compare interrupt
+}
+
+
+// -------------------------- ADC10 SETUP AND METHODS ---------------------------
+
+
+void ADCSetup (void){
+    // initial ADC configuration
+    ADC10CTL0 &= ~ADC10ENC;                                 // disable ADC10
+    ADC10CTL1 |= ADC10SSEL_1 + ADC10SHP + ADC10CONSEQ_0;    // select ACLK for ADC10_B, SAMPCON from sampling timer, single-channel single-conversion
+    ADC10CTL0 |= ADC10ON;                                   // turn on the ADC
+    ADC10CTL2 |= ADC10RES;                                  // set resolution to 10 bit
+    ADC10CTL0 |= ADC10ENC;                                  // enable ADC10
+}
+
+// read data from ADC10 memory and return as a char
+char ADC_Read (void){
+    unsigned char result;
+
+    while(ADC10CTL1 & ADC10BUSY);       // wait for ADC to complete
+    result = ADC10MEM0 >> 2;            // read converted memory and bit shift
+
+    if (result >= 255)                  // if accelerometer data is 255, set to 254
+        result = 254;
+
+    return result;                      // return result
 }
 
 
