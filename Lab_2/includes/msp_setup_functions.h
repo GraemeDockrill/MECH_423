@@ -11,7 +11,9 @@
 // functions
     // clockSetup
     // timerBSetup
-    // TimerB_CCR2_Setup
+    // timerB_CCR1_Setup
+    // timerB_CCR2_Setup
+    // timerAInputSetup
     // UART_Setup
     // UART_Tx
     // UART_Rx
@@ -75,6 +77,15 @@ void timerB_CCR2_Setup (int CCR2_val){
 }
 
 
+// ------------------------------- TIMER A SETUP --------------------------------
+
+
+void timerAInputSetup(){
+    TA1CTL = TASSEL__SMCLK + MC__CONTINUOUS + TACLR + TAIE;  // setup Timer A1 to use SMCLK, in CONTINUOUS UP mode, clear timer A, enable timer A interrupt
+    TA1CCTL1 = CM_1 + CCIS_0 + CAP + SCS + CCIE;    // setup Timer A1.1 to capture on rising edge, input from CCIxA, in capture mode, synchronous capture, enable capture/compare interrupt
+}
+
+
 // -------------------- UART COMMUNICATION SETUP AND METHODS --------------------
 
 
@@ -123,6 +134,7 @@ typedef struct{
     int size;
     int front;
     int rear;
+    int count;
 
 } CircularBuffer;
 
@@ -133,6 +145,7 @@ CircularBuffer* createCircularBuffer(int size){
     cb->size = size;
     cb->front = -1;
     cb->rear = -1;
+    cb->count = 0;
     return cb;
 }
 
@@ -158,6 +171,7 @@ void enqueue(CircularBuffer* cb, char data){
         cb->rear = (cb->rear + 1) % cb->size;
     }
     cb->buffer[cb->rear] = data;
+    cb->count = cb->count + 1;
     return;
 }
 
@@ -173,6 +187,7 @@ char dequeue(CircularBuffer* cb){
     else
         cb->front = (cb->front + 1) % cb->size;
 
+    cb->count = cb->count - 1;
     return data;
 }
 

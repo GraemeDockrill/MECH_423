@@ -1,5 +1,5 @@
 #include <msp430.h> 
-#include <msp_setup_functions.h>
+#include <../includes/msp_setup_functions.h>
 
 // defines and global variables
 unsigned volatile char Rx = 0;
@@ -11,6 +11,8 @@ unsigned volatile char dataByte2;
 unsigned volatile char escByte;
 unsigned volatile int dataWord;
 unsigned volatile int parsingMessage = 0;
+
+#define BUFFER_SIZE 50
 
 volatile CircularBuffer* cb;
 
@@ -33,7 +35,7 @@ int main(void)
 
     // set up clock and UART
     clockSetup();
-    timerBSetup();
+    timerBSetup(1999);
     UART_Setup();
 
     // Global interrupt enable
