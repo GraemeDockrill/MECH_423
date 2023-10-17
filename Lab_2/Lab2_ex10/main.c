@@ -36,6 +36,7 @@ int main(void)
     // set up clock and UART
     clockSetup();
     timerBSetup(1999);
+    timerB_CCR1_Setup(999);
     UART_Setup();
 
     // Global interrupt enable

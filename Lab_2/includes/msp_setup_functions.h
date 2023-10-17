@@ -94,6 +94,20 @@ void timerAInputSetup(){
     TA1CCTL1 = CM_1 + CCIS_0 + CAP + SCS + CCIE;    // setup Timer A1.1 to capture on rising edge, input from CCIxA, in capture mode, synchronous capture, enable capture/compare interrupt
 }
 
+void timerAOutputSetup(unsigned int CCR0_val){
+    // setting up Timer B
+    TA1CTL |= TASSEL__SMCLK;            // TB1 using SMCLK
+    TA1CTL |= ID__1;                    // TB1 with a CLK divider of 1
+    TA1CTL |= MC__UP;                   // setting TB to up mode
+
+    // setting up square wave (CCR0 should be 1999 for 500 Hz)
+    TA1CCR0 = CCR0_val;                 // setting compare latch TB1CL0 - CAN'T WRITE DIRECTLY TO TB1CL0
+}
+
+void timerA_Overflow_Flag (void){
+    TA1CCTL0 |= CCIE;                   // enable timer A overflow flag
+}
+
 
 // -------------------------- ADC10 SETUP AND METHODS ---------------------------
 
