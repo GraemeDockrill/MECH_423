@@ -67,6 +67,13 @@ void timerB_Overflow_Flag (void){
     TB1CCTL0 |= CCIE;                   // enable timer B overflow flag
 }
 
+// sets up CCR0 to create a square wave
+void timerB_CCR0_Setup (unsigned int CCR0_val){
+
+    // (CCR1 should be 1999 for 500 Hz, 50%)
+    TB1CCR0 = CCR0_val;                 // setting compare latch TB1CL0
+}
+
 // sets up CCR1 to create a 500 Hz 50% duty square wave
 void timerB_CCR1_Setup (unsigned int CCR1_val){
     // setting TB1.1 cycle to 500Hz, 50% duty cycle
@@ -83,6 +90,16 @@ void timerB_CCR2_Setup (unsigned int CCR2_val){
 
     // (CCR2 should be 499 for 500 Hz, 25%)
     TB1CCR2 = CCR2_val;                 // setting compare latch TB1CL2 - CAN'T WRITE DIRECTLY TO TB1CL0
+}
+
+// sets up Timer B to run at 1 MHz in CONTINUOUS MODE
+void timerBSetupContinuous (){
+    // setting up Timer B
+    TB1CTL |= TBSSEL__SMCLK;            // TB1 using SMCLK
+    TB1CTL |= ID__1;                    // TB1 with a CLK divider of 1
+    TB1CTL |= MC__CONTINUOUS;                   // setting TB to up mode
+
+    TB1CTL |= CNTL_0;                   // choose highest counter of 16bits 0xFFFFh
 }
 
 
