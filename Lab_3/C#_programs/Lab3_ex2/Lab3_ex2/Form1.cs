@@ -14,6 +14,8 @@ namespace Lab3_ex2
     {
 
         public int numberOfDataPoints = 0;
+        public bool sendData = false;
+        public int direction = 1;                   // 1 = CW, 0 = CCW
         public Form1()
         {
             InitializeComponent();
@@ -34,16 +36,9 @@ namespace Lab3_ex2
         {
             lblDataRate.Visible = false;
             cbComResponse.Checked = true;
-            cbByte1.Checked = false;
-            cbByte2.Checked = false;
-            cbByte3.Checked = false;
-            cbByte4.Checked = false;
-            cbByte5.Checked = false;
-            txtByte1.Enabled = false;
-            txtByte2.Enabled = false;
-            txtByte3.Enabled = false;
-            txtByte4.Enabled = false;
-            txtByte5.Enabled = false;
+            tbDutyCycle.Value = 0;
+            btnCCWdir.Enabled = true;
+            btnCWdir.Enabled = false;
             ComPortUpdate();
         }
 
@@ -100,118 +95,6 @@ namespace Lab3_ex2
             }
         }
 
-        private void btnComTransmit_Click(object sender, EventArgs e)
-        {
-            byte[] TxBytes = new Byte[5];
-
-            try
-            {
-                if (serialPort1.IsOpen)
-                {
-                    if(cbByte1.Checked && (txtByte1.Text) != "")
-                    {
-                        TxBytes[0] = Convert.ToByte(txtByte1.Text);
-                        serialPort1.Write(TxBytes, 0, 1);
-                    }
-                    if (cbByte2.Checked && (txtByte2.Text) != "")
-                    {
-                        TxBytes[0] = Convert.ToByte(txtByte2.Text);
-                        serialPort1.Write(TxBytes, 0, 1);
-                    }
-                    if (cbByte3.Checked && (txtByte3.Text) != "")
-                    {
-                        TxBytes[0] = Convert.ToByte(txtByte3.Text);
-                        serialPort1.Write(TxBytes, 0, 1);
-                    }
-                    if (cbByte4.Checked && (txtByte4.Text) != "")
-                    {
-                        TxBytes[0] = Convert.ToByte(txtByte4.Text);
-                        serialPort1.Write(TxBytes, 0, 1);
-                    }
-                    if (cbByte5.Checked && (txtByte5.Text) != "")
-                    {
-                        TxBytes[0] = Convert.ToByte(txtByte5.Text);
-                        serialPort1.Write(TxBytes, 0, 1);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void Byte_TextChanged(object sender, EventArgs e)
-        {
-            TextBox currentTextBox = sender as TextBox;
-            short parseResult;
-            if (Int16.TryParse((currentTextBox.Text), out parseResult))
-            {
-                if (parseResult > 255)
-                    parseResult = 255;
-                if (parseResult <= 0)
-                    parseResult = 0;
-                currentTextBox.Text = parseResult.ToString();
-            }
-            else
-                currentTextBox.Text = "";
-        }
-
-        private void cbByte1_CheckedChanged(object sender, EventArgs e)
-        {
-            if (cbByte1.Checked == true)
-                txtByte1.Enabled = true;
-            else
-            {
-                txtByte1.Clear();
-                txtByte1.Enabled = false;
-            }
-        }
-
-        private void cbByte2_CheckedChanged(object sender, EventArgs e)
-        {
-            if (cbByte2.Checked == true)
-                txtByte2.Enabled = true;
-            else
-            {
-                txtByte2.Clear();
-                txtByte2.Enabled = false;
-            }
-        }
-
-        private void cbByte3_CheckedChanged(object sender, EventArgs e)
-        {
-            if (cbByte3.Checked == true)
-                txtByte3.Enabled = true;
-            else
-            {
-                txtByte3.Clear();
-                txtByte3.Enabled = false;
-            }
-        }
-
-        private void cbByte4_CheckedChanged(object sender, EventArgs e)
-        {
-            if (cbByte4.Checked == true)
-                txtByte4.Enabled = true;
-            else
-            {
-                txtByte4.Clear();
-                txtByte4.Enabled = false;
-            }
-        }
-
-        private void cbByte5_CheckedChanged(object sender, EventArgs e)
-        {
-            if (cbByte5.Checked == true)
-                txtByte5.Enabled = true;
-            else
-            {
-                txtByte5.Clear();
-                txtByte5.Enabled = false;
-            }
-        }
-
         private void cmbComPorts_DropDown(object sender, EventArgs e)
         {
             ComPortUpdate();
@@ -219,8 +102,31 @@ namespace Lab3_ex2
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            lblDataRate.Text = "Incoming data rate = " + numberOfDataPoints.ToString() + " bytes per second";
+            //lblDataRate.Text = "Incoming data rate = " + numberOfDataPoints.ToString() + " bytes per second";
 
+            // sending UART data to MCU
+            if (sendData)
+            {
+                try
+                {
+                    if (serialPort1.IsOpen)
+                    {
+                        byte[] TxBytes = new Byte[3];
+                        TxBytes[0] = Convert.ToByte(255);                   // start byte
+                        serialPort1.Write(TxBytes, 0, 1);
+                        TxBytes[1] = Convert.ToByte(tbDutyCycle.Value);     // duty cycle byte
+                        serialPort1.Write(TxBytes, 1, 1);
+                        TxBytes[2] = Convert.ToByte(direction);             // motor direction byte
+                        serialPort1.Write(TxBytes, 2, 1);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+
+            // Auto reconnect functionality
             if(cbAutoReconnect.Checked == true && numberOfDataPoints == 0 && serialPort1.IsOpen == true)
             {
                 try
@@ -235,6 +141,27 @@ namespace Lab3_ex2
                     //MessageBox.Show(ex.Message);
                 }
             }
+        }
+
+        private void trackBar1_ValueChanged(object sender, EventArgs e)
+        {
+            sendData = true;
+        }
+
+        private void btnCCWdir_Click(object sender, EventArgs e)
+        {
+            // toggle which button is able to be pressed
+            btnCCWdir.Enabled = false;
+            btnCWdir.Enabled = true;
+            sendData = true;
+        }
+
+        private void btnCWdir_Click(object sender, EventArgs e)
+        {
+            // toggle which button is able to be pressed
+            btnCWdir.Enabled = false;
+            btnCCWdir.Enabled = true;
+            sendData = true;
         }
     }
 }
