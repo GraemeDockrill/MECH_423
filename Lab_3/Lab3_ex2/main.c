@@ -18,11 +18,11 @@ int main(void)
 	timerBSetupContinuous();
 	TB1CTL |= MC__CONTINUOUS;
 	timerB_CCR0_Setup(0xFFFF);
-	timerB_CCR1_Setup(59999);
+	timerB_CCR1_Setup(1999);
 
 	// 16bit precesion - 65535 decimal
 
-	// set P3.4 and P3.5 as outputs for DRV8841
+	// set P3.4 and P3.5 as outputs for DRV8841 B1 & B2
 	P3DIR |= BIT4 + BIT5;
 	P3SEL0 |= BIT4;                     // setting P3.4 as TB1.1
 	P3OUT &= ~BIT5;
