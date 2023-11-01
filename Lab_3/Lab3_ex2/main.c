@@ -56,7 +56,11 @@ __interrupt void USCI_A1_ISR(void)
 
     if(parsingMessage == 1)
         UART1_string("Currently parsing a byte!");
-    else{
+    // ensure you get the start byte first
+    else if(cb->count == 0 && Rx == 255){
+        enqueue(cb, Rx);                        // enqueue the start byte
+    }
+    else if(cb->count > 0){
         enqueue(cb, Rx);                        // enqueue the received byte
     }
 
