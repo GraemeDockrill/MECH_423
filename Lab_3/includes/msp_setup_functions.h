@@ -189,6 +189,39 @@ void UART_string (unsigned char string[]){
         UART_Tx(string[i]);
 }
 
+// set UART communication according to code given by Dr. Ma
+void UART1_Setup (void){
+    // Configure P2.5 and P2.6 ports for UART
+    P2SEL0 &= ~(BIT5 + BIT6);               // secondary module function UCA1RXD
+    P2SEL1 |= BIT5 + BIT6;                  // secondary module function UCA1TXD
+    UCA1CTLW0 |= UCSWRST;                   // Put the UART in software reset so can be modified
+    UCA1CTLW0 |= UCSSEL0;                   // Run the UART using ACLK
+    UCA1MCTLW = UCOS16 + UCBRF0 + 0x4900;   // Enable oversampling, Baud rate = 9600 from an 8 MHz clock (BRCLK) and from column UCBRSx
+    UCA1BRW = 52;                           // Clock prescaler from Table 18-5 column UCBRx
+    UCA1CTLW0 &= ~UCSWRST;                  // release UART for operation
+    UCA1IE |= UCRXIE;                       // Enable UART Rx interrupt
+}
+
+// transmit a message over UART
+void UART1_Tx (unsigned char TxByte){
+    while (!(UCA1IFG & UCTXIFG));           // wait until the previous Tx is finished
+    UCA1TXBUF = TxByte;                     // send TxByte
+}
+
+// read and return a received UART message
+char UART1_Rx (void){
+    unsigned char RxByte = 0;               // Create an unsigned character variable (8 bits)
+    RxByte = UCA1RXBUF;                     // Get the new byte from the Rx buffer
+    return RxByte;                          // return RxByte
+}
+
+// send each character in a string over UART
+void UART1_string (unsigned char string[]){
+    // loop through string character by character and send over serial
+    int i;
+    for(i = 0; string[i] != '\0'; i++)
+        UART1_Tx(string[i]);
+}
 
 // --------------------- CIRCULAR BUFFER STRUCT AND METHODS ---------------------
 
