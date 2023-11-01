@@ -45,8 +45,6 @@ namespace Lab3_ex2
             this.lblDataRate = new System.Windows.Forms.Label();
             this.cbAutoReconnect = new System.Windows.Forms.CheckBox();
             this.tbDutyCycle = new System.Windows.Forms.TrackBar();
-            this.btnCCWdir = new System.Windows.Forms.Button();
-            this.btnCWdir = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tbDutyCycle)).BeginInit();
             this.SuspendLayout();
             // 
@@ -150,7 +148,6 @@ namespace Lab3_ex2
             // 
             // timer1
             // 
-            this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // lblDataRate
@@ -176,39 +173,17 @@ namespace Lab3_ex2
             // tbDutyCycle
             // 
             this.tbDutyCycle.Location = new System.Drawing.Point(12, 61);
-            this.tbDutyCycle.Maximum = 100;
+            this.tbDutyCycle.Maximum = 200;
             this.tbDutyCycle.Name = "tbDutyCycle";
-            this.tbDutyCycle.Size = new System.Drawing.Size(263, 45);
+            this.tbDutyCycle.Size = new System.Drawing.Size(375, 45);
             this.tbDutyCycle.TabIndex = 23;
             this.tbDutyCycle.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
-            // 
-            // btnCCWdir
-            // 
-            this.btnCCWdir.Location = new System.Drawing.Point(281, 59);
-            this.btnCCWdir.Name = "btnCCWdir";
-            this.btnCCWdir.Size = new System.Drawing.Size(50, 47);
-            this.btnCCWdir.TabIndex = 24;
-            this.btnCCWdir.Text = "CCW";
-            this.btnCCWdir.UseVisualStyleBackColor = true;
-            this.btnCCWdir.Click += new System.EventHandler(this.btnCCWdir_Click);
-            // 
-            // btnCWdir
-            // 
-            this.btnCWdir.Location = new System.Drawing.Point(337, 59);
-            this.btnCWdir.Name = "btnCWdir";
-            this.btnCWdir.Size = new System.Drawing.Size(54, 47);
-            this.btnCWdir.TabIndex = 25;
-            this.btnCWdir.Text = "CW";
-            this.btnCWdir.UseVisualStyleBackColor = true;
-            this.btnCWdir.Click += new System.EventHandler(this.btnCWdir_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(401, 470);
-            this.Controls.Add(this.btnCWdir);
-            this.Controls.Add(this.btnCCWdir);
             this.Controls.Add(this.tbDutyCycle);
             this.Controls.Add(this.cbAutoReconnect);
             this.Controls.Add(this.lblDataRate);
@@ -248,8 +223,6 @@ namespace Lab3_ex2
         private System.Windows.Forms.Label lblDataRate;
         private System.Windows.Forms.CheckBox cbAutoReconnect;
         private System.Windows.Forms.TrackBar tbDutyCycle;
-        private System.Windows.Forms.Button btnCCWdir;
-        private System.Windows.Forms.Button btnCWdir;
     }
 }
 

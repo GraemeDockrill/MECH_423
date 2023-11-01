@@ -97,7 +97,7 @@ void timerBSetupContinuous (){
     // setting up Timer B
     TB1CTL |= TBSSEL__SMCLK;            // TB1 using SMCLK
     TB1CTL |= ID__1;                    // TB1 with a CLK divider of 1
-    TB1CTL |= MC__CONTINUOUS;                   // setting TB to up mode
+    TB1CTL |= MC__CONTINUOUS;           // setting TB to continuous mode
 
     TB1CTL |= CNTL_0;                   // choose highest counter of 16bits 0xFFFFh
 }
@@ -189,14 +189,14 @@ void UART_string (unsigned char string[]){
         UART_Tx(string[i]);
 }
 
-// set UART communication according to code given by Dr. Ma
+// set UART communication according to code given by Dr. Ma - changed to use
 void UART1_Setup (void){
     // Configure P2.5 and P2.6 ports for UART
     P2SEL0 &= ~(BIT5 + BIT6);               // secondary module function UCA1RXD
     P2SEL1 |= BIT5 + BIT6;                  // secondary module function UCA1TXD
     UCA1CTLW0 |= UCSWRST;                   // Put the UART in software reset so can be modified
     UCA1CTLW0 |= UCSSEL0;                   // Run the UART using ACLK
-    UCA1MCTLW = UCOS16 + UCBRF0 + 0x4900;   // Enable oversampling, Baud rate = 9600 from an 8 MHz clock (BRCLK) and from column UCBRSx
+    UCA1MCTLW = UCOS16 + UCBRF0 + 0x4900;   // Enable oversampling, Baud rate = 19200 from a 16 MHz clock (BRCLK) and from column UCBRSx
     UCA1BRW = 52;                           // Clock prescaler from Table 18-5 column UCBRx
     UCA1CTLW0 &= ~UCSWRST;                  // release UART for operation
     UCA1IE |= UCRXIE;                       // Enable UART Rx interrupt

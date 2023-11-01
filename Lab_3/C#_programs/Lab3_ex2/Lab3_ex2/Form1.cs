@@ -15,6 +15,7 @@ namespace Lab3_ex2
 
         public int numberOfDataPoints = 0;
         public bool sendData = false;
+        public int dutyCycle = 0;
         public int direction = 1;                   // 1 = CW, 0 = CCW
         public Form1()
         {
@@ -37,8 +38,6 @@ namespace Lab3_ex2
             lblDataRate.Visible = false;
             cbComResponse.Checked = true;
             tbDutyCycle.Value = 0;
-            btnCCWdir.Enabled = true;
-            btnCWdir.Enabled = false;
             ComPortUpdate();
         }
 
@@ -114,7 +113,7 @@ namespace Lab3_ex2
                         byte[] TxBytes = new Byte[3];
                         TxBytes[0] = Convert.ToByte(255);                   // start byte
                         serialPort1.Write(TxBytes, 0, 1);
-                        TxBytes[1] = Convert.ToByte(tbDutyCycle.Value);     // duty cycle byte
+                        TxBytes[1] = Convert.ToByte(dutyCycle);             // duty cycle byte
                         serialPort1.Write(TxBytes, 1, 1);
                         TxBytes[2] = Convert.ToByte(direction);             // motor direction byte
                         serialPort1.Write(TxBytes, 2, 1);
@@ -124,6 +123,8 @@ namespace Lab3_ex2
                 {
                     MessageBox.Show(ex.Message);
                 }
+
+                sendData = false;
             }
 
             // Auto reconnect functionality
@@ -145,22 +146,20 @@ namespace Lab3_ex2
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
-            sendData = true;
-        }
-
-        private void btnCCWdir_Click(object sender, EventArgs e)
-        {
-            // toggle which button is able to be pressed
-            btnCCWdir.Enabled = false;
-            btnCWdir.Enabled = true;
-            sendData = true;
-        }
-
-        private void btnCWdir_Click(object sender, EventArgs e)
-        {
-            // toggle which button is able to be pressed
-            btnCWdir.Enabled = false;
-            btnCCWdir.Enabled = true;
+            if (tbDutyCycle.Value < tbDutyCycle.Maximum / 2)
+            {
+                // setting speed and direction for CW travel
+                direction = 0;
+                dutyCycle = -(100 / (tbDutyCycle.Maximum / 2)) * tbDutyCycle.Value + tbDutyCycle.Maximum;
+            }
+            else if (tbDutyCycle.Value > tbDutyCycle.Maximum / 2)
+            {
+                // setting speed and direction for CCW travel
+                direction = 1;
+                dutyCycle = (100 / (tbDutyCycle.Maximum / 2)) * tbDutyCycle.Value - tbDutyCycle.Maximum;
+            }
+            else
+                dutyCycle = 0;
             sendData = true;
         }
     }

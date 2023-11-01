@@ -25,23 +25,21 @@ int main(void)
 
 	// setup functions
 	CSCTL0 = CSKEY;                             // unlocking clock
-	CSCTL1 |= DCORSEL;
-    CSCTL1 |= DCOFSEL_0;                        // set DCO to 16MHz
+	CSCTL1 = DCORSEL;                           // set DCO to 16MHz
     CSCTL2 = SELA_3 + SELS_3 + SELM_3;          // ACLK = DCO, SMCLK = DCO, MCLK = DCO
-    CSCTL3 = DIVM__8;                           // MCLK/8
+    CSCTL3 |= DIVM__8;                          // MCLK/8, ACLK 16MHz
 	timerBSetupContinuous();
-	TB1CTL |= MC__CONTINUOUS;
 	timerB_CCR0_Setup(0xFFFF);
 	timerB_CCR1_Setup(motorSpeed);
-    UART1_Setup();
+	//timerB_CCR2_Setup(motorSpeed);
+    UART1_Setup();                              // set up UART1 at 19200 Baud
 
 	// 16bit precesion - 65535 decimal
 
 	// set P3.4 and P3.5 as outputs for DRV8841 B1 & B2
 	P3DIR |= BIT4 + BIT5;
-	P3SEL0 |= BIT4;                     // setting P3.4 as TB1.1
+	P3SEL0 |= BIT4 + BIT5;                     // setting P3.4 as TB1.1
 	P3OUT &= ~BIT5;
-//	P3OUT &= ~BIT4;
 
 	// Global interrupt enable
 	_EINT();
@@ -67,19 +65,22 @@ __interrupt void USCI_A1_ISR(void)
         startByte = dequeue(cb);
         dutyByte = dequeue(cb);
         dirByte = dequeue(cb);
+        UART1_Tx(startByte);
+        UART1_Tx(dutyByte);
+        UART1_Tx(dirByte);
 
         if(startByte == 255){
-            // turning duty cycle byte into CCR1
-            motorSpeed = (65535.0 / 100.0) * dutyByte;
-
-            timerB_CCR1_Setup(motorSpeed);          // change motor speed to corresponding duty cycle
+            // turning duty cycle byte into motor speed
+            motorSpeed = (65534.0 * dutyByte) / 100;
 
             // if dirByte = 1, CW, else if dirByte = 0, CCW
             if(dirByte == 1){
-
+                TB1CCTL1 = OUTMOD_5;
+                timerB_CCR2_Setup(motorSpeed);          // change motor speed
             }
             else if(dirByte == 0){
-
+                TB1CCTL2 = OUTMOD_5;
+                timerB_CCR1_Setup(motorSpeed);          // change motor speed
             }
         }
 
