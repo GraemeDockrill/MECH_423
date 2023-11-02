@@ -19,32 +19,36 @@ volatile CircularBuffer* cb;
  */
 int main(void)
 {
-	WDTCTL = WDTPW | WDTHOLD;	// stop watchdog timer
-	
+    WDTCTL = WDTPW | WDTHOLD;   // stop watchdog timer
+
     cb = createCircularBuffer(BUFFER_SIZE); // create circular buffer at cb location
 
-	// setup functions
-	CSCTL0 = CSKEY;                             // unlocking clock
-	CSCTL1 = DCORSEL;                           // set DCO to 16MHz
+    // setup functions
+    CSCTL0 = CSKEY;                             // unlocking clock
+    CSCTL1 = DCORSEL;                           // set DCO to 16MHz
     CSCTL2 = SELA_3 + SELS_3 + SELM_3;          // ACLK = DCO, SMCLK = DCO, MCLK = DCO
-    CSCTL3 |= DIVM__8;                          // MCLK/8, ACLK 16MHz
-    timerBSetup(0xFFFF);
-	timerB_CCR1_Setup(motorSpeed);
+    //CSCTL3 |= DIVM__8;                          // MCLK/8, ACLK 16MHz
+    timerB2Setup(0xFFFF);
+    timerB2_CCR1_Setup(motorSpeed);
     UART1_Setup();                              // set up UART1 at 19200 Baud
 
-	// 16bit precesion - 65535 decimal
+    // 16bit precesion - 65535 decimal
 
-	// set P3.4 and P3.5 as outputs for DRV8841 B1 & B2
-	P3DIR |= BIT4 + BIT5;
-	P3SEL0 |= BIT4 + BIT5;                     // setting P3.4 as TB1.1
-	P3OUT &= ~BIT5;
+    // set P2.1 as output for DC motor driver PWM
+    P2DIR |= BIT2;
+    P2SEL0 |= BIT2;                     // setting P2.1 as TB2.1
 
-	// Global interrupt enable
-	_EINT();
+    // set P3.6 and P3.7 as outputs for AIN2 and AIN1 on DC motor driver
+    P3DIR |= BIT6 + BIT7;
+    P3OUT &= ~BIT6;
+    P3OUT |= BIT7;
 
-	while(1);
+    // Global interrupt enable
+    _EINT();
 
-	return 0;
+    while(1);
+
+    return 0;
 }
 
 #pragma vector = USCI_A1_VECTOR             // interrupt vector for Rx interrupt
@@ -74,15 +78,16 @@ __interrupt void USCI_A1_ISR(void)
         if(startByte == 255){
             // turning duty cycle byte into motor speed
             motorSpeed = (65534.0 * dutyByte) / 100;
+            timerB2_CCR1_Setup(motorSpeed);             // changing motor speed
 
             // if dirByte = 1, CW, else if dirByte = 0, CCW
             if(dirByte == 1){
-                TB1CCTL1 = OUTMOD_5;
-                timerB_CCR2_Setup(motorSpeed);          // change motor speed
+                P3OUT &= ~BIT7;
+                P3OUT |= BIT6;
             }
             else if(dirByte == 0){
-                TB1CCTL2 = OUTMOD_5;
-                timerB_CCR1_Setup(motorSpeed);          // change motor speed
+                P3OUT &= ~BIT6;
+                P3OUT |= BIT7;
             }
         }
 

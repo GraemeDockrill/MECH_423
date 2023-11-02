@@ -126,6 +126,30 @@ void timerA_Overflow_Flag (void){
 }
 
 
+// ------------------------------ DC MOTOR SETUP -------------------------------
+
+
+// sets up Timer B to run at 1 MHz and produce a 500 Hz 50% duty square wave
+void timerB2Setup (unsigned int CCR0_val){
+    // setting up Timer B
+    TB2CTL |= TBSSEL__ACLK;             // TB1 using ACLK
+    TB2CTL |= ID__1;                    // TB1 with a CLK divider of 1
+    TB2CTL |= MC__UP;                   // setting TB to up mode
+
+    // setting up square wave (CCR0 should be 1999 for 500 Hz)
+    TB2CCR0 = CCR0_val;                 // setting compare latch TB1CL0 - CAN'T WRITE DIRECTLY TO TB1CL0
+}
+
+// sets up CCR1 to create a 500 Hz 50% duty square wave
+void timerB2_CCR1_Setup (unsigned int CCR1_val){
+    // setting TB1.1 cycle to 500Hz, 50% duty cycle
+    TB2CCTL2 = OUTMOD_7;                // set mode to Reset/Set
+
+    // (CCR1 should be 1999 for 500 Hz, 50%)
+    TB2CCR2 = CCR1_val;                 // setting compare latch TB1CL1 - CAN'T WRITE DIRECTLY TO TB1CL0
+}
+
+
 // -------------------------- ADC10 SETUP AND METHODS ---------------------------
 
 
