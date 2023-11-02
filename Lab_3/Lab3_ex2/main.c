@@ -28,10 +28,8 @@ int main(void)
 	CSCTL1 = DCORSEL;                           // set DCO to 16MHz
     CSCTL2 = SELA_3 + SELS_3 + SELM_3;          // ACLK = DCO, SMCLK = DCO, MCLK = DCO
     CSCTL3 |= DIVM__8;                          // MCLK/8, ACLK 16MHz
-	timerBSetupContinuous();
-	timerB_CCR0_Setup(0xFFFF);
+    timerBSetup(0xFFFF);
 	timerB_CCR1_Setup(motorSpeed);
-	//timerB_CCR2_Setup(motorSpeed);
     UART1_Setup();                              // set up UART1 at 19200 Baud
 
 	// 16bit precesion - 65535 decimal

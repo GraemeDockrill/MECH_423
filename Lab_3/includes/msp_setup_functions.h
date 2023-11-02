@@ -54,7 +54,7 @@ void clockSetup (void){
 // sets up Timer B to run at 1 MHz and produce a 500 Hz 50% duty square wave
 void timerBSetup (unsigned int CCR0_val){
     // setting up Timer B
-    TB1CTL |= TBSSEL__SMCLK;            // TB1 using SMCLK
+    TB1CTL |= TBSSEL__ACLK;             // TB1 using ACLK
     TB1CTL |= ID__1;                    // TB1 with a CLK divider of 1
     TB1CTL |= MC__UP;                   // setting TB to up mode
 
@@ -95,7 +95,7 @@ void timerB_CCR2_Setup (unsigned int CCR2_val){
 // sets up Timer B to run at 1 MHz in CONTINUOUS MODE
 void timerBSetupContinuous (){
     // setting up Timer B
-    TB1CTL |= TBSSEL__SMCLK;            // TB1 using SMCLK
+    TB1CTL |= TBSSEL__ACLK;             // TB1 using SMCLK
     TB1CTL |= ID__1;                    // TB1 with a CLK divider of 1
     TB1CTL |= MC__CONTINUOUS;           // setting TB to continuous mode
 
