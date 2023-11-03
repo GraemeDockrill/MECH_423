@@ -22,12 +22,14 @@ void UARTSetup(void){
     //UCA0IE |= UCTXIE; // Enable UART transmit interrupt
 }
 
+/*
 void UART_Tx(unsigned char TxByte){
 
     while (!(UCA0IFG & UCTXIFG));   // Wait for Tx to complete
     UCA0TXBUF = TxByte;             // Write the desired char to the buffer
 
 }
+*/
 
 void UART_Tx_str(unsigned char str[]){
     unsigned int i = 0;

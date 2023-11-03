@@ -1,0 +1,20 @@
+#include <msp430.h> 
+#include <Stepper_LUT.h>
+#include <UART.h>
+#include <TimerB.h>
+
+/**
+ * main.c
+ */
+
+volatile unsigned int state = 0;
+
+int main(void)
+{
+	WDTCTL = WDTPW | WDTHOLD;	// stop watchdog timer
+	
+
+
+
+	return 0;
+}

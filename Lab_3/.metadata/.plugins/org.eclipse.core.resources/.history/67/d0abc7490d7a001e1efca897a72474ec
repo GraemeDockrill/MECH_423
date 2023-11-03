@@ -1,0 +1,33 @@
+#include <msp430.h> 
+#include <Stepper_LUT.h>
+#include <UART.h>
+#include <TimerB.h>
+#include <../includes/msp_setup_functions.h>
+
+/**
+ * main.c
+ */
+
+volatile unsigned int state = 0;
+
+int main(void)
+{
+	WDTCTL = WDTPW | WDTHOLD;	// stop watchdog timer
+	
+    // setup functions
+    CSCTL0 = CSKEY;                             // unlocking clock
+    CSCTL1 |= DCORSEL;
+    CSCTL1 |= DCOFSEL_0;                        // set DCO to 16MHz
+    CSCTL2 = SELA_3 + SELS_3 + SELM_3;          // ACLK = DCO, SMCLK = DCO, MCLK = DCO
+    CSCTL3 = DIVM__8;                           // MCLK/8
+    timerBSetupContinuous();
+    TB1CTL |= MC__CONTINUOUS;
+    timerB_CCR0_Setup(0xFFFF);
+    timerB_CCR1_Setup(1999);
+
+	UARTSetup(); // This will be at 19200 baud for a 16 MHz ACLK
+
+
+
+	return 0;
+}
