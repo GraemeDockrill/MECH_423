@@ -82,8 +82,6 @@ int main(void)
     _EINT();
 
     while(1){
-        /*This section sets the outputs based on the states.*/
-
         // A1 is TB0.2
         TB0CCTL2 = outputA1_WS[state];
         // A2 is TB0.1
@@ -147,7 +145,7 @@ __interrupt void USCI_A1_ISR(void)
 
         if(startByte == 255){
             // turning duty cycle byte into motor speed
-            motorSpeed = (65534.0 * dutyByte) / 100; // I don't love this. It's IO bound so maybe not a big deal.
+            motorSpeed = (65534.0 * dutyByte) / 100;
             TB2CCR1 = (motorSpeed);             // changing motor speed
 
             // if dirByte = 1, CW, else if dirByte = 0, CCW
