@@ -15,8 +15,13 @@ namespace Lab3_ex2
 
         public int numberOfDataPoints = 0;
         public bool sendData = false;
-        public int dutyCycle = 0;
-        public int direction = 1;                   // 1 = CW, 0 = CCW
+        public int cmdByte0 = 0;                    // 0 = WS CW, 1 = WS CCW, 2 = HS CW, 3 = HS CCW, 4 = WS CW Cont., 5 = WS CCW Cont., 6 = HS CW Cont., 7 = HW CCW Cont. for STEPPER MOTOR
+        public int cmdByte1 = 1;                    // 0 = CW, 1 = CCW for DC MOTOR
+        public int stepSpeed = 0;                   // stepping speed for STEPPER MOTOR
+        public int dutyCycle = 0;                   // duty cycle for the DC MOTOR
+        public bool wholeStepping = true;
+        public bool halfStepping = false;
+
         public Form1()
         {
             InitializeComponent();
@@ -37,7 +42,7 @@ namespace Lab3_ex2
         {
             lblDataRate.Visible = false;
             cbComResponse.Checked = true;
-            tbDutyCycle.Value = 0;
+            tbDCDutyCycle.Value = 0;
             ComPortUpdate();
         }
 
@@ -99,6 +104,108 @@ namespace Lab3_ex2
             ComPortUpdate();
         }
 
+        private void tbDCDutyCycle_ValueChanged(object sender, EventArgs e)
+        {
+            if (tbDCDutyCycle.Value < tbDCDutyCycle.Maximum / 2)
+            {
+                // setting speed and direction for CW travel
+                cmdByte1 = 0;
+                dutyCycle = -(100 / (tbDCDutyCycle.Maximum / 2)) * tbDCDutyCycle.Value + tbDCDutyCycle.Maximum;
+            }
+            else if (tbDCDutyCycle.Value > tbDCDutyCycle.Maximum / 2)
+            {
+                // setting speed and direction for CCW travel
+                cmdByte1 = 1;
+                dutyCycle = (100 / (tbDCDutyCycle.Maximum / 2)) * tbDCDutyCycle.Value - tbDCDutyCycle.Maximum;
+            }
+            else
+                dutyCycle = 0;
+            sendData = true;
+        }
+
+        private void btnStopDC_Click(object sender, EventArgs e)
+        {
+            // set 0 DC motor speed (middle of slider) and send the command
+            tbDCDutyCycle.Value = tbDCDutyCycle.Maximum / 2;
+            sendData = true;
+        }
+
+        private void btnStopStep_Click(object sender, EventArgs e)
+        {
+            // setting stepper motor speed to 0 (middle of slider) & sending command
+            tbStepperSpeed.Value = tbStepperSpeed.Maximum / 2;
+            sendData = true;
+        }
+
+        private void btnContWhole_Click(object sender, EventArgs e)
+        {
+            // swtiching to stepper whole stepping
+            halfStepping = false;
+            wholeStepping = true;
+        }
+
+        private void btnContHalf_Click(object sender, EventArgs e)
+        {
+            // switching to stepper half stepping
+            wholeStepping = false;
+            halfStepping = true;
+        }
+
+        private void tbStepperSpeed_ValueChanged(object sender, EventArgs e)
+        {
+            if (tbStepperSpeed.Value < tbStepperSpeed.Maximum / 2)
+            {
+                // setting speed and direction for CW travel
+
+                // check if half stepping or whole stepping
+                if (wholeStepping)
+                    cmdByte0 = 4;
+                else if (halfStepping)
+                    cmdByte0 = 6;
+
+                stepSpeed = -(100 / (tbStepperSpeed.Maximum / 2)) * tbStepperSpeed.Value + tbStepperSpeed.Maximum;
+            }
+            else if (tbStepperSpeed.Value > tbStepperSpeed.Maximum / 2)
+            {
+                // setting speed and direction for CCW travel
+
+                // check if half stepping or whole stepping
+                if (wholeStepping)
+                    cmdByte0 = 5;
+                else if (halfStepping)
+                    cmdByte0 = 7;
+                
+                stepSpeed = (100 / (tbStepperSpeed.Maximum / 2)) * tbStepperSpeed.Value - tbStepperSpeed.Maximum;
+            }
+            else
+                stepSpeed = 0;
+            sendData = true;
+        }
+
+        private void btnCWStepWhole_Click(object sender, EventArgs e)
+        {
+            cmdByte0 = 0;
+            sendData = true;
+        }
+
+        private void btnCCWStepWhole_Click(object sender, EventArgs e)
+        {
+            cmdByte0 = 1;
+            sendData = true;
+        }
+
+        private void btnCWStepHalf_Click(object sender, EventArgs e)
+        {
+            cmdByte0 = 2;
+            sendData = true;
+        }
+
+        private void btnCCWStepHalf_Click(object sender, EventArgs e)
+        {
+            cmdByte0 = 3;
+            sendData = true;
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             //lblDataRate.Text = "Incoming data rate = " + numberOfDataPoints.ToString() + " bytes per second";
@@ -113,22 +220,26 @@ namespace Lab3_ex2
                         byte[] TxBytes = new Byte[3];
                         TxBytes[0] = Convert.ToByte(255);                   // start byte
                         serialPort1.Write(TxBytes, 0, 1);
-                        TxBytes[1] = Convert.ToByte(dutyCycle);             // duty cycle byte
+                        TxBytes[1] = Convert.ToByte(cmdByte0);              // command byte for stepper control
                         serialPort1.Write(TxBytes, 1, 1);
-                        TxBytes[2] = Convert.ToByte(direction);             // motor direction byte
+                        TxBytes[2] = Convert.ToByte(cmdByte1);              // command byte for DC motor control
                         serialPort1.Write(TxBytes, 2, 1);
+                        TxBytes[3] = Convert.ToByte(stepSpeed);             // stepper speed byte
+                        serialPort1.Write(TxBytes, 3, 1);
+                        TxBytes[4] = Convert.ToByte(dutyCycle);             // DC motor duty byte
+                        serialPort1.Write(TxBytes, 4, 1);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                 }
 
-                sendData = false;
+                sendData = false;                                           // after sending message, disable sending messages
             }
 
             // Auto reconnect functionality
-            if(cbAutoReconnect.Checked == true && numberOfDataPoints == 0 && serialPort1.IsOpen == true)
+            if (cbAutoReconnect.Checked == true && numberOfDataPoints == 0 && serialPort1.IsOpen == true)
             {
                 try
                 {
@@ -142,25 +253,6 @@ namespace Lab3_ex2
                     //MessageBox.Show(ex.Message);
                 }
             }
-        }
-
-        private void trackBar1_ValueChanged(object sender, EventArgs e)
-        {
-            if (tbDutyCycle.Value < tbDutyCycle.Maximum / 2)
-            {
-                // setting speed and direction for CW travel
-                direction = 0;
-                dutyCycle = -(100 / (tbDutyCycle.Maximum / 2)) * tbDutyCycle.Value + tbDutyCycle.Maximum;
-            }
-            else if (tbDutyCycle.Value > tbDutyCycle.Maximum / 2)
-            {
-                // setting speed and direction for CCW travel
-                direction = 1;
-                dutyCycle = (100 / (tbDutyCycle.Maximum / 2)) * tbDutyCycle.Value - tbDutyCycle.Maximum;
-            }
-            else
-                dutyCycle = 0;
-            sendData = true;
         }
     }
 }
