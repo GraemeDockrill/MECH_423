@@ -5,7 +5,7 @@
 //#include <CircularBuffer.h>
 #include <../includes/msp_setup_functions.h>
 
-#define STEPPER_DUTY_CYCLE 0x3FFF
+#define STEPPER_DUTY_CYCLE 0x3FFF // 3FFF is 25% of FFFF; Might need to be BFFD (75% of FFFF)
 
 /**
  * main.c
@@ -15,12 +15,16 @@
 volatile unsigned int state = 0;
 
 unsigned volatile char Rx = 0;
+
 unsigned volatile char startByte;
-unsigned volatile char dutyByte;
-unsigned volatile char dirByte = 0;
+unsigned volatile char cmdByte0 = 4;
+unsigned volatile char cmdByte1 = 0;
+unsigned volatile char stepSpeed;
+unsigned volatile char dutyCycle;
+
 unsigned volatile int parsingMessage = 0;
 
-unsigned volatile int motorSpeed = 0;
+unsigned volatile int motorSpeed = 1000;
 
 #define BUFFER_SIZE 50
 
@@ -42,29 +46,19 @@ int main(void)
     // This sets up timer B2
     TB2CTL |= TBSSEL__ACLK;             // TB1 using SMCLK
     TB2CTL |= ID__1;                    // TB1 with a CLK divider of 1
-    TB2CTL |= MC__CONTINUOUS;           // setting TB to up mode
+    TB2CTL |= MC__UP;           // setting TB to up mode
 
     TB2CTL |= CNTL_0;                   // choose highest counter of 16bits 0xFFFFh
-
-    TB2CTL |= MC__CONTINUOUS;
 
     // This sets up timer B1
     TB1CTL |= TBSSEL__ACLK;             // TB1 using SMCLK
     TB1CTL |= ID__1;                    // TB1 with a CLK divider of 1
-    TB1CTL |= MC__CONTINUOUS;           // setting TB to up mode
-
-    TB1CTL |= CNTL_0;                   // choose highest counter of 16bits 0xFFFFh
-
-    TB1CTL |= MC__CONTINUOUS;
+    TB1CTL |= MC__UP;           // setting TB to up mode
 
     // This sets up timer B0
     TB0CTL |= TBSSEL__ACLK;             // TB1 using SMCLK
     TB0CTL |= ID__1;                    // TB1 with a CLK divider of 1
-    TB0CTL |= MC__CONTINUOUS;           // setting TB to up mode
-
-    TB0CTL |= CNTL_0;                   // choose highest counter of 16bits 0xFFFFh
-
-    TB0CTL |= MC__CONTINUOUS;
+    TB0CTL |= MC__UP;                   // setting TB to up mode
 
 
     // Set all timers to STEPPER_DUTY_CYCLE (currently 25%):
@@ -75,23 +69,47 @@ int main(void)
     TB1CCR2 = STEPPER_DUTY_CYCLE;
 
     // We will use TB2CCR1 to control the speed
-    TB2CCR1 = motorSpeed;
+    TB2CCR0 = motorSpeed;
 
     // Enable interrupts
-    TB2CCTL1 |= CCIE;
+    TB2CCTL0 |= CCIE;
     _EINT();
 
     while(1){
         /*This section sets the outputs based on the states.*/
+        switch(cmdByte0){
+        case 4: // WS CW
+            // A1 is TB0.2
+            TB0CCTL2 = outputA1_WS[state];
+            // A2 is TB0.1
+            TB0CCTL1 = outputA2_WS[state];
+            // B1 is TB1.2
+            TB1CCTL2 = outputB1_WS[state];
+            // B2 is TB1.1
+            TB1CCTL2 = outputB2_WS[state];
+            break;
+        case 5:
+            // A1 is TB0.2
+            TB0CCTL2 = outputA1_WS[state];
+            // A2 is TB0.1
+            TB0CCTL1 = outputA2_WS[state];
+            // B1 is TB1.2
+            TB1CCTL2 = outputB1_WS[state];
+            // B2 is TB1.1
+            TB1CCTL2 = outputB2_WS[state];
+            break;
+        case 6: // HS CW
+        case 7: // HS CCW
+            TB0CCTL2 = outputA1_HS[state];
+            TB0CCTL1 = outputA2_HS[state];
+            TB1CCTL2 = outputB1_HS[state];
+            TB1CCTL2 = outputB2_HS[state];
+            break;
+        default: // otherwise, _NOP();
+            _NOP();
+            break;
+        }
 
-        // A1 is TB0.2
-        TB0CCTL2 = outputA1_WS[state];
-        // A2 is TB0.1
-        TB0CCTL1 = outputA2_WS[state];
-        // B1 is TB1.2
-        TB1CCTL2 = outputB1_WS[state];
-        // B2 is TB1.1
-        TB1CCTL2 = outputB2_WS[state];
 
         // only clear flags after states are set.
         TB2CCTL1 &= (~CCIFG);
@@ -103,21 +121,39 @@ int main(void)
 	return 0;
 }
 
-#pragma vector = TIMER2_B1_VECTOR             // interrupt vector for TB1 -> Control the state machine.
-__interrupt void TB2_ISR(void)
+#pragma vector = TIMER2_B0_VECTOR             // interrupt vector for TB1 -> Control the state machine.
+__interrupt void TA2_ISR(void)
 {
     // for whole stepping:
-    if(dirByte){
-        if(state < 4)
-            state++;
-        else
-            state = 0;
-    }
-    else{
-        if(state < 1)
-            state = 3;
-        else
-            state--;
+    switch(cmdByte0){
+        case 4:
+            if(state < 4)
+                state++;
+            else
+                state = 0;
+            break;
+        case 5:
+            if(state < 1)
+                state = 3;
+            else
+                state--;
+            break;
+        case 6:
+            if(state < 8)
+                state++;
+            else
+                state = 0;
+            break;
+        case 7:
+            if(state < 1)
+                state = 7;
+            else
+                state--;
+            break;
+        default:
+            _NOP();
+            break;
+
     }
 }
 
@@ -136,28 +172,109 @@ __interrupt void USCI_A1_ISR(void)
         enqueue(cb, Rx);                        // enqueue the received byte
     }
 
-    if(cb->count >= 3){
+    if(cb->count >= 5){
         parsingMessage = 1;                     // signal we're parsing a message
         startByte = dequeue(cb);
-        dutyByte = dequeue(cb);
-        dirByte = dequeue(cb);
+        cmdByte0 = dequeue(cb);
+        cmdByte1 = dequeue(cb);
+        stepSpeed = dequeue(cb);
+        dutyCycle = dequeue(cb);
+
         UART1_Tx(startByte);
-        UART1_Tx(dutyByte);
-        UART1_Tx(dirByte);
+        UART1_Tx(cmdByte0);
+        UART1_Tx(cmdByte1);
+        UART1_Tx(stepSpeed);
+        UART1_Tx(dutyCycle);
 
         if(startByte == 255){
             // turning duty cycle byte into motor speed
-            motorSpeed = (65534.0 * dutyByte) / 100; // I don't love this. It's IO bound so maybe not a big deal.
-            TB2CCR1 = (motorSpeed);             // changing motor speed
+            motorSpeed = (65534.0 * dutyCycle) / 100; // I don't love this. It's IO bound so maybe not a big deal.
 
-            // if dirByte = 1, CW, else if dirByte = 0, CCW
-            if(dirByte == 1){
-                P3OUT &= ~BIT7;
-                P3OUT |= BIT6;
-            }
-            else if(dirByte == 0){
-                P3OUT &= ~BIT6;
-                P3OUT |= BIT7;
+            switch(cmdByte0){
+                case 0:             // if cmdByte = 0, single whole step CW
+                    TB2CCTL0 &= ~(CCIE);
+
+                    if(state < 4)
+                        state++;
+                    else
+                        state = 0;
+
+                    // A1 is TB0.2
+                    TB0CCTL2 = outputA1_WS[state];
+                    // A2 is TB0.1
+                    TB0CCTL1 = outputA2_WS[state];
+                    // B1 is TB1.2
+                    TB1CCTL2 = outputB1_WS[state];
+                    // B2 is TB1.1
+                    TB1CCTL2 = outputB2_WS[state];
+                    break;
+
+                case 1: // Whole step CCW
+                    TB2CCTL0 &= ~(CCIE);
+
+                    if(state < 1)
+                        state = 3;
+                    else
+                        state--;
+
+                    TB0CCTL2 = outputA1_WS[state];
+                    TB0CCTL1 = outputA2_WS[state];
+                    TB1CCTL2 = outputB1_WS[state];
+                    TB1CCTL2 = outputB2_WS[state];
+                    break;
+
+                case 2: // Half step CW
+                    TB2CCTL0 &= ~(CCIE);
+
+                    if(state < 8)
+                        state++;
+                    else
+                        state = 0;
+
+                    TB0CCTL2 = outputA1_HS[state];
+                    TB0CCTL1 = outputA2_HS[state];
+                    TB1CCTL2 = outputB1_HS[state];
+                    TB1CCTL2 = outputB2_HS[state];
+                    break;
+
+                case 3: // Half step CCW
+                    TB2CCTL0 &= ~(CCIE);
+
+                    if(state < 1)
+                        state = 7;
+                    else
+                        state--;
+
+                    TB0CCTL2 = outputA1_HS[state];
+                    TB0CCTL1 = outputA2_HS[state];
+                    TB1CCTL2 = outputB1_HS[state];
+                    TB1CCTL2 = outputB2_HS[state];
+                    break;
+
+                case 4: // Whole step CW at speed = stepSpeed/4
+                    TB2CCR0 |= stepSpeed;
+                    TB2CCTL0 |= CCIE;
+                    break;
+
+                case 5: // Whole step CCW
+                    TB2CCR0 |= stepSpeed;
+                    TB2CCTL0 |= CCIE;
+                    break;
+
+                case 6:
+                    TB2CCR0 |= stepSpeed;
+                    TB2CCTL0 |= CCIE;
+                    break;
+
+                case 7:
+                    TB2CCR0 |= stepSpeed;
+                    TB2CCTL0 |= CCIE;
+                    break;
+                default:
+                    _NOP();
+                    break;
+
+
             }
         }
 
