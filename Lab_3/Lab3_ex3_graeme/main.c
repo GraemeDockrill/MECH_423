@@ -9,10 +9,10 @@ unsigned volatile char dirByte = 0;
 unsigned volatile int parsingMessage = 0;
 unsigned volatile int halfStepState = 0;
 unsigned volatile int wholeStepState = 0;
-unsigned volatile int stepMode = 0;         // 0 = whole stepping, 1 = half stepping
+unsigned volatile int stepMode = 1;         // 1 = whole stepping, 0 = half stepping
 
 unsigned volatile int motorSpeed = 0;
-unsigned volatile int stepSpeed = 0;
+unsigned volatile int stepSpeed = 65535;
 
 #define BUFFER_SIZE 50
 
@@ -24,18 +24,18 @@ volatile CircularBuffer* cb;
 // look up tables for stepper control
 static const unsigned int wholeStepping[16] =
 {
-     on, off, off, off,     // A1
-     off, off, on, off,     // A2
-     off, on, off, off,     // B1
-     off, off, off, on      // B2
+     1, 0, 0, 0,     // A1
+     0, 0, 1, 0,     // A2
+     0, 1, 0, 1,     // B1
+     0, 0, 0, 1      // B2
 };
 
 static const unsigned int halfStepping[32] =
 {
-     on, on, off, off, off, off, off, on,   // A1
-     off, off, off, on, on, on, off, off,   // A2
-     off, on, on, on, off, off, off, off,   // B1
-     off, off, off, off, off, on, on, on    // B2
+     1, 1, 0, 0, 0, 0, 0, 1,   // A1
+     0, 0, 0, 1, 1, 1, 0, 0,   // A2
+     0, 1, 1, 1, 0, 0, 0, 0,   // B1
+     0, 0, 0, 0, 0, 1, 1, 1    // B2
 };
 
 /**
@@ -62,11 +62,11 @@ int main(void)
 
     // setting count for A1N2 to 10000
     TB0CCR1 = 10000;
-    TB0CCTL1 = off;
+    TB0CCTL1 = on;
 
     // setting count for A1N1 to 10000
     TB0CCR2 = 10000;
-    TB0CCTL2 = off;
+    TB0CCTL2 = on;
 
     // -------- TB1 SETUP --------
 
@@ -78,10 +78,10 @@ int main(void)
 
     // setting count for B1N2 to 10000
     TB1CCTL1 = on;
-    TB1CCR1 = motorSpeed;
+    TB1CCR1 = 10000;
 
     // setting count for B1N1 to 10000
-    TB1CCTL2 = off;
+    TB1CCTL2 = on;
     TB1CCR2 = 10000;
 
     // -------- TB2 SETUP --------
@@ -94,7 +94,7 @@ int main(void)
 
     // setting PWM for DC motor
     TB2CCTL1 = off;
-    TB2CCR1 = 10000;
+    TB2CCR1 = motorSpeed;
 
     TB2CCTL2 = on;                              // set TB2.2 to OUTMOD_7 (reset/set)
     TB2CCTL2 |= CCIE;                           // enable interrupt flag for CCR2
@@ -103,11 +103,11 @@ int main(void)
     // -------- A1, A2, B1, B2 STEPPER PIN SETUP --------
 
     // P1.4 (A1N2) & P1.5 (A1N1) set to TB0.1 & TB0.2 respectively
-    P1DIR |= BIT4 + BIT5;
+    //P1DIR |= BIT4 + BIT5;
     P1SEL0 |= BIT4 + BIT5;
 
     // P3.4 (B1N2) & P3.5 (B1N1) set to TB1.1 & TB1.2 respectively
-    P3DIR |= BIT4 + BIT5;
+    //P3DIR |= BIT4 + BIT5;
     P3SEL0 |= BIT4 + BIT5;
 
     // P2.2 set to TB2.2
@@ -135,13 +135,15 @@ __interrupt void USCI_A1_ISR(void)
     case TB2IV_TBCCR2:
 
         // if half stepping, take a half step
-        if(stepMode)
-            halfStep();
-        else
-            wholeStep();
+        halfStep();
+
+//        if(stepMode)
+//            halfStep();
+//        else
+//            wholeStep();
 
         // increment the step counter
-        TB2CCR2 = (TB2CCR2 + stepSpeed) % 0xFFFF;
+        TB2CCR2 = (TB2CCR2 + stepSpeed) % 65535;
 
         break;
     default:
@@ -159,16 +161,35 @@ __interrupt void USCI_A1_ISR(void)
 // take a half step on the stepper motor
 void halfStep(){
 
-    TB0CCTL2 = halfStepping[halfStepState];         // set A1N1
-    TB0CCTL1 = halfStepping[halfStepState + 8];     // set A1N2
-    TB1CCTL2 = halfStepping[halfStepState + 16];    // set B1N1
-    TB1CCTL1 = halfStepping[halfStepState + 24];    // set B1N2
+//    TB0CCTL2 = halfStepping[halfStepState];         // set A1N1
+//    TB0CCTL1 = halfStepping[halfStepState + 8];     // set A1N2
+//    TB1CCTL2 = halfStepping[halfStepState + 16];    // set B1N1
+//    TB1CCTL1 = halfStepping[halfStepState + 24];    // set B1N2
 
     halfStepState++;                                // increment halfStepState
+    if(stepState)
+        halfStepState++;                            // if in whole stepping mode, take 2 half steps
 
     // if halfStepState goes past the last state, reset to 0
     if(halfStepState > 7)
         halfStepState = 0;
+
+    if(halfStepping[halfStepState])
+        P1DIR |= BIT5;                              // set A1N1
+    else
+        P1DIR &= ~BIT5;                             // reset A1N1
+    if(halfStepping[halfStepState + 8])
+        P1DIR |= BIT4;                              // set A1N2
+    else
+        P1DIR &= ~BIT4;                             // reset A1N2
+    if(halfStepping[halfStepState + 16])
+        P3DIR |= BIT5;                              // set BIN1
+    else
+        P3DIR &= ~BIT5;                             // reset B1N1
+    if(halfStepping[halfStepState + 24])
+        P3DIR |= BIT4;                              // set BIN2
+    else
+        P3DIR &= ~BIT4;                             // reset BIN2
 }
 
 // take a whole step on the stepper motor
