@@ -437,6 +437,7 @@ makefile
 
 .jxbrowser.userdata/
 .metadata/
+.settings/
 
 
 Lab_3/Lab3_ex3/.ccsproject
