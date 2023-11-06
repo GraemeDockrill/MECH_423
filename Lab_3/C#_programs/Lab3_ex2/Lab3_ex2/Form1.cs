@@ -42,7 +42,6 @@ namespace Lab3_ex2
         {
             lblDataRate.Visible = false;
             cbComResponse.Checked = true;
-            tbDCDutyCycle.Value = 0;
             ComPortUpdate();
         }
 
@@ -110,13 +109,13 @@ namespace Lab3_ex2
             {
                 // setting speed and direction for CW travel
                 cmdByte1 = 0;
-                dutyCycle = -(100 / (tbDCDutyCycle.Maximum / 2)) * tbDCDutyCycle.Value + tbDCDutyCycle.Maximum;
+                dutyCycle = -(100 / (tbDCDutyCycle.Maximum / 2)) * tbDCDutyCycle.Value + 100;
             }
             else if (tbDCDutyCycle.Value > tbDCDutyCycle.Maximum / 2)
             {
                 // setting speed and direction for CCW travel
                 cmdByte1 = 1;
-                dutyCycle = (100 / (tbDCDutyCycle.Maximum / 2)) * tbDCDutyCycle.Value - tbDCDutyCycle.Maximum;
+                dutyCycle = (100 / (tbDCDutyCycle.Maximum / 2)) * tbDCDutyCycle.Value - 100;
             }
             else
                 dutyCycle = 0;
@@ -134,6 +133,7 @@ namespace Lab3_ex2
         {
             // setting stepper motor speed to 0 (middle of slider) & sending command
             tbStepperSpeed.Value = tbStepperSpeed.Maximum / 2;
+            stepSpeed = 0;
             sendData = true;
         }
 
@@ -142,6 +142,7 @@ namespace Lab3_ex2
             // swtiching to stepper whole stepping
             halfStepping = false;
             wholeStepping = true;
+            sendData = true;
         }
 
         private void btnContHalf_Click(object sender, EventArgs e)
@@ -149,6 +150,7 @@ namespace Lab3_ex2
             // switching to stepper half stepping
             wholeStepping = false;
             halfStepping = true;
+            sendData = true;
         }
 
         private void tbStepperSpeed_ValueChanged(object sender, EventArgs e)
@@ -163,7 +165,7 @@ namespace Lab3_ex2
                 else if (halfStepping)
                     cmdByte0 = 6;
 
-                stepSpeed = -(100 / (tbStepperSpeed.Maximum / 2)) * tbStepperSpeed.Value + tbStepperSpeed.Maximum;
+                stepSpeed = -(100 / (tbStepperSpeed.Maximum / 2)) * tbStepperSpeed.Value + 100;
             }
             else if (tbStepperSpeed.Value > tbStepperSpeed.Maximum / 2)
             {
@@ -175,7 +177,7 @@ namespace Lab3_ex2
                 else if (halfStepping)
                     cmdByte0 = 7;
                 
-                stepSpeed = (100 / (tbStepperSpeed.Maximum / 2)) * tbStepperSpeed.Value - tbStepperSpeed.Maximum;
+                stepSpeed = (100 / (tbStepperSpeed.Maximum / 2)) * tbStepperSpeed.Value - 100;
             }
             else
                 stepSpeed = 0;
@@ -217,7 +219,7 @@ namespace Lab3_ex2
                 {
                     if (serialPort1.IsOpen)
                     {
-                        byte[] TxBytes = new Byte[3];
+                        byte[] TxBytes = new Byte[5];
                         TxBytes[0] = Convert.ToByte(255);                   // start byte
                         serialPort1.Write(TxBytes, 0, 1);
                         TxBytes[1] = Convert.ToByte(cmdByte0);              // command byte for stepper control

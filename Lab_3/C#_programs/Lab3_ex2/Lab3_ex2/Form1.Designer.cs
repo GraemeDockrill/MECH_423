@@ -87,7 +87,7 @@ namespace Lab3_ex2
             this.txtBaudRate.Name = "txtBaudRate";
             this.txtBaudRate.Size = new System.Drawing.Size(100, 20);
             this.txtBaudRate.TabIndex = 2;
-            this.txtBaudRate.Text = "9600";
+            this.txtBaudRate.Text = "19200";
             // 
             // btnComConnect
             // 
