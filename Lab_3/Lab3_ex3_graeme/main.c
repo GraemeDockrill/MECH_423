@@ -14,6 +14,11 @@ unsigned volatile int halfStepState = 0;
 unsigned volatile int stepMode = 1;         // 1 = whole stepping, 0 = half stepping
 unsigned volatile int stepDir = 1;          // 1 = CW, 0 = CCW
 unsigned volatile int stopStep = 0;
+unsigned volatile int TA0HI = 0;
+unsigned volatile int TA0LO = 0;
+unsigned volatile int TA1HI = 0;
+unsigned volatile int TA1LO = 0;
+unsigned volatile int encoderUART = 0;
 
 unsigned volatile int motorSpeed = 0;
 unsigned volatile int stepSpeed = 0;
@@ -46,12 +51,26 @@ int main(void)
     CSCTL2 = SELA_3 + SELS_3 + SELM_3;          // ACLK = DCO, SMCLK = DCO, MCLK = DCO
 
 
-    // -------- TB0 SETUP STEPPING --------
+    // -------- TA0 SETUP ENCODER DOWN --------
+    TA0CTL |= TASSEL__TACLK;                    // TA0 using ACLK
+    TA0CTL |= ID__1;                            // TA0 with a divider of 1
+    TA0CTL |= MC__CONTINUOUS;                   // TA0 in CONTINUOUS mode
+    TA0CTL |= TACLR;                            // clear TAR
+
+
+    // -------- TA1 SETUP ENCODER UP --------
+    TA1CTL |= TASSEL__TACLK;                    // TA0 using ACLK
+    TA1CTL |= ID__1;                            // TA0 with a divider of 1
+    TA1CTL |= MC__CONTINUOUS;                   // TA0 in CONTINUOUS mode
+    TA1CTL |= TACLR;                            // clear TAR
+
+
+    // -------- TB0 SETUP STEPPER STATE STEPPING --------
 
     // setting up TB0 for stepper stepping
     TB0CTL |= TBSSEL__ACLK;                     // TB0 using ACLK
     TB0CTL |= ID__4;                            // TB0 with a divider of 1
-    TB0CTL |= MC__UP;                            // TB0 in UP mode
+    TB0CTL |= MC__UP;                           // TB0 in UP mode
     TB0CCR0 = stepSpeed;                        // set UP counter to 40000
     TB0CCTL0 |= CCIE;                           // enable interrupt for TB0
 
@@ -62,24 +81,26 @@ int main(void)
     TB1CTL |= TBSSEL__ACLK;                     // TB1 using ACLK
     TB1CTL |= ID__1;                            // TB1 with divider of 1
     TB1CTL |= MC__UP;                           // TB1 in UP mode
-    TB1CCR0 = 10000;                            // set UP counter to 40000
+    TB1CCR0 = 10000;                            // set UP counter to 10000
 
     // setting duty cycle for PMW to 25%
     TB1CCTL1 = OUTMOD_7;                        // set up reset/set mode
     TB1CCR1 = 0;                                // turn on at 0
     TB1CCTL1 |= CCIE;                           // enable interrupt flag
 
-    TB1CCR2 = 2500;                            // turn off at 25%
+    TB1CCR2 = 2500;                             // turn off at 25%
     TB1CCTL2 |= CCIE;                           // enable interrupt flag
 
 
-    // -------- TB2 SETUP DC MOTOR --------
+    // -------- TB2 SETUP DC MOTOR SPEED CONTROL AND SENDING ENCODER DATA --------
 
     // setting up TB2 for DC motor
     TB2CTL |= TBSSEL__ACLK;                     // TB2 using ACLK
     TB2CTL |= ID__1;                            // TB2 with divider of 1
     TB2CTL |= MC__UP;                           // TB2 in UP mode
     TB2CCR0 = 0xFFFF;                           // set UP counter to 0xFFFF (max)
+    TB2CCTL0 |= CCIE;                           // enable interrupt for TB2
+
 
     // setting PWM for DC motor
     TB2CCTL2 = OUTMOD_7;
@@ -111,10 +132,17 @@ int main(void)
     P3DIR &= ~(BIT4 + BIT5);
     P3OUT |= BIT4 + BIT5;
 
+
+    // -------- ENC UP, ENC DOWN PIN SETUP --------
+
+    // P1.1 as TA0.CCI2A, P1.2 as TA1.CCI1A
+    P1SEL0 |= BIT1 + BIT2;
+
+
     // Global interrupt enable
     _EINT();
 
-    // control loop for changing states
+    // control loop for changing states (allows to be interrupted by a new command)
     while(1){
 
         if(newCommand){
@@ -204,7 +232,8 @@ int main(void)
 // -------- INTERRUPT SERVICE ROUTINES --------
 
 
-#pragma vector = USCI_A1_VECTOR             // interrupt vector for Rx interrupt
+// interrupt vector for Rx interrupt
+#pragma vector = USCI_A1_VECTOR
 __interrupt void USCI_A1_ISR(void)
 {
     Rx = UART1_Rx();                         // get char from UART
@@ -226,91 +255,14 @@ __interrupt void USCI_A1_ISR(void)
         cmdByte1 = dequeue(cb);
         stepSpeedByte = dequeue(cb);
         dutyByte = dequeue(cb);
-        UART1_Tx(startByte);
+        UART1_Tx(startByte);                    // echo back message (for debugging)
         UART1_Tx(cmdByte0);
         UART1_Tx(cmdByte1);
         UART1_Tx(stepSpeedByte);
         UART1_Tx(dutyByte);
 
         if(startByte == 255){
-
-            newCommand = 1;
-
-//            // turning duty cycle byte into motor speed
-//            motorSpeed = (65534.0 * dutyByte) / 100;
-//            TB2CCR2 = motorSpeed;               // changing motor speed
-//
-//            if(stepSpeedByte == 0)
-//                stopStep = 1;
-//            else
-//                stopStep = 0;
-//
-//            stepSpeed = -(50535 * stepSpeedByte) / 100 + 65535;
-//            TB0CCR0 = stepSpeed;                // changing stepper motor speed
-//
-//            // stepper motor control based on cmdByte0
-//            switch(cmdByte0){
-//                case 0:                             // whole step CW
-//                    stepMode = 1;
-//                    incrementStep();
-//                    TB0CCTL0 &= ~CCIE;              // disable interrupt for TB0
-//                    break;
-//                case 1:                             // whole step CCW
-//                    stepMode = 1;
-//                    decrementStep();
-//                    TB0CCTL0 &= ~CCIE;              // disable interrupt for TB0
-//                    break;
-//                case 2:                             // half step CW
-//                    stepMode = 0;
-//                    incrementStep();
-//                    TB0CCTL0 &= ~CCIE;              // disable interrupt for TB0
-//                    break;
-//                case 3:                             // half step CCW
-//                    stepMode = 0;
-//                    decrementStep();
-//                    TB0CCTL0 &= ~CCIE;              // disable interrupt for TB0
-//                    break;
-//                case 4:                             // continuous whole step CW
-//                    stepMode = 1;
-//                    stepDir = 1;
-//                    TB0CCTL0 |= CCIE;               // enable interrupt for TB0
-//                    break;
-//                case 5:                             // continuous whole step CCW
-//                    stepMode = 1;
-//                    stepDir = 0;
-//                    TB0CCTL0 |= CCIE;               // enable interrupt for TB0
-//                    break;
-//                case 6:                             // continuous half step CW
-//                    stepMode = 0;
-//                    stepDir = 1;
-//                    TB0CCTL0 |= CCIE;               // enable interrupt for TB0
-//                    break;
-//                case 7:                             // continuous half step CCW
-//                    stepMode = 0;
-//                    stepDir = 0;
-//                    TB0CCTL0 |= CCIE;               // enable interrupt for TB0
-//                    break;
-//                default:
-//                    break;
-//            }
-//
-//            updateCoils();                      // update stepper coils based on new command
-//
-//            // DC motor control based on cmdByte1
-//            switch(cmdByte1){
-//                case 0:                             // CW DC motor
-//                    P3OUT &= ~BIT7;
-//                    P3OUT |= BIT6;
-//                    break;
-//                case 1:                             // CCW DC motor
-//                    P3OUT &= ~BIT6;
-//                    P3OUT |= BIT7;
-//                    break;
-//                default:
-//                    break;
-//            }
-
-
+            newCommand = 1;                     // tell super loop a new message is received
         }
 
         parsingMessage = 0;                     // signal we're done parsing a message
@@ -319,7 +271,8 @@ __interrupt void USCI_A1_ISR(void)
 }
 
 
-#pragma vector = TIMER0_B0_VECTOR               // interrupt vector for changing stepper state
+// interrupt vector for changing stepper state and reading encoder
+#pragma vector = TIMER0_B0_VECTOR
 __interrupt void STEPPER_STEP_ISR(void)
 {
     if(stopStep != 1){
@@ -333,7 +286,8 @@ __interrupt void STEPPER_STEP_ISR(void)
 }
 
 
-#pragma vector = TIMER1_B1_VECTOR               // interrupt vector TB1 PWM interrupt
+// interrupt vector TB1 PWM interrupt
+#pragma vector = TIMER1_B1_VECTOR
 __interrupt void STEPPER_PWM_ISR(void)
 {
     switch(TB1IV){
@@ -352,6 +306,70 @@ __interrupt void STEPPER_PWM_ISR(void)
 
     TB1CCTL1 &= ~(CCIFG);                       // reset interrupt flag for TB1IFG
 }
+
+
+// interrupt vector for reading encoder pulses from DC motor timer TB2
+#pragma vector = TIMER2_B0_VECTOR
+__interrupt void EENCODER_PULSE_ISR(void)
+{
+    encoderUART++;
+
+    if(encoderUART >= 15){
+        TA0LO = TA0R & 0x00ff;                      // removing upper data
+        TA0HI = TA0R >> 8;                          // bit shifting upper data to send over UART
+        TA1LO = TA1R & 0x00ff;                      // removing upper data
+        TA1HI = TA1R >> 8;                          // bit shifting upper data to send over UART
+
+        UART1_Tx(TA0LO);
+        UART1_Tx(TA0HI);
+        UART1_Tx(TA1LO);
+        UART1_Tx(TA1HI);
+
+        encoderUART = 0;
+    }
+
+    TB2CCTL0 &= ~(CCIFG);                       // reset interrupt flag for TB0IFG
+}
+
+
+//// interrupt vector for counting encoder DOWN pulses
+//#pragma vector = TIMER0_A1_VECTOR
+//__interrupt void TA0_ENCODER_DOWN_ISR(void)
+//{
+//    UART1_Tx(2);
+//    switch (TA0IV)
+//    {
+//        case TA0IV_TACCR2:
+//        {
+//            UART1_Tx(3);
+//            break;
+//        }
+//    }
+//    TA0CTL &= ~TAIFG;                   // reset TA0 interrupt flag
+//
+//    //TA0CCTL2 = CM_1 + CCIS_0 + SCS + CAP + CCIE;
+//}
+
+//TA1 = TA1R
+//TA0 = TA0R
+
+//// interrupt vector for counting encoder UP pulses
+//#pragma vector = TIMER1_A1_VECTOR
+//__interrupt void TA1_ENCODER_UP_ISR(void)
+//{
+//    UART1_Tx(4);
+//    switch (TA1IV)
+//    {
+//        case TA1IV_TACCR1:
+//        {
+//            UART1_Tx(5);
+//            break;
+//        }
+//    }
+//    TA1CTL &= ~TAIFG;                   // reset TA1 interrupt flag
+//
+//    //TA1CCTL1 = CM_1 + CCIS_0 + SCS + CAP + CCIE;
+//}
 
 
 // update stepper coils based on halfStepState
