@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Lab3_ex2
 {
@@ -22,18 +23,69 @@ namespace Lab3_ex2
         public bool wholeStepping = true;
         public bool halfStepping = false;
 
-        enum encoderState
+        // variables for encoder parsing
+        public double timeSinceCOMConnect = 0;
+        public int encoderPulsesCW = 0;
+        public int encoderPulsesCCW = 0;
+        public double encoderPulseTotal = 0.0;
+        public int encoderPPR = 400;
+        public double DCPulleyRadius = 7.5;
+
+        public int maxXValueDCPositionTime;
+        public int maxXValueDCVelocityTime;
+
+        public double DCshaftPosition = 0;
+        public double DCPreviousShaftPosition = 0;
+        public double DCshaftVelocity = 0;
+
+        private Series seriesDCPosition, seriesDCVelocity;
+
+        public enum encoderByte
         {
             startByte,
             TA0RLO,
-            TA1LO,
+            TA1RLO
         }
 
-
+        public encoderByte encoderState = encoderByte.startByte;
 
         public Form1()
         {
             InitializeComponent();
+            InitializeDCPositionChart();
+            InitializeDCVelocityChart();
+        }
+
+        // function for creating position chart
+        public void InitializeDCPositionChart()
+        {
+            ChartArea chartAreaDCPosition = new ChartArea();
+            chartAreaDCPosition.AxisX.Title = "Time [s]";
+            chartAreaDCPosition.AxisY.Title = "DC Motor Position [mm]";
+            chartDCPosition.ChartAreas.Add(chartAreaDCPosition);
+
+            seriesDCPosition = new Series();
+            seriesDCPosition.ChartType = SeriesChartType.Line;
+
+            chartDCPosition.Series.Add(seriesDCPosition);
+
+            chartDCPosition.ChartAreas[0].AxisX.Interval = 10;      // set X-axis interval to 10
+        }
+
+        // function for creating velocity chart
+        public void InitializeDCVelocityChart()
+        {
+            ChartArea chartAreaDCVelocity = new ChartArea();
+            chartAreaDCVelocity.AxisX.Title = "Time [s]";
+            chartAreaDCVelocity.AxisY.Title = "DC Motor Velocity [mm/s]";
+            chartDCVelocity.ChartAreas.Add(chartAreaDCVelocity);
+
+            seriesDCVelocity = new Series();
+            seriesDCVelocity.ChartType = SeriesChartType.Line;
+
+            chartDCVelocity.Series.Add(seriesDCVelocity);
+
+            chartDCVelocity.ChartAreas[0].AxisX.Interval = 10;      // set X-axis interval to 10
         }
 
         public void ComPortUpdate()
@@ -91,7 +143,7 @@ namespace Lab3_ex2
             }
         }
 
-        private void serialPort1_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
+        public void serialPort1_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
             while (serialPort1.IsOpen && serialPort1.BytesToRead != 0)
             {
@@ -103,6 +155,66 @@ namespace Lab3_ex2
                     {
                         txtComOutput.AppendText(currentByte.ToString() + ", ");
                     }));
+                }
+
+                if (currentByte == 255)
+                    encoderState = encoderByte.startByte;
+
+                // figuring out which state to read data from
+                if (encoderState == encoderByte.startByte)
+                {
+                    encoderState = encoderByte.TA0RLO;
+                    timeSinceCOMConnect += 0.0655;
+                }
+                else if (encoderState == encoderByte.TA0RLO)
+                {
+                    encoderState = encoderByte.TA1RLO;
+                    encoderPulsesCW += currentByte;
+                }
+                else if (encoderState == encoderByte.TA1RLO)
+                {
+                    encoderState = encoderByte.startByte;
+                    encoderPulsesCCW += currentByte;
+
+                    encoderPulseTotal = encoderPulsesCW - encoderPulsesCCW;                                 // total encoder pulses including the received message
+
+                    DCshaftPosition = encoderPulseTotal * 4 * DCPulleyRadius / encoderPPR;                  // calculate the DC motor shaft position [pulses * (4 encoder slits per pulse) * (DC pulley radius) / (encoder PPR)]
+                    DCshaftVelocity = (DCshaftPosition - DCPreviousShaftPosition) / 0.0655;                 // calculate the DC motor shaft speed
+
+                    // store current DC shaft position
+                    DCPreviousShaftPosition = DCshaftPosition;
+
+                    // plot the motor position graph
+                    chartDCPosition.Invoke((MethodInvoker)delegate
+                    {
+                        // plot new data
+                        seriesDCPosition.Points.AddXY(timeSinceCOMConnect, DCshaftPosition);
+
+                        // scroll the data window
+                        int minXValue = ((int) timeSinceCOMConnect - 50 > 0) ? (int) timeSinceCOMConnect - 50 - (int) timeSinceCOMConnect % 10 : 0;
+                        maxXValueDCPositionTime = ((int) timeSinceCOMConnect + 10) % 10 != 0 ? maxXValueDCPositionTime : (int) timeSinceCOMConnect + 10;
+                        chartDCPosition.ChartAreas[0].AxisX.Minimum = minXValue;
+                        chartDCPosition.ChartAreas[0].AxisX.Maximum = maxXValueDCPositionTime;
+
+                        // redraw graph
+                        chartDCPosition.Invalidate();
+                    });
+
+                    // plot the motor velocity graph
+                    chartDCVelocity.Invoke((MethodInvoker)delegate
+                    {
+                        // plot new data
+                        seriesDCVelocity.Points.AddXY(timeSinceCOMConnect, DCshaftVelocity);
+
+                        // scroll the data window
+                        int minXValue = ((int) timeSinceCOMConnect - 50 > 0) ? (int) timeSinceCOMConnect - 50 - (int)timeSinceCOMConnect % 10 : 0;
+                        maxXValueDCVelocityTime = ((int) timeSinceCOMConnect + 10) % 10 != 0 ? maxXValueDCVelocityTime : (int) timeSinceCOMConnect + 10;
+                        chartDCVelocity.ChartAreas[0].AxisX.Minimum = minXValue;
+                        chartDCVelocity.ChartAreas[0].AxisX.Maximum = maxXValueDCVelocityTime;
+
+                        // redraw graph
+                        chartDCVelocity.Invalidate();
+                    });
                 }
             }
         }

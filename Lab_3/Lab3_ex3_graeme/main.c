@@ -321,7 +321,7 @@ __interrupt void EENCODER_PULSE_ISR(void)
 //        TA0HI = TA0R >> 8;                          // bit shifting upper data to send over UART
         TA1LO = TA1R & 0x00ff;                      // removing upper data
 //        TA1HI = TA1R >> 8;                          // bit shifting upper data to send over UART
-        ESC = 0;
+//        ESC = 0;
 
 //        if(TA0HI >= 255){
 //            TA0HI = 0;
