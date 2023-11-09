@@ -22,6 +22,15 @@ namespace Lab3_ex2
         public bool wholeStepping = true;
         public bool halfStepping = false;
 
+        enum encoderState
+        {
+            startByte,
+            TA0RLO,
+            TA1LO,
+        }
+
+
+
         public Form1()
         {
             InitializeComponent();

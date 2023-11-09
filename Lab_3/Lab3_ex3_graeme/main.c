@@ -18,7 +18,9 @@ unsigned volatile int TA0HI = 0;
 unsigned volatile int TA0LO = 0;
 unsigned volatile int TA1HI = 0;
 unsigned volatile int TA1LO = 0;
+unsigned volatile int ESC = 0;
 unsigned volatile int encoderUART = 0;
+unsigned int echoCommand = 0;
 
 unsigned volatile int motorSpeed = 0;
 unsigned volatile int stepSpeed = 0;
@@ -53,14 +55,12 @@ int main(void)
 
     // -------- TA0 SETUP ENCODER DOWN --------
     TA0CTL |= TASSEL__TACLK;                    // TA0 using ACLK
-    TA0CTL |= ID__1;                            // TA0 with a divider of 1
     TA0CTL |= MC__CONTINUOUS;                   // TA0 in CONTINUOUS mode
     TA0CTL |= TACLR;                            // clear TAR
 
 
     // -------- TA1 SETUP ENCODER UP --------
     TA1CTL |= TASSEL__TACLK;                    // TA0 using ACLK
-    TA1CTL |= ID__1;                            // TA0 with a divider of 1
     TA1CTL |= MC__CONTINUOUS;                   // TA0 in CONTINUOUS mode
     TA1CTL |= TACLR;                            // clear TAR
 
@@ -255,11 +255,15 @@ __interrupt void USCI_A1_ISR(void)
         cmdByte1 = dequeue(cb);
         stepSpeedByte = dequeue(cb);
         dutyByte = dequeue(cb);
-        UART1_Tx(startByte);                    // echo back message (for debugging)
-        UART1_Tx(cmdByte0);
-        UART1_Tx(cmdByte1);
-        UART1_Tx(stepSpeedByte);
-        UART1_Tx(dutyByte);
+
+        // echo back message (for debugging)
+        if(echoCommand){
+            UART1_Tx(startByte);
+            UART1_Tx(cmdByte0);
+            UART1_Tx(cmdByte1);
+            UART1_Tx(stepSpeedByte);
+            UART1_Tx(dutyByte);
+        }
 
         if(startByte == 255){
             newCommand = 1;                     // tell super loop a new message is received
@@ -281,7 +285,6 @@ __interrupt void STEPPER_STEP_ISR(void)
         else
             decrementStep();
     }
-
     TB0CCTL0 &= ~(CCIFG);                       // reset interrupt flag for TB0IFG
 }
 
@@ -312,64 +315,49 @@ __interrupt void STEPPER_PWM_ISR(void)
 #pragma vector = TIMER2_B0_VECTOR
 __interrupt void EENCODER_PULSE_ISR(void)
 {
-    encoderUART++;
-
+    // only send data every 16th interrupt
     if(encoderUART >= 15){
         TA0LO = TA0R & 0x00ff;                      // removing upper data
-        TA0HI = TA0R >> 8;                          // bit shifting upper data to send over UART
+//        TA0HI = TA0R >> 8;                          // bit shifting upper data to send over UART
         TA1LO = TA1R & 0x00ff;                      // removing upper data
-        TA1HI = TA1R >> 8;                          // bit shifting upper data to send over UART
+//        TA1HI = TA1R >> 8;                          // bit shifting upper data to send over UART
+        ESC = 0;
 
+//        if(TA0HI >= 255){
+//            TA0HI = 0;
+//            ESC |= BIT2;                            // set BIT2 of ESC byte
+//        }
+//        if(TA0LO >= 255){
+//            TA0LO = 0;
+//            ESC |= BIT3;                            // set BIT3 of ESC byte
+//        }
+//        if(TA1HI >= 255){
+//            TA1HI = 0;
+//            ESC |= BIT0;                            // set BIT0 of ESC byte
+//        }
+//        if(TA1LO >= 255){
+//            TA1LO = 0;
+//            ESC |= BIT1;                            // set BIT1 of ESC byte
+//        }
+
+        TA0CTL |= TACLR;                            // clear TA0R
+        TA1CTL |= TACLR;                            // clear TA1R
+
+        // send encoder data packet
+        UART1_Tx(255);                              // start byte
+//        UART1_Tx(TA0HI);
         UART1_Tx(TA0LO);
-        UART1_Tx(TA0HI);
+//        UART1_Tx(TA1HI);
         UART1_Tx(TA1LO);
-        UART1_Tx(TA1HI);
+//        UART1_Tx(ESC);                              // escape byte
 
         encoderUART = 0;
     }
 
-    TB2CCTL0 &= ~(CCIFG);                       // reset interrupt flag for TB0IFG
+    encoderUART++;
+
+    TB2CCTL0 &= ~(CCIFG);                           // reset interrupt flag for TB0IFG
 }
-
-
-//// interrupt vector for counting encoder DOWN pulses
-//#pragma vector = TIMER0_A1_VECTOR
-//__interrupt void TA0_ENCODER_DOWN_ISR(void)
-//{
-//    UART1_Tx(2);
-//    switch (TA0IV)
-//    {
-//        case TA0IV_TACCR2:
-//        {
-//            UART1_Tx(3);
-//            break;
-//        }
-//    }
-//    TA0CTL &= ~TAIFG;                   // reset TA0 interrupt flag
-//
-//    //TA0CCTL2 = CM_1 + CCIS_0 + SCS + CAP + CCIE;
-//}
-
-//TA1 = TA1R
-//TA0 = TA0R
-
-//// interrupt vector for counting encoder UP pulses
-//#pragma vector = TIMER1_A1_VECTOR
-//__interrupt void TA1_ENCODER_UP_ISR(void)
-//{
-//    UART1_Tx(4);
-//    switch (TA1IV)
-//    {
-//        case TA1IV_TACCR1:
-//        {
-//            UART1_Tx(5);
-//            break;
-//        }
-//    }
-//    TA1CTL &= ~TAIFG;                   // reset TA1 interrupt flag
-//
-//    //TA1CCTL1 = CM_1 + CCIS_0 + SCS + CAP + CCIE;
-//}
 
 
 // update stepper coils based on halfStepState
