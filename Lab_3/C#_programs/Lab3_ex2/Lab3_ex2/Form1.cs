@@ -28,7 +28,7 @@ namespace Lab3_ex2
         public int encoderPulsesCW = 0;
         public int encoderPulsesCCW = 0;
         public double encoderPulseTotal = 0.0;
-        public int encoderPPR = 400;
+        public double encoderPPR = 979.62;
         public double DCPulleyRadius = 7.5;
 
         public int maxXValueDCPositionTime;
@@ -161,25 +161,25 @@ namespace Lab3_ex2
                     encoderState = encoderByte.startByte;
 
                 // figuring out which state to read data from
-                if (encoderState == encoderByte.startByte)
+                if (encoderState == encoderByte.startByte)              // start byte
                 {
                     encoderState = encoderByte.TA0RLO;
                     timeSinceCOMConnect += 0.0655;
                 }
-                else if (encoderState == encoderByte.TA0RLO)
+                else if (encoderState == encoderByte.TA0RLO)            // TA0 byte
                 {
                     encoderState = encoderByte.TA1RLO;
                     encoderPulsesCW += currentByte;
                 }
-                else if (encoderState == encoderByte.TA1RLO)
+                else if (encoderState == encoderByte.TA1RLO)            // TA1 byte
                 {
                     encoderState = encoderByte.startByte;
                     encoderPulsesCCW += currentByte;
 
-                    encoderPulseTotal = encoderPulsesCW - encoderPulsesCCW;                                 // total encoder pulses including the received message
+                    encoderPulseTotal = encoderPulsesCW - encoderPulsesCCW;                                                 // total encoder pulses including the received message
 
-                    DCshaftPosition = encoderPulseTotal * 4 * DCPulleyRadius / encoderPPR;                  // calculate the DC motor shaft position [pulses * (4 encoder slits per pulse) * (DC pulley radius) / (encoder PPR)]
-                    DCshaftVelocity = (DCshaftPosition - DCPreviousShaftPosition) / 0.0655;                 // calculate the DC motor shaft speed
+                    DCshaftPosition = encoderPulseTotal * 4 * (2 * 3.14 * DCPulleyRadius) / encoderPPR;   // calculate the DC motor shaft position [pulses * (4 encoder slits per pulse) * (DC pulley radius) / (encoder PPR)]
+                    DCshaftVelocity = (DCshaftPosition - DCPreviousShaftPosition) / 0.0655;                                 // calculate the DC motor shaft speed
 
                     // store current DC shaft position
                     DCPreviousShaftPosition = DCshaftPosition;
