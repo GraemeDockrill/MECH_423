@@ -18,10 +18,22 @@ namespace Lab3_ex2
         public bool sendData = false;
         public int cmdByte0 = 0;                    // 0 = WS CW, 1 = WS CCW, 2 = HS CW, 3 = HS CCW, 4 = WS CW Cont., 5 = WS CCW Cont., 6 = HS CW Cont., 7 = HW CCW Cont. for STEPPER MOTOR
         public int cmdByte1 = 1;                    // 0 = CW, 1 = CCW for DC MOTOR
+        public int stepByte0 = 0;
+        public int stepByte1 = 0;
+        public int DCByte0 = 0;
+        public int DCByte1 = 0;
+        public int ESCByte = 0;
+
         public int stepSpeed = 0;                   // stepping speed for STEPPER MOTOR
         public int dutyCycle = 0;                   // duty cycle for the DC MOTOR
         public bool wholeStepping = true;
         public bool halfStepping = false;
+
+        // define bit constants
+        public int BIT0 = 0x0001;
+        public int BIT1 = 0x0002;
+        public int BIT2 = 0x0004;
+        public int BIT3 = 0x0008;
 
         // variables for encoder parsing
         public double timeSinceCOMConnect = 0;
@@ -230,13 +242,13 @@ namespace Lab3_ex2
             {
                 // setting speed and direction for CW travel
                 cmdByte1 = 0;
-                dutyCycle = -(100 / (tbDCDutyCycle.Maximum / 2)) * tbDCDutyCycle.Value + 100;
+                dutyCycle = -(65535 / (tbDCDutyCycle.Maximum / 2)) * tbDCDutyCycle.Value + 65535;
             }
             else if (tbDCDutyCycle.Value > tbDCDutyCycle.Maximum / 2)
             {
                 // setting speed and direction for CCW travel
                 cmdByte1 = 1;
-                dutyCycle = (100 / (tbDCDutyCycle.Maximum / 2)) * tbDCDutyCycle.Value - 100;
+                dutyCycle = (65535 / (tbDCDutyCycle.Maximum / 2)) * tbDCDutyCycle.Value - 65535;
             }
             else
                 dutyCycle = 0;
@@ -255,6 +267,7 @@ namespace Lab3_ex2
             // setting stepper motor speed to 0 (middle of slider) & sending command
             tbStepperSpeed.Value = tbStepperSpeed.Maximum / 2;
             stepSpeed = 0;
+            cmdByte0 = 8;
             sendData = true;
         }
 
@@ -286,7 +299,8 @@ namespace Lab3_ex2
                 else if (halfStepping)
                     cmdByte0 = 6;
 
-                stepSpeed = -(100 / (tbStepperSpeed.Maximum / 2)) * tbStepperSpeed.Value + 100;
+                //stepSpeed = -(65535 / (tbStepperSpeed.Maximum / 2)) * tbStepperSpeed.Value + 65535;
+                stepSpeed = -(58034 / (tbStepperSpeed.Maximum / 2)) * tbStepperSpeed.Value + 65535;             // scaling on stepper side                
             }
             else if (tbStepperSpeed.Value > tbStepperSpeed.Maximum / 2)
             {
@@ -298,10 +312,14 @@ namespace Lab3_ex2
                 else if (halfStepping)
                     cmdByte0 = 7;
                 
-                stepSpeed = (100 / (tbStepperSpeed.Maximum / 2)) * tbStepperSpeed.Value - 100;
+                //stepSpeed = (65535 / (tbStepperSpeed.Maximum / 2)) * tbStepperSpeed.Value - 65535;
+                stepSpeed = (58034 / (tbStepperSpeed.Maximum / 2)) * tbStepperSpeed.Value - 65535;             // scaling on stepper side                
             }
             else
+            {
                 stepSpeed = 0;
+                cmdByte0 = 8;
+            }
             sendData = true;
         }
 
@@ -340,17 +358,60 @@ namespace Lab3_ex2
                 {
                     if (serialPort1.IsOpen)
                     {
-                        byte[] TxBytes = new Byte[5];
+                        // split the step speed into 2 bytes
+                        stepByte0 = stepSpeed >> 8;
+                        stepByte0 &= 255;
+                        stepByte1 = stepSpeed;
+                        stepByte1 &= 255;
+
+                        // split the duty cycle into 2 bytes
+                        DCByte0 = dutyCycle >> 8;
+                        DCByte0 &= 255;
+                        DCByte1 = dutyCycle;
+                        DCByte1 &= 255;
+
+                        // check if data bytes are greater or equal to 255
+                        if(stepByte0 >= 255)
+                        {
+                            stepByte0 = 0;
+                            ESCByte |= BIT3;
+                        }
+                        if(stepByte1 >= 255)
+                        {
+                            stepByte1 = 0;
+                            ESCByte |= BIT2;
+                        }
+                        if(DCByte0 >= 255)
+                        {
+                            DCByte0 = 0;
+                            ESCByte |= BIT1;
+                        }
+                        if(DCByte1 >= 255)
+                        {
+                            DCByte1 = 0;
+                            ESCByte |= BIT0;
+                        }
+
+                        // sending data packet over UART
+                        byte[] TxBytes = new Byte[8];
                         TxBytes[0] = Convert.ToByte(255);                   // start byte
                         serialPort1.Write(TxBytes, 0, 1);
                         TxBytes[1] = Convert.ToByte(cmdByte0);              // command byte for stepper control
                         serialPort1.Write(TxBytes, 1, 1);
                         TxBytes[2] = Convert.ToByte(cmdByte1);              // command byte for DC motor control
                         serialPort1.Write(TxBytes, 2, 1);
-                        TxBytes[3] = Convert.ToByte(stepSpeed);             // stepper speed byte
+                        TxBytes[3] = Convert.ToByte(stepByte0);             // stepper speed byte0
                         serialPort1.Write(TxBytes, 3, 1);
-                        TxBytes[4] = Convert.ToByte(dutyCycle);             // DC motor duty byte
+                        TxBytes[4] = Convert.ToByte(stepByte1);             // stepper speed byte1
                         serialPort1.Write(TxBytes, 4, 1);
+                        TxBytes[5] = Convert.ToByte(DCByte0);               // DC motor duty byte0
+                        serialPort1.Write(TxBytes, 5, 1);
+                        TxBytes[6] = Convert.ToByte(DCByte1);               // DC motor duty byte1
+                        serialPort1.Write(TxBytes, 6, 1);
+                        TxBytes[7] = Convert.ToByte(ESCByte);               // Escape byte
+                        serialPort1.Write(TxBytes, 7, 1);
+
+                        ESCByte = 0;                                        // reset escape byte
                     }
                 }
                 catch (Exception ex)

@@ -6,6 +6,12 @@ unsigned volatile char Rx = 0;
 unsigned volatile char startByte;
 unsigned volatile char cmdByte0;
 unsigned volatile char cmdByte1;
+unsigned volatile char stepByte0;
+unsigned volatile char stepByte1;
+unsigned volatile char DCByte0;
+unsigned volatile char DCByte1;
+unsigned volatile char ESCByte;
+
 unsigned volatile char stepSpeedByte;
 unsigned volatile char dutyByte;
 unsigned volatile int parsingMessage = 0;
@@ -14,9 +20,7 @@ unsigned volatile int halfStepState = 0;
 unsigned volatile int stepMode = 1;         // 1 = whole stepping, 0 = half stepping
 unsigned volatile int stepDir = 1;          // 1 = CW, 0 = CCW
 unsigned volatile int stopStep = 0;
-unsigned volatile int TA0HI = 0;
 unsigned volatile int TA0LO = 0;
-unsigned volatile int TA1HI = 0;
 unsigned volatile int TA1LO = 0;
 unsigned volatile int ESC = 0;
 unsigned volatile int encoderUART = 0;
@@ -147,15 +151,16 @@ int main(void)
 
         if(newCommand){
             // turning duty cycle byte into motor speed
-            motorSpeed = (65534.0 * dutyByte) / 100;
+            //motorSpeed = (65534.0 * dutyByte) / 100;
             TB2CCR2 = motorSpeed;               // changing motor speed
 
-            if(stepSpeedByte == 0)
+            // if stop DC motor command received
+            if(cmdByte0 == 8)
                 stopStep = 1;
             else
                 stopStep = 0;
 
-            stepSpeed = -(58034 * stepSpeedByte) / 100 + 65535;
+            //stepSpeed = -(58034 * stepSpeedByte) / 100 + 65535;
             TB0CCR0 = stepSpeed;                // changing stepper motor speed
 
             // stepper motor control based on cmdByte0
@@ -199,6 +204,8 @@ int main(void)
                     stepMode = 0;
                     stepDir = 0;
                     TB0CCTL0 |= CCIE;               // enable interrupt for TB0
+                    break;
+                case 8:
                     break;
                 default:
                     break;
@@ -248,21 +255,45 @@ __interrupt void USCI_A1_ISR(void)
         enqueue(cb, Rx);                        // enqueue the received byte
     }
 
-    if(cb->count >= 5){
+    if(cb->count >= 8){
         parsingMessage = 1;                     // signal we're parsing a message
         startByte = dequeue(cb);
         cmdByte0 = dequeue(cb);
         cmdByte1 = dequeue(cb);
-        stepSpeedByte = dequeue(cb);
-        dutyByte = dequeue(cb);
+        stepByte0 = dequeue(cb);
+        stepByte1 = dequeue(cb);
+        DCByte0 = dequeue(cb);
+        DCByte1 = dequeue(cb);
+        ESCByte = dequeue(cb);
+
+        // handle escape byte
+        if(ESCByte & BIT3)
+            stepByte0 = 255;
+        if(ESCByte & BIT2)
+            stepByte1 = 255;
+        if(ESCByte & BIT1)
+            DCByte0 = 255;
+        if(ESCByte & BIT0)
+            DCByte1 = 255;
+
+        // combine UART bytes into 16 bit int
+        stepSpeed = stepByte0 << 8;
+        stepSpeed = stepSpeed + stepByte1;
+        motorSpeed = DCByte0 << 8;
+        motorSpeed = motorSpeed + DCByte1;
+
+//        stepSpeedByte = dequeue(cb);
+//        dutyByte = dequeue(cb);
 
         // echo back message (for debugging)
         if(echoCommand){
             UART1_Tx(startByte);
             UART1_Tx(cmdByte0);
             UART1_Tx(cmdByte1);
-            UART1_Tx(stepSpeedByte);
-            UART1_Tx(dutyByte);
+            UART1_Tx(stepByte0);
+            UART1_Tx(stepByte1);
+            UART1_Tx(DCByte0);
+            UART1_Tx(DCByte1);
         }
 
         if(startByte == 255){
@@ -318,38 +349,15 @@ __interrupt void EENCODER_PULSE_ISR(void)
     // only send data every 16th interrupt
     if(encoderUART >= 15){
         TA0LO = TA0R & 0x00ff;                      // removing upper data
-//        TA0HI = TA0R >> 8;                          // bit shifting upper data to send over UART
         TA1LO = TA1R & 0x00ff;                      // removing upper data
-//        TA1HI = TA1R >> 8;                          // bit shifting upper data to send over UART
-//        ESC = 0;
-
-//        if(TA0HI >= 255){
-//            TA0HI = 0;
-//            ESC |= BIT2;                            // set BIT2 of ESC byte
-//        }
-//        if(TA0LO >= 255){
-//            TA0LO = 0;
-//            ESC |= BIT3;                            // set BIT3 of ESC byte
-//        }
-//        if(TA1HI >= 255){
-//            TA1HI = 0;
-//            ESC |= BIT0;                            // set BIT0 of ESC byte
-//        }
-//        if(TA1LO >= 255){
-//            TA1LO = 0;
-//            ESC |= BIT1;                            // set BIT1 of ESC byte
-//        }
 
         TA0CTL |= TACLR;                            // clear TA0R
         TA1CTL |= TACLR;                            // clear TA1R
 
         // send encoder data packet
         UART1_Tx(255);                              // start byte
-//        UART1_Tx(TA0HI);
         UART1_Tx(TA0LO);
-//        UART1_Tx(TA1HI);
         UART1_Tx(TA1LO);
-//        UART1_Tx(ESC);                              // escape byte
 
         encoderUART = 0;
     }
