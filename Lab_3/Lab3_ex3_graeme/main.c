@@ -12,19 +12,40 @@ unsigned volatile char DCByte0;
 unsigned volatile char DCByte1;
 unsigned volatile char ESCByte;
 
-unsigned volatile char stepSpeedByte;
-unsigned volatile char dutyByte;
 unsigned volatile int parsingMessage = 0;
-unsigned volatile int newCommand = 0;      // if a message received on UART, set = 1
+unsigned volatile int newCommand = 0;       // if a message received on UART, set = 1
 unsigned volatile int halfStepState = 0;
 unsigned volatile int stepMode = 1;         // 1 = whole stepping, 0 = half stepping
 unsigned volatile int stepDir = 1;          // 1 = CW, 0 = CCW
 unsigned volatile int stopStep = 0;
-unsigned volatile int TA0LO = 0;
-unsigned volatile int TA1LO = 0;
-unsigned volatile int ESC = 0;
-unsigned volatile int encoderUART = 0;
-unsigned int echoCommand = 0;
+
+#define Kp 5                                // proportional controller gain
+#define Ki 1                                // integral controller gain
+#define Kd 1                                // derivative controller gain
+#define Kf 4*(2*3.14*7.5)/(20.4*48)         // gain between encoder counts to position in (mm)
+#define Kint 65535 / 100                    // gain conversion between (mm) to (int)
+#define Ke 1
+#define Kv 1
+
+unsigned volatile int DCClosedCTRL = 0;     // 1 = closed loop control of DC motor, 0 = open loop control
+unsigned volatile int StepClosedCTRL = 0;   // 1 = closed loop control of stepper motor, 0 = open loop control
+
+unsigned volatile int xPos = 0;             // position of DC motor for closed loop control
+unsigned volatile int xEncoderPulses = 0;
+unsigned volatile int xTarget = 0;          // target of DC motor for closed loop control
+int xTargetTolerance = 0.22*0xFFFF/100;     // tolerance for DC motor position control
+volatile int error = 0;                     // error between xTarget and xPos
+
+unsigned volatile int yPos = 0;             // position of stepper motor for closed loop control
+unsigned volatile int yTarget = 0;          // target of stepper motor for closed loop control
+unsigned int yTargetTolerance = 0;          // tolerance for stepper motor position control
+
+unsigned int echoCommand = 0;               // flag to echo back UART command (for debugging)
+unsigned int echoDCControlLoop = 0;         // flag to transmit DC Control Loop values
+
+unsigned volatile int TA0LO = 0;            // encoder CW pulses to send over UART
+unsigned volatile int TA1LO = 0;            // encoder CCW pulses to send over UART
+unsigned volatile int encoderUART = 0;      // counter to send encoder data every ~65 ms
 
 unsigned volatile int motorSpeed = 0;
 unsigned volatile int stepSpeed = 0;
@@ -150,9 +171,13 @@ int main(void)
     while(1){
 
         if(newCommand){
-            // turning duty cycle byte into motor speed
-            //motorSpeed = (65534.0 * dutyByte) / 100;
-            TB2CCR2 = motorSpeed;               // changing motor speed
+            // setting DC motor speed
+            if(!DCClosedCTRL)
+                TB2CCR2 = motorSpeed;               // changing DC motor speed
+
+            // setting stepper motor speed
+            if(!StepClosedCTRL)
+                TB0CCR0 = stepSpeed;                // changing stepper motor speed
 
             // if stop DC motor command received
             if(cmdByte0 == 8)
@@ -160,68 +185,95 @@ int main(void)
             else
                 stopStep = 0;
 
-            //stepSpeed = -(58034 * stepSpeedByte) / 100 + 65535;
-            TB0CCR0 = stepSpeed;                // changing stepper motor speed
-
             // stepper motor control based on cmdByte0
             switch(cmdByte0){
                 case 0:                             // whole step CW
+                    StepClosedCTRL = 0;
                     stepMode = 1;
                     incrementStep();
                     TB0CCTL0 &= ~CCIE;              // disable interrupt for TB0
                     break;
                 case 1:                             // whole step CCW
+                    StepClosedCTRL = 0;
                     stepMode = 1;
                     decrementStep();
                     TB0CCTL0 &= ~CCIE;              // disable interrupt for TB0
                     break;
                 case 2:                             // half step CW
+                    StepClosedCTRL = 0;
                     stepMode = 0;
                     incrementStep();
                     TB0CCTL0 &= ~CCIE;              // disable interrupt for TB0
                     break;
                 case 3:                             // half step CCW
+                    StepClosedCTRL = 0;
                     stepMode = 0;
                     decrementStep();
                     TB0CCTL0 &= ~CCIE;              // disable interrupt for TB0
                     break;
                 case 4:                             // continuous whole step CW
+                    StepClosedCTRL = 0;
                     stepMode = 1;
                     stepDir = 1;
                     TB0CCTL0 |= CCIE;               // enable interrupt for TB0
                     break;
                 case 5:                             // continuous whole step CCW
+                    StepClosedCTRL = 0;
                     stepMode = 1;
                     stepDir = 0;
                     TB0CCTL0 |= CCIE;               // enable interrupt for TB0
                     break;
                 case 6:                             // continuous half step CW
+                    StepClosedCTRL = 0;
                     stepMode = 0;
                     stepDir = 1;
                     TB0CCTL0 |= CCIE;               // enable interrupt for TB0
                     break;
                 case 7:                             // continuous half step CCW
+                    StepClosedCTRL = 0;
                     stepMode = 0;
                     stepDir = 0;
                     TB0CCTL0 |= CCIE;               // enable interrupt for TB0
                     break;
-                case 8:
+                case 8:                             // stop stepper motor
+                    StepClosedCTRL = 0;
                     break;
+                case 9:
+                    StepClosedCTRL = 1;
+                    yTarget = stepSpeed;            // setting Y target from data bytes 0 & 1
                 default:
                     break;
             }
 
-            updateCoils();                      // update stepper coils based on new command
+            updateCoils();                          // update stepper coils based on new command
 
             // DC motor control based on cmdByte1
             switch(cmdByte1){
                 case 0:                             // CW DC motor
+                    DCClosedCTRL = 0;
                     P3OUT &= ~BIT7;
                     P3OUT |= BIT6;
                     break;
                 case 1:                             // CCW DC motor
+                    DCClosedCTRL = 0;
                     P3OUT &= ~BIT6;
                     P3OUT |= BIT7;
+                    break;
+                case 2:                             // position control of DC motor
+                    DCClosedCTRL = 1;
+                    xTarget = motorSpeed;           // setting X target from data bytes 2 & 3
+                    break;
+                case 3:
+                    DCClosedCTRL = 0;
+                    xEncoderPulses = 0;
+                    xPos = 0;
+                    xTarget = 0;
+                    TA0CTL |= TACLR;                            // clear TA0R
+                    TA1CTL |= TACLR;                            // clear TA1R
+                    TA0LO = 0;
+                    TA1LO = 0;
+                    error = 0;
+                    P3OUT &= ~(BIT6 + BIT7);
                     break;
                 default:
                     break;
@@ -276,14 +328,11 @@ __interrupt void USCI_A1_ISR(void)
         if(ESCByte & BIT0)
             DCByte1 = 255;
 
-        // combine UART bytes into 16 bit int
+        // combine UART bytes into 16 bit integer
         stepSpeed = stepByte0 << 8;
         stepSpeed = stepSpeed + stepByte1;
         motorSpeed = DCByte0 << 8;
         motorSpeed = motorSpeed + DCByte1;
-
-//        stepSpeedByte = dequeue(cb);
-//        dutyByte = dequeue(cb);
 
         // echo back message (for debugging)
         if(echoCommand){
@@ -344,9 +393,9 @@ __interrupt void STEPPER_PWM_ISR(void)
 
 // interrupt vector for reading encoder pulses from DC motor timer TB2
 #pragma vector = TIMER2_B0_VECTOR
-__interrupt void EENCODER_PULSE_ISR(void)
+__interrupt void ENCODER_PULSE_ISR(void)
 {
-    // only send data every 16th interrupt
+    // only send data every 16th interrupt (~65 ms)
     if(encoderUART >= 15){
         TA0LO = TA0R & 0x00ff;                      // removing upper data
         TA1LO = TA1R & 0x00ff;                      // removing upper data
@@ -355,9 +404,57 @@ __interrupt void EENCODER_PULSE_ISR(void)
         TA1CTL |= TACLR;                            // clear TA1R
 
         // send encoder data packet
-        UART1_Tx(255);                              // start byte
-        UART1_Tx(TA0LO);
-        UART1_Tx(TA1LO);
+        if(!echoDCControlLoop){
+            UART1_Tx(255);                              // start byte
+            UART1_Tx(TA0LO);
+            UART1_Tx(TA1LO);
+        }
+
+        // X control loop
+        if(DCClosedCTRL){
+
+            // storing encoder pulses of X axis
+            xEncoderPulses = xEncoderPulses + TA0LO - TA1LO;
+            if(xEncoderPulses >= 0xFFFF)
+                xEncoderPulses = 0;
+
+            xPos = xEncoderPulses * Kf * Kint;        // current X pos of the motor
+
+            error = xTarget - xPos;
+
+            if(echoDCControlLoop){                      // for debugging purposes
+                unsigned volatile int xTargetHI = xTarget >> 8;
+                unsigned volatile int xTargetLO = xTarget & 0x00FF;
+                unsigned volatile int xPosHI = xPos >> 8;
+                unsigned volatile int xPosLO = xPos & 0x00FF;
+                volatile int errorHI = error >> 8;
+                volatile int errorLO = error & 0x00FF;
+
+                UART1_Tx(69);
+                UART1_Tx(xTargetHI);
+                UART1_Tx(xTargetLO);
+                UART1_Tx(xPosHI);
+                UART1_Tx(xPosLO);
+                UART1_Tx(errorHI);
+                UART1_Tx(errorLO);
+            }
+
+            // set speed of DC motor
+            TB2CCR2 = abs(error) * Kp;
+
+            // set direction of DC motor
+            if(xPos < xTarget){
+                P3OUT &= ~BIT6;
+                P3OUT |= BIT7;
+            }
+            else if(xPos > xTarget){
+                P3OUT &= ~BIT7;
+                P3OUT |= BIT6;
+            }
+            else                                            // if within tolerance, shut off motor
+                P3OUT &= ~(BIT6 + BIT7);
+
+        }
 
         encoderUART = 0;
     }

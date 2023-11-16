@@ -315,6 +315,74 @@ char dequeue(CircularBuffer* cb){
 }
 
 
+// ------------------------------ GANTRY FUNCTIONS ------------------------------
+
+
+//void gantryClockSetup(){
+//    CSCTL0 = CSKEY;                             // unlocking clock
+//    CSCTL1 = DCORSEL;                           // set DCO to 16MHz
+//    CSCTL2 = SELA_3 + SELS_3 + SELM_3;          // ACLK = DCO, SMCLK = DCO, MCLK = DCO
+//}
+//
+//void gantryTA0EncDWNSetup(){
+//    // -------- TA0 SETUP ENCODER DOWN --------
+//    TA0CTL |= TASSEL__TACLK;                    // TA0 using ACLK
+//    TA0CTL |= MC__CONTINUOUS;                   // TA0 in CONTINUOUS mode
+//    TA0CTL |= TACLR;                            // clear TAR
+//}
+//
+//void gantryTA1EncUPSetup(){
+//    // -------- TA1 SETUP ENCODER UP --------
+//    TA1CTL |= TASSEL__TACLK;                    // TA0 using ACLK
+//    TA1CTL |= MC__CONTINUOUS;                   // TA0 in CONTINUOUS mode
+//    TA1CTL |= TACLR;                            // clear TAR
+//}
+//
+//void gantryTB0StepperStateSetup(){
+//    // -------- TB0 SETUP STEPPER STATE STEPPING --------
+//
+//    // setting up TB0 for stepper stepping
+//    TB0CTL |= TBSSEL__ACLK;                     // TB0 using ACLK
+//    TB0CTL |= ID__4;                            // TB0 with a divider of 1
+//    TB0CTL |= MC__UP;                           // TB0 in UP mode
+//    TB0CCR0 = stepSpeed;                        // set UP counter to 40000
+//    TB0CCTL0 |= CCIE;                           // enable interrupt for TB0
+//}
+//
+//void gantryStepperPWMSetup(){
+//    // -------- TB1 SETUP STEPPER PWM --------
+//
+//    // setting up TB1 PWM to P1.4, P1.5, P3.4, P3.5
+//    TB1CTL |= TBSSEL__ACLK;                     // TB1 using ACLK
+//    TB1CTL |= ID__1;                            // TB1 with divider of 1
+//    TB1CTL |= MC__UP;                           // TB1 in UP mode
+//    TB1CCR0 = 10000;                            // set UP counter to 10000
+//
+//    // setting duty cycle for PMW to 25%
+//    TB1CCTL1 = OUTMOD_7;                        // set up reset/set mode
+//    TB1CCR1 = 0;                                // turn on at 0
+//    TB1CCTL1 |= CCIE;                           // enable interrupt flag
+//
+//    TB1CCR2 = 2500;                             // turn off at 25%
+//    TB1CCTL2 |= CCIE;                           // enable interrupt flag
+//}
+//
+//void gantryDCPWMSetup(){
+//    // -------- TB2 SETUP DC MOTOR SPEED CONTROL AND SENDING ENCODER DATA --------
+//
+//    // setting up TB2 for DC motor
+//    TB2CTL |= TBSSEL__ACLK;                     // TB2 using ACLK
+//    TB2CTL |= ID__1;                            // TB2 with divider of 1
+//    TB2CTL |= MC__UP;                           // TB2 in UP mode
+//    TB2CCR0 = 0xFFFF;                           // set UP counter to 0xFFFF (max)
+//    TB2CCTL0 |= CCIE;                           // enable interrupt for TB2
+//
+//
+//    // setting PWM for DC motor
+//    TB2CCTL2 = OUTMOD_7;
+//    TB2CCR2 = motorSpeed;
+//}
+
 // ------------------------------------------------------------------------------
 
 

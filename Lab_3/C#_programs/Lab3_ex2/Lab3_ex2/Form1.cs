@@ -193,6 +193,12 @@ namespace Lab3_ex2
                     DCshaftPosition = encoderPulseTotal * 4 * (2 * 3.14 * DCPulleyRadius) / encoderPPR;   // calculate the DC motor shaft position [pulses * (4 encoder slits per pulse) * (DC pulley radius) / (encoder PPR)]
                     DCshaftVelocity = (DCshaftPosition - DCPreviousShaftPosition) / 0.0655;                                 // calculate the DC motor shaft speed
 
+                    // update current X pos
+                    chartDCPosition.Invoke((MethodInvoker)delegate
+                    {
+                        txtCurrentXPos.Text = DCshaftPosition.ToString();
+                    });
+
                     // store current DC shaft position
                     DCPreviousShaftPosition = DCshaftPosition;
 
@@ -259,6 +265,8 @@ namespace Lab3_ex2
         {
             // set 0 DC motor speed (middle of slider) and send the command
             tbDCDutyCycle.Value = tbDCDutyCycle.Maximum / 2;
+            dutyCycle = 0;
+            cmdByte1 = 0;
             sendData = true;
         }
 
@@ -344,6 +352,42 @@ namespace Lab3_ex2
         private void btnCCWStepHalf_Click(object sender, EventArgs e)
         {
             cmdByte0 = 3;
+            sendData = true;
+        }
+
+        private void btnDCClosedLoop_Click(object sender, EventArgs e)
+        {
+            if (txtXtarget.Text != "")
+            {
+                if (Int16.Parse(txtXtarget.Text) > 100)
+                    txtXtarget.Text = "100";
+                cmdByte1 = 2;
+                dutyCycle = Int16.Parse(txtXtarget.Text) * 65535 / 100;     // convert [mm] to [int] to send over UART
+                sendData = true;
+            }
+            else
+                txtXtarget.Text = "0";
+        }
+
+        private void btnStepClosedLoop_Click(object sender, EventArgs e)
+        {
+            if(txtYTarget.Text != ""){
+                if (Int16.Parse(txtYTarget.Text) > 100)
+                    txtYTarget.Text = "100";
+                cmdByte0 = 9;
+                stepSpeed = Int16.Parse(txtYTarget.Text);
+                sendData = true;
+            }
+        }
+
+        private void btnZeroXAxis_Click(object sender, EventArgs e)
+        {
+            cmdByte1 = 3;
+            txtXtarget.Text = "0";
+            dutyCycle = 0;
+            encoderPulsesCW = 0;
+            encoderPulsesCCW = 0;
+            encoderPulseTotal = 0;
             sendData = true;
         }
 
