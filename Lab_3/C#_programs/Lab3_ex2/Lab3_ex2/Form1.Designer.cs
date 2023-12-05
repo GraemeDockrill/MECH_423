@@ -30,8 +30,8 @@ namespace Lab3_ex2
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.Title title3 = new System.Windows.Forms.DataVisualization.Charting.Title();
-            System.Windows.Forms.DataVisualization.Charting.Title title4 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.Title title5 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.Title title6 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.cmbComPorts = new System.Windows.Forms.ComboBox();
             this.lblBaudRate = new System.Windows.Forms.Label();
@@ -201,11 +201,11 @@ namespace Lab3_ex2
             // tbDCDutyCycle
             // 
             this.tbDCDutyCycle.Location = new System.Drawing.Point(12, 61);
-            this.tbDCDutyCycle.Maximum = 200;
+            this.tbDCDutyCycle.Maximum = 8;
             this.tbDCDutyCycle.Name = "tbDCDutyCycle";
             this.tbDCDutyCycle.Size = new System.Drawing.Size(303, 45);
             this.tbDCDutyCycle.TabIndex = 23;
-            this.tbDCDutyCycle.Value = 100;
+            this.tbDCDutyCycle.Value = 4;
             this.tbDCDutyCycle.ValueChanged += new System.EventHandler(this.tbDCDutyCycle_ValueChanged);
             // 
             // tbStepperSpeed
@@ -234,7 +234,7 @@ namespace Lab3_ex2
             this.btnCWStepWhole.Name = "btnCWStepWhole";
             this.btnCWStepWhole.Size = new System.Drawing.Size(75, 50);
             this.btnCWStepWhole.TabIndex = 26;
-            this.btnCWStepWhole.Text = "CW Step (WHOLE)";
+            this.btnCWStepWhole.Text = "0-25%";
             this.btnCWStepWhole.UseVisualStyleBackColor = true;
             this.btnCWStepWhole.Click += new System.EventHandler(this.btnCWStepWhole_Click);
             // 
@@ -244,7 +244,7 @@ namespace Lab3_ex2
             this.btnCCWStepWhole.Name = "btnCCWStepWhole";
             this.btnCCWStepWhole.Size = new System.Drawing.Size(75, 50);
             this.btnCCWStepWhole.TabIndex = 27;
-            this.btnCCWStepWhole.Text = "CCW Step (WHOLE)";
+            this.btnCCWStepWhole.Text = "0-50%";
             this.btnCCWStepWhole.UseVisualStyleBackColor = true;
             this.btnCCWStepWhole.Click += new System.EventHandler(this.btnCCWStepWhole_Click);
             // 
@@ -274,7 +274,7 @@ namespace Lab3_ex2
             this.btnCWStepHalf.Name = "btnCWStepHalf";
             this.btnCWStepHalf.Size = new System.Drawing.Size(75, 50);
             this.btnCWStepHalf.TabIndex = 30;
-            this.btnCWStepHalf.Text = "CW Step (HALF)";
+            this.btnCWStepHalf.Text = "0-75%";
             this.btnCWStepHalf.UseVisualStyleBackColor = true;
             this.btnCWStepHalf.Click += new System.EventHandler(this.btnCWStepHalf_Click);
             // 
@@ -284,7 +284,7 @@ namespace Lab3_ex2
             this.btnCCWStepHalf.Name = "btnCCWStepHalf";
             this.btnCCWStepHalf.Size = new System.Drawing.Size(75, 50);
             this.btnCCWStepHalf.TabIndex = 31;
-            this.btnCCWStepHalf.Text = "CCW Step (HALF)";
+            this.btnCCWStepHalf.Text = "0-100%";
             this.btnCCWStepHalf.UseVisualStyleBackColor = true;
             this.btnCCWStepHalf.Click += new System.EventHandler(this.btnCCWStepHalf_Click);
             // 
@@ -311,31 +311,31 @@ namespace Lab3_ex2
             // chartDCPosition
             // 
             this.chartDCPosition.Location = new System.Drawing.Point(610, 8);
-            this.chartDCPosition.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.chartDCPosition.Margin = new System.Windows.Forms.Padding(2);
             this.chartDCPosition.Name = "chartDCPosition";
             this.chartDCPosition.Size = new System.Drawing.Size(541, 287);
             this.chartDCPosition.TabIndex = 34;
             this.chartDCPosition.Text = "chart1";
-            title3.Name = "DC Motor Position";
-            title3.Text = "DC Motor Position";
-            this.chartDCPosition.Titles.Add(title3);
+            title5.Name = "DC Motor Position";
+            title5.Text = "DC Motor Position";
+            this.chartDCPosition.Titles.Add(title5);
             // 
             // chartDCVelocity
             // 
             this.chartDCVelocity.Location = new System.Drawing.Point(610, 300);
-            this.chartDCVelocity.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.chartDCVelocity.Margin = new System.Windows.Forms.Padding(2);
             this.chartDCVelocity.Name = "chartDCVelocity";
             this.chartDCVelocity.Size = new System.Drawing.Size(541, 287);
             this.chartDCVelocity.TabIndex = 35;
             this.chartDCVelocity.Text = "chart2";
-            title4.Name = "DC Motor Velocity";
-            title4.Text = "DC Motor Velocity";
-            this.chartDCVelocity.Titles.Add(title4);
+            title6.Name = "DC Motor Velocity";
+            title6.Text = "DC Motor Velocity";
+            this.chartDCVelocity.Titles.Add(title6);
             // 
             // btnDCClosedLoop
             // 
             this.btnDCClosedLoop.Location = new System.Drawing.Point(395, 61);
-            this.btnDCClosedLoop.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnDCClosedLoop.Margin = new System.Windows.Forms.Padding(2);
             this.btnDCClosedLoop.Name = "btnDCClosedLoop";
             this.btnDCClosedLoop.Size = new System.Drawing.Size(75, 45);
             this.btnDCClosedLoop.TabIndex = 36;
@@ -346,7 +346,7 @@ namespace Lab3_ex2
             // btnStepClosedLoop
             // 
             this.btnStepClosedLoop.Location = new System.Drawing.Point(395, 132);
-            this.btnStepClosedLoop.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnStepClosedLoop.Margin = new System.Windows.Forms.Padding(2);
             this.btnStepClosedLoop.Name = "btnStepClosedLoop";
             this.btnStepClosedLoop.Size = new System.Drawing.Size(75, 45);
             this.btnStepClosedLoop.TabIndex = 37;
@@ -357,7 +357,7 @@ namespace Lab3_ex2
             // txtXtarget
             // 
             this.txtXtarget.Location = new System.Drawing.Point(474, 75);
-            this.txtXtarget.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtXtarget.Margin = new System.Windows.Forms.Padding(2);
             this.txtXtarget.Name = "txtXtarget";
             this.txtXtarget.Size = new System.Drawing.Size(63, 20);
             this.txtXtarget.TabIndex = 38;
@@ -367,7 +367,7 @@ namespace Lab3_ex2
             // txtCurrentXPos
             // 
             this.txtCurrentXPos.Location = new System.Drawing.Point(540, 75);
-            this.txtCurrentXPos.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtCurrentXPos.Margin = new System.Windows.Forms.Padding(2);
             this.txtCurrentXPos.Name = "txtCurrentXPos";
             this.txtCurrentXPos.Size = new System.Drawing.Size(67, 20);
             this.txtCurrentXPos.TabIndex = 39;
@@ -377,7 +377,7 @@ namespace Lab3_ex2
             // txtYTarget
             // 
             this.txtYTarget.Location = new System.Drawing.Point(474, 146);
-            this.txtYTarget.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtYTarget.Margin = new System.Windows.Forms.Padding(2);
             this.txtYTarget.Name = "txtYTarget";
             this.txtYTarget.Size = new System.Drawing.Size(63, 20);
             this.txtYTarget.TabIndex = 40;
@@ -387,7 +387,7 @@ namespace Lab3_ex2
             // txtCurrentYPos
             // 
             this.txtCurrentYPos.Location = new System.Drawing.Point(540, 146);
-            this.txtCurrentYPos.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtCurrentYPos.Margin = new System.Windows.Forms.Padding(2);
             this.txtCurrentYPos.Name = "txtCurrentYPos";
             this.txtCurrentYPos.Size = new System.Drawing.Size(67, 20);
             this.txtCurrentYPos.TabIndex = 41;

@@ -22,7 +22,7 @@ unsigned volatile int stopStep = 0;
 #define Kp 5                                // proportional controller gain
 #define Ki 1                                // integral controller gain
 #define Kd 1                                // derivative controller gain
-#define Kf 4*(2*3.14*7.5)/(20.4*48)         // gain between encoder counts to position in (mm)
+#define Kf 4*(2*3.14*6)/(20.4*48)         // gain between encoder counts to position in (mm)
 #define Kint 65535 / 100                    // gain conversion between (mm) to (int)
 #define Ke 1
 #define Kv 1
@@ -421,23 +421,6 @@ __interrupt void ENCODER_PULSE_ISR(void)
             xPos = xEncoderPulses * Kf * Kint;        // current X pos of the motor
 
             error = xTarget - xPos;
-
-            if(echoDCControlLoop){                      // for debugging purposes
-                unsigned volatile int xTargetHI = xTarget >> 8;
-                unsigned volatile int xTargetLO = xTarget & 0x00FF;
-                unsigned volatile int xPosHI = xPos >> 8;
-                unsigned volatile int xPosLO = xPos & 0x00FF;
-                volatile int errorHI = error >> 8;
-                volatile int errorLO = error & 0x00FF;
-
-                UART1_Tx(69);
-                UART1_Tx(xTargetHI);
-                UART1_Tx(xTargetLO);
-                UART1_Tx(xPosHI);
-                UART1_Tx(xPosLO);
-                UART1_Tx(errorHI);
-                UART1_Tx(errorLO);
-            }
 
             // set speed of DC motor
             TB2CCR2 = abs(error) * Kp;

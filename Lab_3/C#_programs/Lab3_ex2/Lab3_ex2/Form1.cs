@@ -41,7 +41,7 @@ namespace Lab3_ex2
         public int encoderPulsesCCW = 0;
         public double encoderPulseTotal = 0.0;
         public double encoderPPR = 979.62;
-        public double DCPulleyRadius = 7.5;
+        public double DCPulleyRadius = 6;
 
         public int maxXValueDCPositionTime;
         public int maxXValueDCVelocityTime;
@@ -81,7 +81,7 @@ namespace Lab3_ex2
 
             chartDCPosition.Series.Add(seriesDCPosition);
 
-            chartDCPosition.ChartAreas[0].AxisX.Interval = 10;      // set X-axis interval to 10
+            chartDCPosition.ChartAreas[0].AxisX.Interval = 0.1;      // set X-axis interval to 10
         }
 
         // function for creating velocity chart
@@ -97,7 +97,7 @@ namespace Lab3_ex2
 
             chartDCVelocity.Series.Add(seriesDCVelocity);
 
-            chartDCVelocity.ChartAreas[0].AxisX.Interval = 10;      // set X-axis interval to 10
+            chartDCVelocity.ChartAreas[0].AxisX.Interval = 0.1;      // set X-axis interval to 10
         }
 
         public void ComPortUpdate()
@@ -209,8 +209,8 @@ namespace Lab3_ex2
                         seriesDCPosition.Points.AddXY(timeSinceCOMConnect, DCshaftPosition);
 
                         // scroll the data window
-                        int minXValue = ((int) timeSinceCOMConnect - 50 > 0) ? (int) timeSinceCOMConnect - 50 - (int) timeSinceCOMConnect % 10 : 0;
-                        maxXValueDCPositionTime = ((int) timeSinceCOMConnect + 10) % 10 != 0 ? maxXValueDCPositionTime : (int) timeSinceCOMConnect + 10;
+                        int minXValue = ((int) timeSinceCOMConnect - 50 > 0) ? (int) timeSinceCOMConnect - 50 - (int) timeSinceCOMConnect % 5 : 0;
+                        maxXValueDCPositionTime = ((int) timeSinceCOMConnect + 5) % 5 != 0 ? maxXValueDCPositionTime : (int) timeSinceCOMConnect + 5;
                         chartDCPosition.ChartAreas[0].AxisX.Minimum = minXValue;
                         chartDCPosition.ChartAreas[0].AxisX.Maximum = maxXValueDCPositionTime;
 
@@ -225,8 +225,8 @@ namespace Lab3_ex2
                         seriesDCVelocity.Points.AddXY(timeSinceCOMConnect, DCshaftVelocity);
 
                         // scroll the data window
-                        int minXValue = ((int) timeSinceCOMConnect - 50 > 0) ? (int) timeSinceCOMConnect - 50 - (int)timeSinceCOMConnect % 10 : 0;
-                        maxXValueDCVelocityTime = ((int) timeSinceCOMConnect + 10) % 10 != 0 ? maxXValueDCVelocityTime : (int) timeSinceCOMConnect + 10;
+                        int minXValue = ((int) timeSinceCOMConnect - 50 > 0) ? (int) timeSinceCOMConnect - 50 - (int)timeSinceCOMConnect % 5 : 0;
+                        maxXValueDCVelocityTime = ((int) timeSinceCOMConnect + 5) % 5 != 0 ? maxXValueDCVelocityTime : (int) timeSinceCOMConnect + 5;
                         chartDCVelocity.ChartAreas[0].AxisX.Minimum = minXValue;
                         chartDCVelocity.ChartAreas[0].AxisX.Maximum = maxXValueDCVelocityTime;
 
@@ -308,7 +308,7 @@ namespace Lab3_ex2
                     cmdByte0 = 6;
 
                 //stepSpeed = -(65535 / (tbStepperSpeed.Maximum / 2)) * tbStepperSpeed.Value + 65535;
-                stepSpeed = -(58034 / (tbStepperSpeed.Maximum / 2)) * tbStepperSpeed.Value + 65535;             // scaling on stepper side                
+                stepSpeed = (58034 / (tbStepperSpeed.Maximum / 2)) * tbStepperSpeed.Value - 65535;             // scaling on stepper side                
             }
             else if (tbStepperSpeed.Value > tbStepperSpeed.Maximum / 2)
             {
@@ -321,7 +321,7 @@ namespace Lab3_ex2
                     cmdByte0 = 7;
                 
                 //stepSpeed = (65535 / (tbStepperSpeed.Maximum / 2)) * tbStepperSpeed.Value - 65535;
-                stepSpeed = (58034 / (tbStepperSpeed.Maximum / 2)) * tbStepperSpeed.Value - 65535;             // scaling on stepper side                
+                stepSpeed = -(58034 / (tbStepperSpeed.Maximum / 2)) * tbStepperSpeed.Value + 65535;             // scaling on stepper side                
             }
             else
             {
@@ -333,26 +333,22 @@ namespace Lab3_ex2
 
         private void btnCWStepWhole_Click(object sender, EventArgs e)
         {
-            cmdByte0 = 0;
-            sendData = true;
+            tbDCDutyCycle.Value = 5;
         }
 
         private void btnCCWStepWhole_Click(object sender, EventArgs e)
         {
-            cmdByte0 = 1;
-            sendData = true;
+            tbDCDutyCycle.Value = 6;
         }
 
         private void btnCWStepHalf_Click(object sender, EventArgs e)
         {
-            cmdByte0 = 2;
-            sendData = true;
+            tbDCDutyCycle.Value = 7;
         }
 
         private void btnCCWStepHalf_Click(object sender, EventArgs e)
         {
-            cmdByte0 = 3;
-            sendData = true;
+            tbDCDutyCycle.Value = 8;
         }
 
         private void btnDCClosedLoop_Click(object sender, EventArgs e)
