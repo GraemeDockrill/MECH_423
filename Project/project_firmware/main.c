@@ -16,8 +16,8 @@ unsigned volatile char ESCByte;
 unsigned volatile int dataWord01;
 unsigned volatile int dataWord23;
 
-unsigned volatile int TimerB1Count = 37700;
-unsigned volatile int TimerB2Count = 37700;
+unsigned volatile int TimerB1Count = 4713; // old 37700
+unsigned volatile int TimerB2Count = 4713; // old 37700
 unsigned volatile int XcurrentSteps = 0;
 unsigned volatile int XtargetSteps = 0;
 unsigned volatile int YcurrentSteps = 0;
@@ -86,20 +86,20 @@ int main(void)
 
     // setting up P3.4 as output for X AXIS STEPPING (switches on TB1.1)
     P3DIR |= BIT4;                      // setting P3.4 as output
-//    P3SEL0 |= BIT4;                     // setting P3.4 as TB1.1
     P3OUT &= ~BIT4;                     // start on PUL low
 
     // setting up P3.6 as output for Y AXIS STEPPING (switches on TB2.1)
     P3DIR |= BIT6;                      // setting P3.6 as output
-//    P3SEL0 |= BIT6;                     // setting P3.6 as TB2.1
     P3OUT &= ~BIT6;                     // start PUL low
 
-    // setting up P3.5 as X AXIS DIRECTION
-    P3DIR |= BIT5;                      // setting P3.5 as output
+    // setting up P3.5 and P1.6 as X AXIS DIRECTION
+    P3DIR |= BIT5;                      // setting P3.5 as DIR output
     P3OUT |= BIT5;                      // setting +ve as default
+    P1DIR |= BIT6;                      // setting P1.6 as DIR output
+    P1OUT &= ~BIT6;                     // setting +ve as default (opposite of P3.5)
 
     // setting up P3.7 as Y AXIS DIRECTION
-    P3DIR |= BIT7;                      // setting P3.7 as output
+    P3DIR |= BIT7;                      // setting P3.7 as DIR output
     P3OUT |= BIT7;                      // setting +ve as default
 
     // Global interrupt enable
@@ -239,12 +239,14 @@ __interrupt void X_AXIS_STEPPING_ISR(void)
                 // if below target position, move +ve steps to reach target
                 if(XcurrentSteps < XtargetSteps){
 
-                    P3OUT |= (BIT5 + BIT4);   // set direction to +ve & take step
+                    P1OUT &= ~BIT6;         // set direction to +ve of P1.6 (opposite of P3.5)
+                    P3OUT |= (BIT5 + BIT4); // set direction to +ve & take step
                     XcurrentSteps++;        // increment current steps
                 }
                 // if above target position, move -ve steps to reach target
                 else if(XcurrentSteps > XtargetSteps){
                     P3OUT &= ~BIT5;         // set direction -ve
+                    P1OUT |= BIT6;          // set direction -ve of P1.6 (opposite of P3.5)
                     P3OUT |= BIT4;          // take step
                     XcurrentSteps--;        // decrement current steps
                 }
