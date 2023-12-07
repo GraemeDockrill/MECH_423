@@ -125,17 +125,19 @@ int main(void)
             // cases for cmdByte for controlling both X & Y axes
             switch(cmdByte){
                 case 0: // zero X & Y axes
-                    movementEnabled = 0;
+//                    movementEnabled = 0;
                     XcurrentSteps = 0;
+                    XtargetSteps = 0;
                     YcurrentSteps = 0;
+                    YtargetSteps = 0;
                     break;
                 case 1: // move to (X,Y) (steps)
-                    movementEnabled = 1;
+//                    movementEnabled = 1;
                     XtargetSteps = dataWord01;
                     YtargetSteps = dataWord23;
                     break;
                 case 2: // Move to origin (0,0) (steps)
-                    movementEnabled = 1;
+//                    movementEnabled = 1;
                     XtargetSteps = 0;
                     YtargetSteps = 0;
                     break;
