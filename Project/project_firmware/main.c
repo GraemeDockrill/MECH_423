@@ -4,20 +4,25 @@
 // defines and global variables
 unsigned volatile char RxByte = 0;
 unsigned volatile char startByte;
-unsigned volatile char cmdByte0;
-unsigned volatile char cmdByte1;
-unsigned volatile char ColorByte;
+unsigned volatile char cmdByte;
+unsigned volatile char colorByte;
 unsigned volatile char dataByte0;
 unsigned volatile char dataByte1;
 unsigned volatile char dataByte2;
 unsigned volatile char dataByte3;
+unsigned volatile char dataByte4;
+unsigned volatile char dataByte5;
+unsigned volatile char dataByte6;
+unsigned volatile char dataByte7;
 unsigned volatile char ESCByte;
 
 unsigned volatile int dataWord01;
 unsigned volatile int dataWord23;
+unsigned volatile int dataWord45;
+unsigned volatile int dataWord67;
 
-unsigned volatile int TimerB1Count = 4713; // old 37700
-unsigned volatile int TimerB2Count = 4713; // old 37700
+unsigned volatile int XTimerB1Count = 4713; // old 37700
+unsigned volatile int YTimerB2Count = 4713; // old 37700
 unsigned volatile int XcurrentSteps = 0;
 unsigned volatile int XtargetSteps = 0;
 unsigned volatile int YcurrentSteps = 0;
@@ -57,14 +62,14 @@ int main(void)
     TB1CTL |= TBSSEL__ACLK;             // TB1 using ACLK
     TB1CTL |= ID__4;                    // TB1 with a CLK divider of 4
     TB1CTL |= MC__UP;                   // setting TB to up mode
-    TB1CCR0 = TimerB1Count;             // setting compare latch TB1CL0
+    TB1CCR0 = XTimerB1Count;             // setting compare latch TB1CL0
 
     // setting TB1.1 cycle to 53Hz, 50% duty cycle
     TB1CCTL1 = OUTMOD_7;                // set mode to Reset/Set
     TB1CCR1 = 0;                        // setting compare latch TB1CL1
     TB1CCTL1 |= CCIE;                   // enable interrupt flag
 
-    TB1CCR2 = TimerB1Count / 2;         // turn off at 50%
+    TB1CCR2 = XTimerB1Count / 2;         // turn off at 50%
     TB1CCTL2 |= CCIE;                   // enable interrupt flag
 
 
@@ -72,7 +77,7 @@ int main(void)
     TB2CTL |= TBSSEL__ACLK;             // TB2 using ACLK
     TB2CTL |= ID__4;                    // TB2 with a CLK divider of 4
     TB2CTL |= MC__UP;                   // setting TB to up mode
-    TB2CCR0 = TimerB2Count;             // setting compare latch TB1CL0
+    TB2CCR0 = YTimerB2Count;             // setting compare latch TB1CL0
 
 
     // setting TB2.1 cycle to 53Hz, 50% duty cycle
@@ -80,7 +85,7 @@ int main(void)
     TB2CCR1 = 0;                        // setting compare latch TB2CL1
     TB2CCTL1 |= CCIE;                   // enable interrupt flag
 
-    TB2CCR2 = TimerB2Count / 2;         // turn off at 50%
+    TB2CCR2 = YTimerB2Count / 2;         // turn off at 50%
     TB2CCTL2 |= CCIE;                   // enable interrupt flag
 
 
@@ -110,53 +115,47 @@ int main(void)
 
         if(newCommand){
 
-            // cases for cmdByte0 for X axis
-            switch(cmdByte0){
-                case 0: // Step +X
-                    movementEnabled = 1;
-                    XtargetSteps = XcurrentSteps + 1;
+            // disable interrupts while parsing data
+            TB1CCTL1 |= CCIE;
+            TB1CCTL2 |= CCIE;
+
+            TB2CCTL1 |= CCIE;
+            TB2CCTL2 |= CCIE;
+
+            // cases for cmdByte for controlling both X & Y axes
+            switch(cmdByte){
+                case 0: // zero X & Y axes
+                    movementEnabled = 0;
+                    XcurrentSteps = 0;
+                    YcurrentSteps = 0;
                     break;
-                case 1: // Step -X
-                    movementEnabled = 1;
-                    if(XcurrentSteps > 0)
-                        XtargetSteps = XcurrentSteps - 1;
-                    break;
-                case 2: // Move to X position (steps)
+                case 1: // move to (X,Y) (steps)
                     movementEnabled = 1;
                     XtargetSteps = dataWord01;
+                    YtargetSteps = dataWord23;
                     break;
-                case 3: // zero X axis
-                    movementEnabled = 0;
-                    XcurrentSteps = 0;
+                case 2: // Move to origin (0,0) (steps)
+                    movementEnabled = 1;
+                    XtargetSteps = 0;
+                    YtargetSteps = 0;
                     break;
-                case 4: // STOP GANTRY!
-                    movementEnabled = 0;
-                    XcurrentSteps = 0;
                 default:
                     break;
             }
 
-            // cases for cmdByte1 for Y axis
-            switch(cmdByte1){
-                case 0: // Step +Y
-                    movementEnabled = 1;
-                    YtargetSteps = YcurrentSteps + 1;
-                    break;
-                case 1: // Step -Y
-                    movementEnabled = 1;
-                    if(YcurrentSteps > 0)
-                        YtargetSteps = YcurrentSteps - 1;
-                    break;
-                case 2: // Move to Y position (steps)
-                    movementEnabled = 1;
-                    YtargetSteps = dataWord23;
-                    break;
-                case 3: // zero Y axis
-                    movementEnabled = 0;
-                    break;
-                default:
-                    break;
-            }
+            // change speed based on received packet
+            TB1CCR0 = dataWord45;       // X axis speed change
+            TB1CCR2 = dataWord45 / 2;
+
+            TB2CCR0 = dataWord67;       // Y axis speed change
+            TB2CCR2 = dataWord67 / 2;
+
+            // re-enable interrupts
+            TB1CCTL1 |= CCIE;
+            TB1CCTL2 |= CCIE;
+
+            TB2CCTL1 |= CCIE;
+            TB2CCTL2 |= CCIE;
 
             movementEnabled = 1;
 
@@ -190,30 +189,47 @@ __interrupt void USCI_A0_ISR(void)
     if(cb->count >= 9){
         parsingMessage = 1;                     // signal we're parsing a message
         startByte = dequeue(cb);
-        cmdByte0 = dequeue(cb);
-        cmdByte1 = dequeue(cb);
-        ColorByte = dequeue(cb);
+        cmdByte = dequeue(cb);
+        colorByte = dequeue(cb);
         dataByte0 = dequeue(cb);
         dataByte1 = dequeue(cb);
         dataByte2 = dequeue(cb);
         dataByte3 = dequeue(cb);
+        dataByte4 = dequeue(cb);
+        dataByte5 = dequeue(cb);
+        dataByte6 = dequeue(cb);
+        dataByte7 = dequeue(cb);
         ESCByte = dequeue(cb);
 
         // handle escape byte
-        if(ESCByte & BIT3)
+        if(ESCByte & BIT7)
             dataByte0 = 255;
-        if(ESCByte & BIT2)
+        if(ESCByte & BIT6)
             dataByte1 = 255;
-        if(ESCByte & BIT1)
+        if(ESCByte & BIT5)
             dataByte2 = 255;
-        if(ESCByte & BIT0)
+        if(ESCByte & BIT4)
             dataByte3 = 255;
+        if(ESCByte & BIT3)
+            dataByte4 = 255;
+        if(ESCByte & BIT2)
+            dataByte5 = 255;
+        if(ESCByte & BIT1)
+            dataByte6 = 255;
+        if(ESCByte & BIT0)
+            dataByte7 = 255;
 
         // combine UART bytes into 16 bit integer for X and Y step target positions
         dataWord01 = dataByte0 << 8;
         dataWord01 = dataWord01 + dataByte1;
         dataWord23 = dataByte2 << 8;
         dataWord23 = dataWord23 + dataByte3;
+
+        // combine UART bytes into 16 bit integers for X and Y speeds
+        dataWord45 = dataByte4 << 8;
+        dataWord45 = dataWord45 + dataByte5;
+        dataWord67 = dataByte6 << 8;
+        dataWord67 = dataWord67 + dataByte7;
 
         // tell super loop a new message is received
         if(startByte == 255){
