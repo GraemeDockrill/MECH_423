@@ -206,20 +206,20 @@ int main(void)
 
         if(newCommand){
 
-//            // disable interrupts while parsing data
-//            TB1CCTL1 &= ~CCIE;
-//            TB1CCTL2 &= ~CCIE;
-//
-//            TB2CCTL1 &= ~CCIE;
-//            TB2CCTL2 &= ~CCIE;
-//
-//            TB0CCTL1 &= ~CCIE;
-//            TB0CCTL2 &= ~CCIE;
-//
-//            TA0CCTL1 &= ~CCIE;
-//            TA0CCTL2 &= ~CCIE;
-//
-//            TA1CCTL0 &= ~CCIE;
+            // disable interrupts while parsing data
+            TB1CCTL1 &= ~CCIE;
+            TB1CCTL2 &= ~CCIE;
+
+            TB2CCTL1 &= ~CCIE;
+            TB2CCTL2 &= ~CCIE;
+
+            TB0CCTL1 &= ~CCIE;
+            TB0CCTL2 &= ~CCIE;
+
+            TA0CCTL1 &= ~CCIE;
+            TA0CCTL2 &= ~CCIE;
+
+            TA1CCTL0 &= ~CCIE;
 
             // cases for cmdByte for controlling both X & Y axes
             switch(cmdByte){
@@ -286,20 +286,20 @@ int main(void)
 
             newCommand = 0;             // we've read and parsed the command
 
-//            // re-enable interrupts
-//            TB1CCTL1 |= CCIE;
-//            TB1CCTL2 |= CCIE;
-//
-//            TB2CCTL1 |= CCIE;
-//            TB2CCTL2 |= CCIE;
-//
-//            TB0CCTL1 |= CCIE;
-//            TB0CCTL2 |= CCIE;
-//
-//            TA0CCTL1 |= CCIE;
-//            TA0CCTL2 |= CCIE;
-//
-//            TA1CCTL0 |= CCIE;
+            // re-enable interrupts
+            TB1CCTL1 |= CCIE;
+            TB1CCTL2 |= CCIE;
+
+            TB2CCTL1 |= CCIE;
+            TB2CCTL2 |= CCIE;
+
+            TB0CCTL1 |= CCIE;
+            TB0CCTL2 |= CCIE;
+
+            TA0CCTL1 |= CCIE;
+            TA0CCTL2 |= CCIE;
+
+            TA1CCTL0 |= CCIE;
         }
 
     }
@@ -383,6 +383,16 @@ __interrupt void USCI_A1_ISR(void)
         dataWord45 = dataWord45 + dataByte5;
         dataWord67 = dataByte6 << 8;
         dataWord67 = dataWord67 + dataByte7;
+
+        // hard cap check speed
+        if(dataWord45 <= 4713)
+            dataWord45 = 4713;
+        if(dataWord67 <= 4713)
+            dataWord67 = 4713;
+        if(dataWord45 >= 0xFFF0)
+            dataWord45 = 0xFFF0;
+        if(dataWord67 >= 0xFFF0)
+            dataWord67 = 0xFFF0;
 
         // tell super loop a new message is received
         if(startByte == 255){
