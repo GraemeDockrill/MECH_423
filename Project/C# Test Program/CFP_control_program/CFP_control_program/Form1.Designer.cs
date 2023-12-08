@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.Title title11 = new System.Windows.Forms.DataVisualization.Charting.Title();
-            System.Windows.Forms.DataVisualization.Charting.Title title12 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.Title title13 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.Title title14 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.cmbComPorts = new System.Windows.Forms.ComboBox();
             this.lblBaudRate = new System.Windows.Forms.Label();
             this.txtBaudRate = new System.Windows.Forms.TextBox();
@@ -93,6 +93,12 @@
             this.chkByte8 = new System.Windows.Forms.CheckBox();
             this.txtByte9 = new System.Windows.Forms.TextBox();
             this.chkByte9 = new System.Windows.Forms.CheckBox();
+            this.txtByte10 = new System.Windows.Forms.TextBox();
+            this.txtByte11 = new System.Windows.Forms.TextBox();
+            this.txtByte12 = new System.Windows.Forms.TextBox();
+            this.chkByte10 = new System.Windows.Forms.CheckBox();
+            this.chkByte11 = new System.Windows.Forms.CheckBox();
+            this.chkByte12 = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.tbManualMove)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartLoadCellForce)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartCurrentStepPosition)).BeginInit();
@@ -125,7 +131,7 @@
             this.txtBaudRate.Name = "txtBaudRate";
             this.txtBaudRate.Size = new System.Drawing.Size(146, 26);
             this.txtBaudRate.TabIndex = 2;
-            this.txtBaudRate.Text = "9600";
+            this.txtBaudRate.Text = "19200";
             // 
             // btnComConnect
             // 
@@ -227,6 +233,7 @@
             this.txtByte1.Name = "txtByte1";
             this.txtByte1.Size = new System.Drawing.Size(100, 26);
             this.txtByte1.TabIndex = 11;
+            this.txtByte1.Text = "255";
             this.txtByte1.TextChanged += new System.EventHandler(this.genericTextBoxEventHandler);
             // 
             // txtByte2
@@ -236,6 +243,7 @@
             this.txtByte2.Name = "txtByte2";
             this.txtByte2.Size = new System.Drawing.Size(100, 26);
             this.txtByte2.TabIndex = 12;
+            this.txtByte2.Text = "1";
             this.txtByte2.TextChanged += new System.EventHandler(this.genericTextBoxEventHandler);
             // 
             // txtByte3
@@ -245,6 +253,7 @@
             this.txtByte3.Name = "txtByte3";
             this.txtByte3.Size = new System.Drawing.Size(100, 26);
             this.txtByte3.TabIndex = 13;
+            this.txtByte3.Text = "0";
             this.txtByte3.TextChanged += new System.EventHandler(this.genericTextBoxEventHandler);
             // 
             // txtByte4
@@ -254,6 +263,7 @@
             this.txtByte4.Name = "txtByte4";
             this.txtByte4.Size = new System.Drawing.Size(100, 26);
             this.txtByte4.TabIndex = 14;
+            this.txtByte4.Text = "4";
             this.txtByte4.TextChanged += new System.EventHandler(this.genericTextBoxEventHandler);
             // 
             // txtByte5
@@ -263,6 +273,7 @@
             this.txtByte5.Name = "txtByte5";
             this.txtByte5.Size = new System.Drawing.Size(100, 26);
             this.txtByte5.TabIndex = 15;
+            this.txtByte5.Text = "200";
             this.txtByte5.TextChanged += new System.EventHandler(this.genericTextBoxEventHandler);
             // 
             // chkByte1
@@ -590,9 +601,9 @@
             this.chartLoadCellForce.Size = new System.Drawing.Size(1009, 351);
             this.chartLoadCellForce.TabIndex = 44;
             this.chartLoadCellForce.Text = "chart1";
-            title11.Name = "Load Cell Force";
-            title11.Text = "Load Cell Force";
-            this.chartLoadCellForce.Titles.Add(title11);
+            title13.Name = "Load Cell Force";
+            title13.Text = "Load Cell Force";
+            this.chartLoadCellForce.Titles.Add(title13);
             // 
             // chartCurrentStepPosition
             // 
@@ -602,9 +613,9 @@
             this.chartCurrentStepPosition.Size = new System.Drawing.Size(1009, 491);
             this.chartCurrentStepPosition.TabIndex = 45;
             this.chartCurrentStepPosition.Text = "chart2";
-            title12.Name = "Current Position";
-            title12.Text = "Current Position";
-            this.chartCurrentStepPosition.Titles.Add(title12);
+            title14.Name = "Current Position";
+            title14.Text = "Current Position";
+            this.chartCurrentStepPosition.Titles.Add(title14);
             // 
             // txtFileName
             // 
@@ -663,6 +674,7 @@
             this.txtByte6.Name = "txtByte6";
             this.txtByte6.Size = new System.Drawing.Size(100, 26);
             this.txtByte6.TabIndex = 53;
+            this.txtByte6.Text = "4";
             this.txtByte6.TextChanged += new System.EventHandler(this.genericTextBoxEventHandler);
             // 
             // chkByte6
@@ -682,6 +694,7 @@
             this.txtByte7.Name = "txtByte7";
             this.txtByte7.Size = new System.Drawing.Size(100, 26);
             this.txtByte7.TabIndex = 55;
+            this.txtByte7.Text = "200";
             this.txtByte7.TextChanged += new System.EventHandler(this.genericTextBoxEventHandler);
             // 
             // chkByte7
@@ -701,6 +714,7 @@
             this.txtByte8.Name = "txtByte8";
             this.txtByte8.Size = new System.Drawing.Size(100, 26);
             this.txtByte8.TabIndex = 57;
+            this.txtByte8.Text = "20";
             this.txtByte8.TextChanged += new System.EventHandler(this.genericTextBoxEventHandler);
             // 
             // chkByte8
@@ -720,6 +734,7 @@
             this.txtByte9.Name = "txtByte9";
             this.txtByte9.Size = new System.Drawing.Size(100, 26);
             this.txtByte9.TabIndex = 59;
+            this.txtByte9.Text = "0";
             this.txtByte9.TextChanged += new System.EventHandler(this.genericTextBoxEventHandler);
             // 
             // chkByte9
@@ -733,11 +748,77 @@
             this.chkByte9.UseVisualStyleBackColor = true;
             this.chkByte9.CheckedChanged += new System.EventHandler(this.chkByte9_CheckedChanged);
             // 
+            // txtByte10
+            // 
+            this.txtByte10.Location = new System.Drawing.Point(966, 110);
+            this.txtByte10.Name = "txtByte10";
+            this.txtByte10.Size = new System.Drawing.Size(100, 26);
+            this.txtByte10.TabIndex = 61;
+            this.txtByte10.Text = "20";
+            this.txtByte10.TextChanged += new System.EventHandler(this.genericTextBoxEventHandler);
+            // 
+            // txtByte11
+            // 
+            this.txtByte11.Location = new System.Drawing.Point(1072, 110);
+            this.txtByte11.Name = "txtByte11";
+            this.txtByte11.Size = new System.Drawing.Size(100, 26);
+            this.txtByte11.TabIndex = 62;
+            this.txtByte11.Text = "0";
+            this.txtByte11.TextChanged += new System.EventHandler(this.genericTextBoxEventHandler);
+            // 
+            // txtByte12
+            // 
+            this.txtByte12.Location = new System.Drawing.Point(1178, 110);
+            this.txtByte12.Name = "txtByte12";
+            this.txtByte12.Size = new System.Drawing.Size(100, 26);
+            this.txtByte12.TabIndex = 63;
+            this.txtByte12.Text = "0";
+            this.txtByte12.TextChanged += new System.EventHandler(this.genericTextBoxEventHandler);
+            // 
+            // chkByte10
+            // 
+            this.chkByte10.AutoSize = true;
+            this.chkByte10.Location = new System.Drawing.Point(966, 80);
+            this.chkByte10.Name = "chkByte10";
+            this.chkByte10.Size = new System.Drawing.Size(98, 24);
+            this.chkByte10.TabIndex = 64;
+            this.chkByte10.Text = "Byte #10";
+            this.chkByte10.UseVisualStyleBackColor = true;
+            this.chkByte10.CheckedChanged += new System.EventHandler(this.chkByte10_CheckedChanged);
+            // 
+            // chkByte11
+            // 
+            this.chkByte11.AutoSize = true;
+            this.chkByte11.Location = new System.Drawing.Point(1072, 80);
+            this.chkByte11.Name = "chkByte11";
+            this.chkByte11.Size = new System.Drawing.Size(98, 24);
+            this.chkByte11.TabIndex = 65;
+            this.chkByte11.Text = "Byte #11";
+            this.chkByte11.UseVisualStyleBackColor = true;
+            this.chkByte11.CheckedChanged += new System.EventHandler(this.chkByte11_CheckedChanged);
+            // 
+            // chkByte12
+            // 
+            this.chkByte12.AutoSize = true;
+            this.chkByte12.Location = new System.Drawing.Point(1178, 80);
+            this.chkByte12.Name = "chkByte12";
+            this.chkByte12.Size = new System.Drawing.Size(98, 24);
+            this.chkByte12.TabIndex = 66;
+            this.chkByte12.Text = "Byte #12";
+            this.chkByte12.UseVisualStyleBackColor = true;
+            this.chkByte12.CheckedChanged += new System.EventHandler(this.chkByte12_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1611, 1121);
+            this.Controls.Add(this.chkByte12);
+            this.Controls.Add(this.chkByte11);
+            this.Controls.Add(this.chkByte10);
+            this.Controls.Add(this.txtByte12);
+            this.Controls.Add(this.txtByte11);
+            this.Controls.Add(this.txtByte10);
             this.Controls.Add(this.chkByte9);
             this.Controls.Add(this.txtByte9);
             this.Controls.Add(this.chkByte8);
@@ -872,6 +953,12 @@
         private System.Windows.Forms.CheckBox chkByte8;
         private System.Windows.Forms.TextBox txtByte9;
         private System.Windows.Forms.CheckBox chkByte9;
+        private System.Windows.Forms.TextBox txtByte10;
+        private System.Windows.Forms.TextBox txtByte11;
+        private System.Windows.Forms.TextBox txtByte12;
+        private System.Windows.Forms.CheckBox chkByte10;
+        private System.Windows.Forms.CheckBox chkByte11;
+        private System.Windows.Forms.CheckBox chkByte12;
     }
 }
 

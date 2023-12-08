@@ -21,9 +21,9 @@ unsigned volatile int dataWord23;
 unsigned volatile int dataWord45;
 unsigned volatile int dataWord67;
 
+// for XY gantry control
 unsigned volatile int XTimerB1Count = 4713; // old 37700
 unsigned volatile int YTimerB2Count = 4713; // old 37700
-unsigned volatile int servoTimerB0Count = 20000;
 unsigned volatile int XcurrentSteps = 0;
 unsigned volatile int XtargetSteps = 0;
 unsigned volatile int YcurrentSteps = 0;
@@ -32,6 +32,14 @@ unsigned volatile int parsingMessage = 0;
 
 unsigned volatile int newCommand = 0;
 unsigned volatile int movementEnabled = 0;
+
+// for marker servo control
+unsigned volatile int servoTimerB0Count = 20000;
+unsigned volatile int servoUpPosCount = 1000;       // servo 0 degrees
+unsigned volatile int servoDownPosCount = 1600;     // servo 45 degrees
+unsigned volatile int dotDelayCounter = 0;
+unsigned volatile int dotMade = 0;                  // 1 = dot was made (send ACKByte over serial) 0 = dot not made yet
+unsigned volatile int ACKsent = 0;                  // check if acknowledge was sent
 
 // for cylinder stepper
 unsigned volatile int halfStepState = 0;
@@ -45,6 +53,7 @@ unsigned volatile int marker2Steps = 683;
 unsigned volatile int marker3Steps = 1024;
 unsigned volatile int marker4Steps = 1365;
 unsigned volatile int marker5Steps = 1707;
+unsigned volatile int markerReady = 0;
 
 // circular buffer defines
 #define BUFFER_SIZE 50
@@ -91,10 +100,10 @@ int main(void)
         // setting TB1.1 cycle to 53Hz, 50% duty cycle
         TB1CCTL1 = OUTMOD_7;                // set mode to Reset/Set
         TB1CCR1 = 0;                        // setting compare latch TB1CL1
-//        TB1CCTL1 |= CCIE;                   // enable interrupt flag
+        TB1CCTL1 |= CCIE;                   // enable interrupt flag
 
         TB1CCR2 = XTimerB1Count / 2;        // turn off at 50%
-//        TB1CCTL2 |= CCIE;                   // enable interrupt flag
+        TB1CCTL2 |= CCIE;                   // enable interrupt flag
 
         // setting up P3.3 as output for X AXIS STEPPING (switches on TB1.1)
         P3DIR |= BIT3;                      // setting P3.3 as output
@@ -117,10 +126,10 @@ int main(void)
         // setting TB2.1 cycle to 53Hz, 50% duty cycle
         TB2CCTL1 = OUTMOD_7;                // set mode to Reset/Set
         TB2CCR1 = 0;                        // setting compare latch TB2CL1
-//        TB2CCTL1 |= CCIE;                   // enable interrupt flag
+        TB2CCTL1 |= CCIE;                   // enable interrupt flag
 
         TB2CCR2 = YTimerB2Count / 2;        // turn off at 50%
-//        TB2CCTL2 |= CCIE;                   // enable interrupt flag
+        TB2CCTL2 |= CCIE;                   // enable interrupt flag
 
         // setting up P3.0 as output for Y AXIS STEPPING (switches on TB2.1)
         P3DIR |= BIT0;                      // setting P3.0 as output
@@ -190,11 +199,19 @@ int main(void)
         if(newCommand){
 
             // disable interrupts while parsing data
-            TB1CCTL1 |= CCIE;
-            TB1CCTL2 |= CCIE;
+            TB1CCTL1 &= ~CCIE;
+            TB1CCTL2 &= ~CCIE;
 
-            TB2CCTL1 |= CCIE;
-            TB2CCTL2 |= CCIE;
+            TB2CCTL1 &= ~CCIE;
+            TB2CCTL2 &= ~CCIE;
+
+            TB0CCTL1 &= ~CCIE;
+            TB0CCTL2 &= ~CCIE;
+
+            TA0CCTL1 &= ~CCIE;
+            TA0CCTL2 &= ~CCIE;
+
+            TA1CCTL0 &= ~CCIE;
 
             // cases for cmdByte for controlling both X & Y axes
             switch(cmdByte){
@@ -251,6 +268,16 @@ int main(void)
             TB2CCR0 = dataWord67;       // Y axis speed change
             TB2CCR2 = dataWord67 / 2;
 
+            movementEnabled = 1;
+
+            markerReady = 0;            // marker is not ready, as movement command received
+
+            dotMade = 0;                // dot is not made for new command
+
+            ACKsent = 0;                // reset that we've sent an acknowledge byte
+
+            newCommand = 0;             // we've read and parsed the command
+
             // re-enable interrupts
             TB1CCTL1 |= CCIE;
             TB1CCTL2 |= CCIE;
@@ -258,9 +285,13 @@ int main(void)
             TB2CCTL1 |= CCIE;
             TB2CCTL2 |= CCIE;
 
-            movementEnabled = 1;
+            TB0CCTL1 |= CCIE;
+            TB0CCTL2 |= CCIE;
 
-            newCommand = 0;             // we've read and parsed the command
+            TA0CCTL1 |= CCIE;
+            TA0CCTL2 |= CCIE;
+
+            TA1CCTL0 |= CCIE;
         }
 
     }
@@ -342,7 +373,7 @@ __interrupt void USCI_A0_ISR(void)
 }
 
 
-// interrupt vector for PWM of servo-motor
+// interrupt vector for PWM of servo-motor for moving marker
 #pragma vector = TIMER0_B1_VECTOR
 __interrupt void SERVO_PWM_ISR(void)
 {
@@ -468,19 +499,56 @@ __interrupt void STEPPER_PWM_ISR(void)
 }
 
 
-// interrupt vector TA1 for changing stepper state
+// interrupt vector TA1 for changing stepper state for marker stepper
 #pragma vector = TIMER1_A0_VECTOR
 __interrupt void STEPPER_STEP_ISR(void)
 {
 
-    if(currentMarkerSteps > targetMarkerSteps){
-        decrementStep();
-        currentMarkerSteps--;
+    // if marker is not ready, and XY target reached, move cylinder to ready position
+    if(!markerReady && XcurrentSteps == XtargetSteps && YcurrentSteps == YtargetSteps){
+
+        if(currentMarkerSteps > targetMarkerSteps){
+            decrementStep();
+            currentMarkerSteps--;
+        }
+        else if(currentMarkerSteps < targetMarkerSteps){
+            incrementStep();
+            currentMarkerSteps++;
+        }
+        else if(currentMarkerSteps == targetMarkerSteps){
+            markerReady = 1;                        // marker is lined up and ready to dot
+            TA1CCR0 = 50000;                        // set up TA1 for state switching the marker servo
+            dotDelayCounter = 0;                    // reset dot delay
+        }
     }
-    else if(currentMarkerSteps < targetMarkerSteps){
-        incrementStep();
-        currentMarkerSteps++;
+
+    // if after position reached and the dot hasn't been made yet, make dot
+    else if(markerReady && !dotMade){
+
+        dotDelayCounter++;                          // increment dot delay
+
+        // lower servo
+        if(dotDelayCounter == 1)
+            TB0CCR2 = servoDownPosCount;
+        // after 0.5s, raise servo
+        else if(dotDelayCounter >= 20)
+            TB0CCR2 = servoUpPosCount;
+        // after another 0.5s, signal dot is made
+        else if(dotDelayCounter >= 40){
+            dotDelayCounter = 0;
+            dotMade = 1;                            // signal we've made the dot
+        }
+
     }
+
+    // if marker is ready and dot is made, send acknowledge
+    else if(markerReady && dotMade && !ACKsent){
+        UART1_Tx(255);
+        UART1_Tx(1);
+        TA1CCR0 = stepSpeed;                        // reset interrupt of TA1 to stepper speed for cylinder
+        ACKsent = 1;
+    }
+
 
     TA1CCTL0 &= ~(CCIFG);                       // reset interrupt flag for TA1IFG
 }

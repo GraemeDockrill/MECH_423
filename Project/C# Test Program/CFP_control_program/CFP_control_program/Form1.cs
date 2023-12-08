@@ -95,24 +95,30 @@ namespace CFP_control_program
             InitializeLoadCellForceChart();
             InitializeCurrentStepPositionChart();
             cbComResponse.Checked = true;
-            chkByte1.Checked = false;
-            chkByte2.Checked = false;
-            chkByte3.Checked = false;
-            chkByte4.Checked = false;
-            chkByte5.Checked = false;
-            chkByte6.Checked = false;
-            chkByte7.Checked = false;
-            chkByte8.Checked = false;
-            chkByte9.Checked = false;
-            txtByte1.Enabled = false;
-            txtByte2.Enabled = false;
-            txtByte3.Enabled = false;
-            txtByte4.Enabled = false;
-            txtByte5.Enabled = false;
-            txtByte6.Enabled = false;
-            txtByte7.Enabled = false;
-            txtByte8.Enabled = false;
-            txtByte9.Enabled = false;
+            chkByte1.Checked = true;
+            chkByte2.Checked = true;
+            chkByte3.Checked = true;
+            chkByte4.Checked = true;
+            chkByte5.Checked = true;
+            chkByte6.Checked = true;
+            chkByte7.Checked = true;
+            chkByte8.Checked = true;
+            chkByte9.Checked = true;
+            chkByte10.Checked = true;
+            chkByte11.Checked = true;
+            chkByte12.Checked = true;
+            txtByte1.Enabled = true;
+            txtByte2.Enabled = true;
+            txtByte3.Enabled = true;
+            txtByte4.Enabled = true;
+            txtByte5.Enabled = true;
+            txtByte6.Enabled = true;
+            txtByte7.Enabled = true;
+            txtByte8.Enabled = true;
+            txtByte9.Enabled = true;
+            txtByte10.Enabled = true;
+            txtByte11.Enabled = true;
+            txtByte12.Enabled = true;
             ComPortUpdate();
         }
 
@@ -533,6 +539,39 @@ namespace CFP_control_program
             }
         }
 
+        private void chkByte10_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkByte10.Checked == true)
+                txtByte10.Enabled = true;
+            else
+            {
+                txtByte10.Clear();
+                txtByte10.Enabled = false;
+            }
+        }
+
+        private void chkByte11_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkByte11.Checked == true)
+                txtByte11.Enabled = true;
+            else
+            {
+                txtByte11.Clear();
+                txtByte11.Enabled = false;
+            }
+        }
+
+        private void chkByte12_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkByte12.Checked == true)
+                txtByte12.Enabled = true;
+            else
+            {
+                txtByte12.Clear();
+                txtByte12.Enabled = false;
+            }
+        }
+
         private void genericTextBoxEventHandler(object sender, EventArgs e)
         {
             TextBox currentTextBox = sender as TextBox;
@@ -551,7 +590,7 @@ namespace CFP_control_program
 
         private void btnTransmitToComPort_Click(object sender, EventArgs e)
         {
-            byte[] TxBytes = new Byte[9];
+            byte[] TxBytes = new Byte[12];
 
             try
             {
@@ -601,6 +640,21 @@ namespace CFP_control_program
                     {
                         TxBytes[8] = Convert.ToByte(txtByte9.Text);
                         serialPort1.Write(TxBytes, 8, 1);
+                    }
+                    if (chkByte10.Checked && (txtByte10.Text != ""))
+                    {
+                        TxBytes[9] = Convert.ToByte(txtByte10.Text);
+                        serialPort1.Write(TxBytes, 9, 1);
+                    }
+                    if (chkByte11.Checked && (txtByte11.Text != ""))
+                    {
+                        TxBytes[10] = Convert.ToByte(txtByte11.Text);
+                        serialPort1.Write(TxBytes, 10, 1);
+                    }
+                    if (chkByte12.Checked && (txtByte12.Text != ""))
+                    {
+                        TxBytes[11] = Convert.ToByte(txtByte12.Text);
+                        serialPort1.Write(TxBytes, 11, 1);
                     }
                 }
             }
@@ -793,6 +847,7 @@ namespace CFP_control_program
                 btnResetAllCharts.Text = "Reset All Charts";
             }
         }
+
 
         bool IsBitSet(byte b, int pos)
         {
