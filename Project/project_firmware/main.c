@@ -46,14 +46,14 @@ unsigned volatile int halfStepState = 0;
 unsigned volatile int stepMode = 1;         // 1 = whole stepping, 0 = half stepping
 unsigned volatile int stepSpeed = 20000;
 unsigned volatile int currentMarkerSteps = 0;   // 2048 total steps/revolution
-unsigned volatile int targetMarkerSteps = 2048;
+unsigned volatile int targetMarkerSteps = 0;
 unsigned volatile int marker0Steps = 0;
 unsigned volatile int marker1Steps = 341;
 unsigned volatile int marker2Steps = 683;
 unsigned volatile int marker3Steps = 1024;
 unsigned volatile int marker4Steps = 1365;
 unsigned volatile int marker5Steps = 1707;
-unsigned volatile int markerReady = 0;
+unsigned volatile int markerReady = 1;      // marker start as ready
 
 // circular buffer defines
 #define BUFFER_SIZE 50
@@ -88,7 +88,15 @@ int main(void)
 
 
     // -------- SET UP UART --------
-    UART1_Setup();
+    // Configure P2.5 and P2.6 ports for UART
+    P2SEL0 &= ~(BIT5 + BIT6);               // secondary module function UCA1RXD
+    P2SEL1 |= BIT5 + BIT6;                  // secondary module function UCA1TXD
+    UCA1CTLW0 |= UCSWRST;                   // Put the UART in software reset so can be modified
+    UCA1CTLW0 |= UCSSEL0;                   // Run the UART using ACLK
+    UCA1MCTLW = UCOS16 + 0xB600;            // Enable oversampling, Baud rate = 19200 from a 8 MHz clock (BRCLK) and from column UCBRSx
+    UCA1BRW = 26;                           // Clock prescaler from Table 18-5 column UCBRx
+    UCA1CTLW0 &= ~UCSWRST;                  // release UART for operation
+    UCA1IE |= UCRXIE;                       // Enable UART Rx interrupt
 
 
     // -------- SETTING UP TIMER B1 - X AXIS CONTROL --------
@@ -151,7 +159,7 @@ int main(void)
         TB0CCR1 = 0;                        // setting compare latch TB1CL1
         TB0CCTL1 |= CCIE;                   // enable interrupt flag
 
-        TB0CCR2 = servoTimerB0Count / 20;   // turn off at 50%
+        TB0CCR2 = servoUpPosCount;          // set initial position to UP
         TB0CCTL2 |= CCIE;                   // enable interrupt flag
 
         // setting up P1.3 as output for servo-motor
@@ -303,8 +311,8 @@ int main(void)
 // -------- INTERRUPT SERVICE ROUTINES --------
 
 
-#pragma vector = USCI_A0_VECTOR             // interrupt vector for Rx interrupt
-__interrupt void USCI_A0_ISR(void)
+#pragma vector = USCI_A1_VECTOR             // interrupt vector for Rx interrupt
+__interrupt void USCI_A1_ISR(void)
 {
     RxByte = UART1_Rx();                         // Get the new byte from the Rx buffer
 
@@ -318,7 +326,7 @@ __interrupt void USCI_A0_ISR(void)
         enqueue(cb, RxByte);                        // enqueue the received byte
     }
 
-    if(cb->count >= 9){
+    if(cb->count >= 12){
         parsingMessage = 1;                     // signal we're parsing a message
         startByte = dequeue(cb);
         cmdByte = dequeue(cb);
@@ -332,6 +340,19 @@ __interrupt void USCI_A0_ISR(void)
         dataByte6 = dequeue(cb);
         dataByte7 = dequeue(cb);
         ESCByte = dequeue(cb);
+
+        UART1_Tx(startByte);
+        UART1_Tx(cmdByte);
+        UART1_Tx(colorByte);
+        UART1_Tx(dataByte0);
+        UART1_Tx(dataByte1);
+        UART1_Tx(dataByte2);
+        UART1_Tx(dataByte3);
+        UART1_Tx(dataByte4);
+        UART1_Tx(dataByte5);
+        UART1_Tx(dataByte6);
+        UART1_Tx(dataByte7);
+        UART1_Tx(ESCByte);
 
         // handle escape byte
         if(ESCByte & BIT7)
