@@ -143,9 +143,9 @@ int main(void)
         P3DIR |= BIT0;                      // setting P3.0 as output
         P3OUT &= ~BIT0;                     // start PUL low
 
-        // setting up P1.2 as Y AXIS DIRECTION
-        P1DIR |= BIT2;                      // setting P1.2 as DIR output
-        P1OUT |= BIT2;                      // setting +ve as default
+        // setting up P1.1 as Y AXIS DIRECTION
+        P1DIR |= BIT0;                      // setting P1.2 as DIR output
+        P1OUT |= BIT0;                      // setting +ve as default
 
 
     // -------- SETTING UP TIMER B0 - SERVO CONTROL --------
@@ -206,20 +206,20 @@ int main(void)
 
         if(newCommand){
 
-            // disable interrupts while parsing data
-            TB1CCTL1 &= ~CCIE;
-            TB1CCTL2 &= ~CCIE;
-
-            TB2CCTL1 &= ~CCIE;
-            TB2CCTL2 &= ~CCIE;
-
-            TB0CCTL1 &= ~CCIE;
-            TB0CCTL2 &= ~CCIE;
-
-            TA0CCTL1 &= ~CCIE;
-            TA0CCTL2 &= ~CCIE;
-
-            TA1CCTL0 &= ~CCIE;
+//            // disable interrupts while parsing data
+//            TB1CCTL1 &= ~CCIE;
+//            TB1CCTL2 &= ~CCIE;
+//
+//            TB2CCTL1 &= ~CCIE;
+//            TB2CCTL2 &= ~CCIE;
+//
+//            TB0CCTL1 &= ~CCIE;
+//            TB0CCTL2 &= ~CCIE;
+//
+//            TA0CCTL1 &= ~CCIE;
+//            TA0CCTL2 &= ~CCIE;
+//
+//            TA1CCTL0 &= ~CCIE;
 
             // cases for cmdByte for controlling both X & Y axes
             switch(cmdByte){
@@ -286,20 +286,20 @@ int main(void)
 
             newCommand = 0;             // we've read and parsed the command
 
-            // re-enable interrupts
-            TB1CCTL1 |= CCIE;
-            TB1CCTL2 |= CCIE;
-
-            TB2CCTL1 |= CCIE;
-            TB2CCTL2 |= CCIE;
-
-            TB0CCTL1 |= CCIE;
-            TB0CCTL2 |= CCIE;
-
-            TA0CCTL1 |= CCIE;
-            TA0CCTL2 |= CCIE;
-
-            TA1CCTL0 |= CCIE;
+//            // re-enable interrupts
+//            TB1CCTL1 |= CCIE;
+//            TB1CCTL2 |= CCIE;
+//
+//            TB2CCTL1 |= CCIE;
+//            TB2CCTL2 |= CCIE;
+//
+//            TB0CCTL1 |= CCIE;
+//            TB0CCTL2 |= CCIE;
+//
+//            TA0CCTL1 |= CCIE;
+//            TA0CCTL2 |= CCIE;
+//
+//            TA1CCTL0 |= CCIE;
         }
 
     }
@@ -471,13 +471,13 @@ __interrupt void Y_AXIS_STEPPING_ISR(void)
                 // if below target position, move +ve steps to reach target
                 if(YcurrentSteps < YtargetSteps){
 
-                    P1OUT |= BIT2;          // set direction to +ve
+                    P1OUT |= BIT0;          // set direction to +ve
                     P3OUT |= BIT0;          // take step
                     YcurrentSteps++;        // increment current steps
                 }
                 // if above target position, move -ve steps to reach target
                 else if(YcurrentSteps > YtargetSteps){
-                    P1OUT &= ~BIT2;         // set direction -ve
+                    P1OUT &= ~BIT0;         // set direction -ve
                     P3OUT |= BIT0;          // take step
                     YcurrentSteps--;        // decrement current steps
                 }
@@ -552,7 +552,7 @@ __interrupt void STEPPER_STEP_ISR(void)
         if(dotDelayCounter == 1)
             TB0CCR2 = servoDownPosCount;
         // after 0.5s, raise servo
-        else if(dotDelayCounter >= 20)
+        else if(dotDelayCounter == 20)
             TB0CCR2 = servoUpPosCount;
         // after another 0.5s, signal dot is made
         else if(dotDelayCounter >= 40){
